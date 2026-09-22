@@ -16,10 +16,21 @@ from config import settings
 
 database_url = settings.database_url
 
-# Vercel serverless environment
-# /tmp is the writable temporary directory.
+# Vercel / Neon PostgreSQL
 if os.getenv("VERCEL"):
-    database_url = "sqlite+aiosqlite:////tmp/hydro_rain_guard.db"
+    if database_url.startswith("postgresql://"):
+        database_url = database_url.replace(
+            "postgresql://",
+            "postgresql+asyncpg://",
+            1,
+        )
+
+    elif database_url.startswith("postgres://"):
+        database_url = database_url.replace(
+            "postgres://",
+            "postgresql+asyncpg://",
+            1,
+        )
 
 
 # ============================================================
@@ -29,7 +40,9 @@ if os.getenv("VERCEL"):
 engine = create_async_engine(
     database_url,
     echo=False,
+    pool_pre_ping=True,
 )
+
 
 SessionLocal = async_sessionmaker(
     engine,
@@ -56,13 +69,16 @@ async def get_db():
 
 
 # ============================================================
-# INITIALIZE DATABASE
+# INITIALIZE TABLES
 # ============================================================
 
 async def init_db():
+
+    # Import models so SQLAlchemy knows about Assessment
     from models import db_models  # noqa: F401
 
     async with engine.begin() as conn:
+
         await conn.run_sync(
             Base.metadata.create_all
         )
