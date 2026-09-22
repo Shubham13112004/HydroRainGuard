@@ -14,8 +14,7 @@ from config import settings
 
 database_url = settings.database_url.strip()
 
-
-# Convert PostgreSQL URL to SQLAlchemy asyncpg URL
+# Convert PostgreSQL URL to asyncpg URL
 if database_url.startswith("postgresql://"):
     database_url = database_url.replace(
         "postgresql://",
@@ -32,29 +31,30 @@ elif database_url.startswith("postgres://"):
 
 
 # ============================================================
-# NEON / ASYNCPG CONNECTION OPTIONS
+# NEON / ASYNCPG SSL
 # ============================================================
 
 connect_args = {}
 
 if database_url.startswith("postgresql+asyncpg://"):
 
-    # asyncpg does not use SQLAlchemy's sslmode URL parameter
-    if "sslmode=require" in database_url:
-        database_url = database_url.replace(
-            "?sslmode=require",
-            "",
-        )
-        database_url = database_url.replace(
-            "&sslmode=require",
-            "",
-        )
+    # SQLAlchemy's sslmode parameter is not passed directly
+    # to asyncpg. Remove it and provide SSL through connect_args.
+    database_url = database_url.replace(
+        "?sslmode=require",
+        "",
+    )
 
-        connect_args["ssl"] = "require"
+    database_url = database_url.replace(
+        "&sslmode=require",
+        "",
+    )
+
+    connect_args["ssl"] = "require"
 
 
 # ============================================================
-# SQLALCHEMY ASYNC ENGINE
+# ASYNC SQLALCHEMY ENGINE
 # ============================================================
 
 engine = create_async_engine(
@@ -99,6 +99,7 @@ async def get_db():
 
 async def init_db():
 
+    # Import models so SQLAlchemy registers Assessment
     from models import db_models  # noqa: F401
 
     async with engine.begin() as conn:
