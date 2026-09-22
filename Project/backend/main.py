@@ -18,19 +18,24 @@ from services.feasibility import get_recommendations
 from services.cost_benefit import calculate_cost_benefit
 from services.pdf_report import generate_pdf_report
 from config import settings
-
+from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI(
     title='HYDRO RAIN GUARD API',
     description='Intelligent Rainwater Harvesting and Groundwater Recharge Assessment System',
     version='1.0.0'
 )
 
+
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.frontend_url, 'http://localhost:3000', 'http://127.0.0.1:3000'],
+    allow_origins=[
+        "http://localhost:3000",
+        "https://hydro-rain-guard-mhus.vercel.app",
+    ],
     allow_credentials=True,
-    allow_methods=['*'],
-    allow_headers=['*'],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 @app.on_event('startup')
