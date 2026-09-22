@@ -1,5 +1,3 @@
-import os
-
 from sqlalchemy.ext.asyncio import (
     create_async_engine,
     AsyncSession,
@@ -14,7 +12,8 @@ from config import settings
 # DATABASE URL
 # ============================================================
 
-database_url = settings.database_url
+database_url = settings.database_url.strip()
+
 
 # Convert PostgreSQL URL to SQLAlchemy asyncpg URL
 if database_url.startswith("postgresql://"):
@@ -33,20 +32,19 @@ elif database_url.startswith("postgres://"):
 
 
 # ============================================================
-# NEON SSL
+# NEON / ASYNCPG CONNECTION OPTIONS
 # ============================================================
 
 connect_args = {}
 
 if database_url.startswith("postgresql+asyncpg://"):
 
+    # asyncpg does not use SQLAlchemy's sslmode URL parameter
     if "sslmode=require" in database_url:
-
         database_url = database_url.replace(
             "?sslmode=require",
             "",
         )
-
         database_url = database_url.replace(
             "&sslmode=require",
             "",
@@ -56,7 +54,7 @@ if database_url.startswith("postgresql+asyncpg://"):
 
 
 # ============================================================
-# SQLALCHEMY ENGINE
+# SQLALCHEMY ASYNC ENGINE
 # ============================================================
 
 engine = create_async_engine(
@@ -79,7 +77,7 @@ SessionLocal = async_sessionmaker(
 
 
 # ============================================================
-# BASE MODEL
+# BASE
 # ============================================================
 
 class Base(DeclarativeBase):
@@ -101,7 +99,6 @@ async def get_db():
 
 async def init_db():
 
-    # Import models so SQLAlchemy knows about the tables
     from models import db_models  # noqa: F401
 
     async with engine.begin() as conn:
