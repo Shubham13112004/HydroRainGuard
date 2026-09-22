@@ -16,33 +16,60 @@ from config import settings
 
 database_url = settings.database_url
 
-# Vercel / Neon PostgreSQL
-if os.getenv("VERCEL"):
-    if database_url.startswith("postgresql://"):
-        database_url = database_url.replace(
-            "postgresql://",
-            "postgresql+asyncpg://",
-            1,
-        )
+# Convert PostgreSQL URL to SQLAlchemy asyncpg URL
+if database_url.startswith("postgresql://"):
+    database_url = database_url.replace(
+        "postgresql://",
+        "postgresql+asyncpg://",
+        1,
+    )
 
-    elif database_url.startswith("postgres://"):
-        database_url = database_url.replace(
-            "postgres://",
-            "postgresql+asyncpg://",
-            1,
-        )
+elif database_url.startswith("postgres://"):
+    database_url = database_url.replace(
+        "postgres://",
+        "postgresql+asyncpg://",
+        1,
+    )
 
 
 # ============================================================
-# ENGINE
+# NEON SSL
+# ============================================================
+
+connect_args = {}
+
+if database_url.startswith("postgresql+asyncpg://"):
+
+    if "sslmode=require" in database_url:
+
+        database_url = database_url.replace(
+            "?sslmode=require",
+            "",
+        )
+
+        database_url = database_url.replace(
+            "&sslmode=require",
+            "",
+        )
+
+        connect_args["ssl"] = "require"
+
+
+# ============================================================
+# SQLALCHEMY ENGINE
 # ============================================================
 
 engine = create_async_engine(
     database_url,
     echo=False,
     pool_pre_ping=True,
+    connect_args=connect_args,
 )
 
+
+# ============================================================
+# SESSION
+# ============================================================
 
 SessionLocal = async_sessionmaker(
     engine,
@@ -52,7 +79,7 @@ SessionLocal = async_sessionmaker(
 
 
 # ============================================================
-# BASE
+# BASE MODEL
 # ============================================================
 
 class Base(DeclarativeBase):
@@ -60,7 +87,7 @@ class Base(DeclarativeBase):
 
 
 # ============================================================
-# DATABASE SESSION
+# DATABASE DEPENDENCY
 # ============================================================
 
 async def get_db():
@@ -69,16 +96,13 @@ async def get_db():
 
 
 # ============================================================
-# INITIALIZE TABLES
+# INITIALIZE DATABASE
 # ============================================================
 
 async def init_db():
 
-    # Import models so SQLAlchemy knows about Assessment
+    # Import models so SQLAlchemy knows about the tables
     from models import db_models  # noqa: F401
 
     async with engine.begin() as conn:
-
-        await conn.run_sync(
-            Base.metadata.create_all
-        )
+        await conn.run_sync(Base.metadata.create_all)
