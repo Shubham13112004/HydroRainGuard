@@ -94,8 +94,8 @@ export const en = {
   'assess.map.detected': 'Detected area',
   'assess.map.manualToggle': 'Enter coordinates manually',
   'assess.map.mapToggle': 'Pick on map instead',
-  'assess.map.tilesFailed': 'Map tiles could not be loaded',
-  'assess.map.tilesFailedHint': 'Your coordinates still work — the rainfall lookup does not need the map. Check your network or an ad/script blocker.',
+  'assess.map.tilesFailed': 'Map tiles are blocked by the provider',
+  'assess.map.tilesFailedHint': 'OpenStreetMap’s volunteer servers reject embedded apps (osm.wiki/Blocked). Your coordinates still work — the rainfall lookup does not need the map.',
   'assess.map.tip': 'Tip: right-click anywhere on the map to drop the pin there.',
   'assess.map.defaultNote': 'Default pin is set to Pune. Drag it to your exact location.',
 

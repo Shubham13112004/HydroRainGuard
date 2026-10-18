@@ -99,8 +99,8 @@ export const mr: Partial<Record<TranslationKey, string>> = {
   'assess.map.detected': 'ओळखलेला परिसर',
   'assess.map.manualToggle': 'निर्देशांक स्वहस्ते भरा',
   'assess.map.mapToggle': 'नकाशावर निवडा',
-  'assess.map.tilesFailed': 'नकाशा टाइल्स लोड होऊ शकल्या नाहीत',
-  'assess.map.tilesFailedHint': 'आपले निर्देशांक अजून कार्यरत आहेत — पर्जन्यमान गणनेसाठी नकाशा आवश्यक नाही. नेटवर्क किंवा जाहिरात-रोधक तपासा.',
+  'assess.map.tilesFailed': 'नकाशा टाइल्स पुरवठादाराकडून अवरोधित आहेत',
+  'assess.map.tilesFailedHint': 'OpenStreetMap चे स्वयंसेवक सर्व्हर एम्बेडेड अ‍ॅप्सना अवरोधित करतात (osm.wiki/Blocked). आपले निर्देशांक अजून कार्यरत आहेत — पर्जन्यमान गणनेसाठी नकाशा आवश्यक नाही.',
   'assess.map.tip': 'सूचना: नकाशावर कोठेही उजवे-क्लिक करा आणि पिन तेथे टाका.',
   'assess.map.defaultNote': 'डीफॉल्ट पिन पुणे येथे आहे. आपल्या नेमक्या स्थानावर ओढा.',
 

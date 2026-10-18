@@ -40,9 +40,49 @@ const pinIcon = L.divIcon({
 });
 
 /* ============================================================
-   GEOCODING  (OpenStreetMap Nominatim — free, no API key)
-   Reverse lookups only fire when the user releases the pin,
-   never per-pixel, to respect the 1 req/s usage policy.
+   TILE PROVIDERS
+
+   tile.openstreetmap.org is a volunteer-run server whose tile usage
+   policy forbids use from apps: it answers 403 "access blocked" as
+   soon as the requests look embedded rather than human, which is
+   exactly what happens inside a preview iframe. So the default is a
+   provider that permits embedding, with the next in the list tried
+   automatically if the first never produces a tile.
+
+   Both require attribution, shown in the map's corner.
+============================================================ */
+
+const TILE_PROVIDERS = [
+  {
+    name: 'CARTO',
+    url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',
+    subdomains: 'abcd',
+    maxZoom: 19,
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+  },
+  {
+    name: 'OpenStreetMap',
+    url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    subdomains: 'abc',
+    maxZoom: 19,
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  },
+];
+
+/* ============================================================
+   GEOCODING
+
+   Nominatim runs on the same volunteer OSM infrastructure as the
+   tiles, and its usage policy is stricter still (1 req/s, no app or
+   bulk use), so it 403s embedded apps too. Photon (Komoot, built on
+   OSM data, CORS-enabled, no key) is tried first and Nominatim is
+   the fallback; if both are unavailable the coordinates still stand
+   and the user simply types the location name themselves.
+
+   Reverse lookups only fire when the user releases the pin, never
+   per-pixel.
 ============================================================ */
 
 type NominatimAddress = {
@@ -69,22 +109,52 @@ function readablePlace(a: NominatimAddress): string {
   );
 }
 
-async function reverseGeocode(
-  lat: number,
-  lon: number,
-): Promise<string> {
-  const url =
-    'https://nominatim.openstreetmap.org/reverse' +
-    `?format=jsonv2&lat=${lat}&lon=${lon}&zoom=16&addressdetails=1`;
+/** Photon returns GeoJSON; properties vary, so fall back down a list. */
+function photonLabel(props: Record<string, string | undefined>): string {
+  return (
+    props.name ||
+    props.city ||
+    props.town ||
+    props.village ||
+    props.suburb ||
+    props.district ||
+    props.county ||
+    props.state ||
+    ''
+  );
+}
 
+async function getJson(url: string): Promise<any> {
   const res = await fetch(url, { headers: { Accept: 'application/json' } });
-  if (!res.ok) throw new Error('reverse geocode failed');
+  if (!res.ok) throw new Error(`${res.status} from ${new URL(url).host}`);
+  return res.json();
+}
 
-  const data = await res.json();
+async function photonReverse(lat: number, lon: number): Promise<string> {
+  const data = await getJson(
+    `https://photon.komoot.io/reverse?lat=${lat}&lon=${lon}`,
+  );
+  const f = data?.features?.[0];
+  if (!f) throw new Error('no match');
+  return photonLabel(f.properties ?? {});
+}
+
+async function nominatimReverse(lat: number, lon: number): Promise<string> {
+  const data = await getJson(
+    'https://nominatim.openstreetmap.org/reverse' +
+      `?format=jsonv2&lat=${lat}&lon=${lon}&zoom=16&addressdetails=1`,
+  );
   const place = readablePlace(data?.address ?? {});
   const display: string = data?.display_name ?? '';
-
   return place || display.split(',').slice(0, 2).join(',').trim();
+}
+
+async function reverseGeocode(lat: number, lon: number): Promise<string> {
+  try {
+    return await photonReverse(lat, lon);
+  } catch {
+    return nominatimReverse(lat, lon);
+  }
 }
 
 async function forwardGeocode(q: string): Promise<{
@@ -92,21 +162,47 @@ async function forwardGeocode(q: string): Promise<{
   lon: number;
   name: string;
 } | null> {
-  const url =
-    'https://nominatim.openstreetmap.org/search' +
-    `?format=jsonv2&q=${encodeURIComponent(q)}&limit=1&addressdetails=1`;
+  const query = encodeURIComponent(q);
 
-  const res = await fetch(url, { headers: { Accept: 'application/json' } });
-  if (!res.ok) throw new Error('geocode failed');
+  // 1) Photon — no key, CORS-enabled, built for type-ahead search.
+  try {
+    const data = await getJson(
+      `https://photon.komoot.io/api/?q=${query}&limit=1`,
+    );
+    const f = data?.features?.[0];
+    if (f) {
+      const [lon, lat] = f.geometry.coordinates;
+      const name =
+        photonLabel(f.properties ?? {}) ||
+        (f.properties?.country ?? '');
+      return { lat, lon, name };
+    }
+  } catch {
+    /* fall through to Nominatim */
+  }
 
-  const data = await res.json();
-  if (!Array.isArray(data) || data.length === 0) return null;
+  // 2) Nominatim fallback.
+  try {
+    const data = await getJson(
+      'https://nominatim.openstreetmap.org/search' +
+        `?format=jsonv2&q=${query}&limit=1&addressdetails=1`,
+    );
+    if (Array.isArray(data) && data.length > 0) {
+      return {
+        lat: parseFloat(data[0].lat),
+        lon: parseFloat(data[0].lon),
+        name: (data[0].display_name ?? '')
+          .split(',')
+          .slice(0, 2)
+          .join(',')
+          .trim(),
+      };
+    }
+  } catch {
+    /* both providers unavailable */
+  }
 
-  return {
-    lat: parseFloat(data[0].lat),
-    lon: parseFloat(data[0].lon),
-    name: (data[0].display_name ?? '').split(',').slice(0, 2).join(',').trim(),
-  };
+  return null;
 }
 
 /* ============================================================
@@ -158,9 +254,23 @@ export default function MapPicker({
   const [looking, setLooking] = useState(false);
   /* Tile loading is counted, not treated as boolean: a single 404
      tile (routine while panning or at the edge of coverage) must not
-     blank the map. We only warn when nothing at all has loaded. */
+     blank the map. We only act when nothing at all has loaded. */
+  const [providerIdx, setProviderIdx] = useState(0);
   const [tiles, setTiles] = useState({ loaded: 0, failed: 0 });
-  const tilesBlocked = tiles.failed >= 3 && tiles.loaded === 0;
+
+  const provider = TILE_PROVIDERS[providerIdx];
+  const noTilesAtAll = tiles.failed >= 3 && tiles.loaded === 0;
+
+  // Nothing rendered from this provider -> try the next one once.
+  useEffect(() => {
+    if (noTilesAtAll && providerIdx < TILE_PROVIDERS.length - 1) {
+      setProviderIdx((i) => i + 1);
+      setTiles({ loaded: 0, failed: 0 });
+    }
+  }, [noTilesAtAll, providerIdx]);
+
+  // Only warn once every provider has been tried and none delivered.
+  const tilesBlocked = noTilesAtAll && providerIdx === TILE_PROVIDERS.length - 1;
 
   // Keep the latest onChange without re-creating map callbacks.
   const onChangeRef = useRef(onChange);
@@ -300,9 +410,11 @@ export default function MapPicker({
           style={{ height: '100%', width: '100%' }}
         >
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-            maxZoom={19}
+            key={provider.name}
+            url={provider.url}
+            subdomains={provider.subdomains}
+            maxZoom={provider.maxZoom}
+            attribution={provider.attribution}
             eventHandlers={{
               load: () => setTiles((s) => ({ loaded: s.loaded + 1, failed: s.failed })),
               tileerror: () =>
