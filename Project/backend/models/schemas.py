@@ -29,6 +29,8 @@ class AssessmentRequest(BaseModel):
     open_space_area: float  # m²
     soil_type: SoilType
     groundwater_depth: float  # meters
+    # Economics override (Rs per 1000 L). Optional.
+    water_tariff_per_kl: float | None = None
 
 class RunoffResult(BaseModel):
     annual_runoff_volume: float  # liters
@@ -53,9 +55,22 @@ class StructureRecommendation(BaseModel):
 
 class CostBenefitAnalysis(BaseModel):
     estimated_cost: float  # INR
+    # Capital cost breakdown
+    storage_cost: float = 0.0
+    recharge_cost: float = 0.0
+    plumbing_cost: float = 0.0
+    # Tariff actually used, so reports can state the assumption
+    water_tariff_per_kl: float = 0.0
+    # Benefits
     annual_water_savings_liters: float
     annual_savings_inr: float
-    payback_period_years: float
+    annual_recharge_value_inr: float = 0.0
+    annual_maintenance_inr: float = 0.0
+    net_annual_savings_inr: float = 0.0
+    # None == never pays back at the modelled tariff
+    payback_period_years: float | None = None
+    # True when the system pays back inside the ROI horizon
+    economically_viable: bool = False
     roi_percentage: float
     monthly_savings: list[float]
 

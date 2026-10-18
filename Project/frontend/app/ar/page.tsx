@@ -1,192 +1,288 @@
 'use client';
-import { useEffect, useState } from 'react';
+
+import { useEffect, useMemo, useState } from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { ArrowLeft, Info } from 'lucide-react';
+import { ArrowLeft, Info, Layers, Tag, Smartphone } from 'lucide-react';
+
 import type { AssessmentResponse } from '@/lib/types';
+import { formatLiters } from '@/lib/utils';
+import { useI18n } from '@/lib/i18n';
+
+/* three.js touches `window` at module scope — browser only. */
+const ARViewer = dynamic(() => import('@/components/ARViewer'), {
+  ssr: false,
+  loading: () => (
+    <div className="h-full w-full flex items-center justify-center">
+      <div className="w-10 h-10 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+    </div>
+  ),
+});
+
+const ARButton = dynamic(
+  () => import('@react-three/xr').then((m) => m.ARButton),
+  { ssr: false },
+);
+
+const LEGEND_STRUCTURE_KEYS: Record<string, string> = {
+  'Rooftop Storage Tank': 'ar.legend.tank',
+  'Recharge Pit': 'ar.legend.pit',
+  'Recharge Well / Borewell Recharge': 'ar.legend.well',
+  'Percolation Tank': 'ar.legend.tankPercolation',
+  'Soak Pit / French Drain': 'ar.legend.soakPit',
+};
 
 export default function ARPage() {
+  const { t, structureLabel } = useI18n();
+
   const [data, setData] = useState<AssessmentResponse | null>(null);
   const [selected, setSelected] = useState(0);
+  const [cutaway, setCutaway] = useState(true);
+  const [showLabels, setShowLabels] = useState(true);
+  const [inAR, setInAR] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const stored = localStorage.getItem('hydro_result');
-    if (stored) setData(JSON.parse(stored));
+    if (stored) {
+      try {
+        setData(JSON.parse(stored));
+      } catch {
+        setData(null);
+      }
+    }
+    setLoading(false);
   }, []);
 
-  const structures3D = [
-    {
-      name: 'Rooftop Storage Tank',
-      color: '#0d5c8c',
-      shape: 'cylinder',
-      desc: 'Underground/ground-level storage tank. Captures rooftop runoff via first-flush diverter.',
-      emoji: '🏗️',
-    },
-    {
-      name: 'Recharge Pit',
-      color: '#27ae60',
-      shape: 'box',
-      desc: 'Gravel-filled pit (1.5m × 1.5m × 2m). Allows water to percolate into the water table.',
-      emoji: '🕳️',
-    },
-    {
-      name: 'Recharge Well',
-      color: '#e67e22',
-      shape: 'cylinder-deep',
-      desc: 'Deep borewell (200–300mm dia, 10–30m). Channels water directly into deep aquifers.',
-      emoji: '🛢️',
-    },
-    {
-      name: 'Percolation Tank',
-      color: '#8e44ad',
-      shape: 'pond',
-      desc: 'Open surface tank with large area. Slow percolation over a large footprint.',
-      emoji: '🏞️',
-    },
-  ];
+  const structures = data?.recommended_structures ?? [];
+  const structure = structures[selected] ?? structures[0] ?? null;
 
-  const topStructure = data?.recommended_structures?.[selected];
+  const labels = useMemo(
+    () => ({
+      building: t('ar.building'),
+      tank: t('ar.legend.tank'),
+      pipe: t('ar.legend.pipe'),
+      structure: structure ? structureLabel(structure.structure_type) : '',
+    }),
+    [t, structure, structureLabel],
+  );
+
+  /* ---------- no assessment yet ---------- */
+  if (!loading && !data) {
+    return (
+      <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center px-4">
+        <div className="text-center max-w-md">
+          <div className="text-6xl mb-5">🏗️</div>
+          <h1 className="text-2xl font-bold mb-3">{t('ar.title')}</h1>
+          <p className="text-gray-400 mb-7">{t('ar.noData')}</p>
+          <Link
+            href="/assess"
+            className="inline-block bg-primary-700 hover:bg-primary-800 text-white font-bold px-7 py-3 rounded-xl transition-colors"
+          >
+            {t('ar.noDataCta')}
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-      <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-800">
-        <Link href="/results" className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
-          <ArrowLeft className="w-4 h-4" /> Back to Results
-        </Link>
-        <span className="text-gray-600">|</span>
-        <h1 className="font-bold text-lg">💧 AR Visualization — HYDRO RAIN GUARD</h1>
-      </div>
-
-      <div className="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* 3D Viewer */}
-        <div className="lg:col-span-2">
-          <div className="bg-gray-800 rounded-2xl overflow-hidden" style={{ height: '500px' }}>
-            <div
-              dangerouslySetInnerHTML={{
-                __html: `
-                <style>
-                  a-scene { width: 100%; height: 500px; display: block; }
-                </style>
-                <a-scene embedded background="color: #1a1a2e" fog="type: linear; color: #1a1a2e; near: 10; far: 50">
-                  <!-- Lighting -->
-                  <a-light type="ambient" color="#ffffff" intensity="0.4"></a-light>
-                  <a-light type="directional" position="5 10 5" color="#ffffff" intensity="1"></a-light>
-                  <a-light type="point" position="0 5 0" color="#0d5c8c" intensity="0.5"></a-light>
-
-                  <!-- Ground grid -->
-                  <a-grid position="0 0 0" color="#333" opacity="0.3"></a-grid>
-                  <a-plane position="0 0 -2" rotation="-90 0 0" width="20" height="20" color="#1a2a1a" opacity="0.8" shadow></a-plane>
-
-                  <!-- Building representation -->
-                  <a-box position="0 1 0" width="4" height="2" depth="3" color="#d0cfc9" opacity="0.9" shadow>
-                    <!-- Roof -->
-                    <a-box position="0 1.2 0" width="4.2" height="0.2" depth="3.2" color="#8B4513"></a-box>
-                  </a-box>
-
-                  <!-- Rooftop tank (always shown) -->
-                  <a-cylinder position="1.5 3.2 0" radius="0.4" height="0.8" color="#0d5c8c" opacity="0.9" shadow>
-                    <a-animation attribute="rotation" to="0 360 0" dur="8000" repeat="indefinite" easing="linear"></a-animation>
-                  </a-cylinder>
-                  <a-text value="Storage\nTank" position="1.5 4.2 0" color="#00bcd4" scale="0.8 0.8 0.8" align="center"></a-text>
-
-                  <!-- Downpipe -->
-                  <a-cylinder position="-2 1 0" radius="0.06" height="2" color="#444" rotation="0 0 0"></a-cylinder>
-
-                  <!-- Recharge pit (underground, shown as glowing box) -->
-                  <a-box position="-3.5 -0.5 0" width="1.5" height="1.5" depth="1.5" color="#27ae60" opacity="0.7" shadow>
-                    <a-animation attribute="scale" from="1 1 1" to="1.05 1.05 1.05" dur="2000" repeat="indefinite" direction="alternate" easing="ease-in-out"></a-animation>
-                  </a-box>
-                  <a-text value="Recharge\nPit" position="-3.5 0.8 0" color="#27ae60" scale="0.8 0.8 0.8" align="center"></a-text>
-
-                  <!-- Flow pipe connecting building to pit -->
-                  <a-cylinder position="-2.7 0.1 0" radius="0.05" height="1.6" color="#00bcd4" rotation="0 0 90" opacity="0.8"></a-cylinder>
-
-                  <!-- Recharge well -->
-                  <a-cylinder position="3.5 0 0" radius="0.25" height="3" color="#e67e22" opacity="0.85" shadow></a-cylinder>
-                  <a-cylinder position="3.5 -1.5 0" radius="0.2" height="5" color="#c0392b" opacity="0.5"></a-cylinder>
-                  <a-text value="Recharge\nWell" position="3.5 2 0" color="#e67e22" scale="0.8 0.8 0.8" align="center"></a-text>
-
-                  <!-- Water flow particles effect -->
-                  <a-sphere position="-2 0.8 0" radius="0.08" color="#00bcd4" opacity="0.8">
-                    <a-animation attribute="position" from="-2 0.8 0" to="-3 0.1 0" dur="2000" repeat="indefinite" easing="ease-in"></a-animation>
-                    <a-animation attribute="opacity" from="1" to="0" dur="2000" repeat="indefinite"></a-animation>
-                  </a-sphere>
-
-                  <!-- Water level indicator in pit -->
-                  <a-box position="-3.5 -0.8 0" width="1.3" height="0.4" depth="1.3" color="#00bcd4" opacity="0.5">
-                    <a-animation attribute="position" from="-3.5 -1.1 0" to="-3.5 -0.5 0" dur="3000" repeat="indefinite" direction="alternate" easing="ease-in-out"></a-animation>
-                  </a-box>
-
-                  <!-- Labels floating -->
-                  <a-text value="HYDRO RAIN GUARD" position="0 5.5 -2" color="#ffffff" scale="1.2 1.2 1.2" align="center"></a-text>
-                  <a-text value="Rainwater Harvesting System" position="0 4.9 -2" color="#00bcd4" scale="0.7 0.7 0.7" align="center"></a-text>
-
-                  <!-- Camera -->
-                  <a-camera position="0 3 9" look-controls="enabled: true" wasd-controls="enabled: false">
-                    <a-cursor color="#ffffff" opacity="0.5"></a-cursor>
-                  </a-camera>
-                </a-scene>
-              `
-              }}
-            />
-          </div>
-          <p className="text-gray-400 text-xs mt-2 text-center">Interactive 3D view — click and drag to rotate • Scroll to zoom</p>
+      {/* ---- header ---- */}
+      <div className="flex items-center justify-between gap-3 px-4 sm:px-6 py-4 border-b border-gray-800">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/results"
+            className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span className="hidden sm:inline">{t('ar.back')}</span>
+          </Link>
+          <span className="text-gray-600">|</span>
+          <h1 className="font-bold text-sm sm:text-lg truncate">
+            💧 {t('ar.title')}
+          </h1>
         </div>
 
-        {/* Info Panel */}
+        {/* AR entry — only meaningful on a WebXR AR device */}
+        <div className="shrink-0 [&>button]:!bg-primary-700 [&>button]:!text-white [&>button]:!rounded-lg [&>button]:!px-4 [&>button]:!py-2 [&>button]:!text-sm [&>button]:!font-semibold [&>button]:!border-0 [&>button]:!cursor-pointer">
+          <ARButton
+            sessionInit={{
+              optionalFeatures: ['hit-test', 'dom-overlay'],
+            }}
+          />
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* ---- 3D viewport ---- */}
+        <div className="lg:col-span-2 space-y-3">
+          <div
+            className="bg-gray-800 rounded-2xl overflow-hidden relative"
+            style={{ height: 'min(62vh, 520px)' }}
+          >
+            <ARViewer
+              structure={structure}
+              roofArea={data?.request?.roof_area ?? 100}
+              cutaway={cutaway}
+              showLabels={showLabels && !inAR}
+              labels={labels}
+            />
+          </div>
+
+          {/* ---- view controls ---- */}
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setCutaway((v) => !v)}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-semibold border transition-colors ${
+                cutaway
+                  ? 'bg-cyan-500/20 border-cyan-500/40 text-cyan-300'
+                  : 'bg-gray-800 border-gray-700 text-gray-400 hover:text-white'
+              }`}
+            >
+              <Layers className="w-4 h-4" />
+              {t('ar.view.cutaway')}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowLabels((v) => !v)}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-semibold border transition-colors ${
+                showLabels
+                  ? 'bg-cyan-500/20 border-cyan-500/40 text-cyan-300'
+                  : 'bg-gray-800 border-gray-700 text-gray-400 hover:text-white'
+              }`}
+            >
+              <Tag className="w-4 h-4" />
+              {t('ar.showLabels')}
+            </button>
+
+            <span className="ml-auto text-xs text-gray-500">
+              {t('ar.desktopNote')}
+            </span>
+          </div>
+
+          <div className="bg-blue-900/30 border border-blue-800/60 rounded-xl p-3.5 flex gap-2.5">
+            <Smartphone className="w-4 h-4 text-blue-300 shrink-0 mt-0.5" />
+            <p className="text-xs text-blue-200 leading-relaxed">
+              {t('ar.mobileNote')}
+            </p>
+          </div>
+        </div>
+
+        {/* ---- side panel ---- */}
         <div className="space-y-4">
+          {/* structure picker */}
           <div className="bg-gray-800 rounded-2xl p-5">
-            <h2 className="font-bold text-white mb-3 flex items-center gap-2">
-              <Info className="w-4 h-4 text-cyan-400" /> System Components
+            <h2 className="font-bold text-white mb-3 text-sm">
+              {t('ar.selectStructure')}
             </h2>
             <div className="space-y-2">
-              {[
-                { color: '#0d5c8c', name: 'Rooftop Storage Tank', desc: 'Blue cylinder on roof' },
-                { color: '#27ae60', name: 'Recharge Pit', desc: 'Green underground box' },
-                { color: '#e67e22', name: 'Recharge Well', desc: 'Orange deep cylinder' },
-                { color: '#00bcd4', name: 'Water Flow', desc: 'Animated blue particles' },
-              ].map((c, i) => (
-                <div key={i} className="flex items-center gap-3 p-2.5 bg-gray-700 rounded-xl">
-                  <div className="w-4 h-4 rounded-full shrink-0" style={{ backgroundColor: c.color }} />
-                  <div>
-                    <p className="text-sm font-semibold">{c.name}</p>
-                    <p className="text-xs text-gray-400">{c.desc}</p>
+              {structures.map((s, i) => (
+                <button
+                  key={`${s.structure_type}-${i}`}
+                  type="button"
+                  onClick={() => setSelected(i)}
+                  className={`w-full text-left px-3 py-2.5 rounded-xl border transition-colors ${
+                    i === selected
+                      ? 'bg-primary-700/30 border-primary-600 text-white'
+                      : 'bg-gray-700/50 border-transparent text-gray-300 hover:bg-gray-700'
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-sm font-semibold truncate">
+                      {structureLabel(s.structure_type)}
+                    </span>
+                    <span className="text-xs text-cyan-300 shrink-0">
+                      {s.suitability_score}/100
+                    </span>
                   </div>
-                </div>
+                </button>
               ))}
             </div>
           </div>
 
+          {/* dimensions */}
+          {structure && (
+            <div className="bg-gray-800 rounded-2xl p-5">
+              <h2 className="font-bold text-white mb-3 flex items-center gap-2 text-sm">
+                <Info className="w-4 h-4 text-cyan-400" />
+                {t('results.structures.dimensions')}
+              </h2>
+              <div className="flex flex-wrap gap-2">
+                {Object.entries(structure.dimensions).map(([k, v]) => (
+                  <span
+                    key={k}
+                    className="text-[11px] bg-gray-700 text-gray-200 px-2.5 py-1 rounded-lg"
+                  >
+                    {k.replace(/_/g, ' ')}: <strong>{String(v)}</strong>
+                  </span>
+                ))}
+              </div>
+              <p className="text-[11px] text-gray-500 mt-3">
+                {t('ar.scaleNote')}
+              </p>
+            </div>
+          )}
+
+          {/* assessment summary */}
           {data && (
             <div className="bg-gray-800 rounded-2xl p-5">
-              <h2 className="font-bold text-white mb-3">📊 Your Assessment</h2>
+              <h2 className="font-bold text-white mb-3 text-sm">
+                {t('ar.yourAssessment')}
+              </h2>
               <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Roof Area</span>
-                  <span className="font-bold">{data.request.roof_area} m²</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Annual Runoff</span>
-                  <span className="font-bold text-cyan-400">{(data.runoff.annual_runoff_volume/1000).toFixed(1)} KL</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Top Structure</span>
-                  <span className="font-bold text-green-400 text-xs">{data.recommended_structures[0]?.structure_type}</span>
-                </div>
+                <Row
+                  label={t('ar.roofArea')}
+                  value={`${data.request.roof_area} m²`}
+                />
+                <Row
+                  label={t('ar.annualRunoff')}
+                  value={formatLiters(data.runoff.annual_runoff_volume)}
+                  accent
+                />
+                <Row
+                  label={t('ar.topStructure')}
+                  value={structureLabel(
+                    data.recommended_structures[0]?.structure_type ?? '—',
+                  )}
+                />
               </div>
             </div>
           )}
 
-          <div className="bg-blue-900/40 border border-blue-800 rounded-2xl p-4">
-            <p className="text-xs text-blue-300 leading-relaxed">
-              📱 <strong>On mobile:</strong> Open this page in Chrome on Android for WebXR AR mode. Point your camera at a flat surface to place the 3D model in your environment.
-            </p>
-          </div>
-
-          <Link href="/results" className="block w-full text-center bg-primary-700 hover:bg-primary-800 text-white font-bold py-3 rounded-xl transition-colors">
-            ← Back to Results
+          <Link
+            href="/results"
+            className="block w-full text-center bg-primary-700 hover:bg-primary-800 text-white font-bold py-3 rounded-xl transition-colors"
+          >
+            {t('ar.back')}
           </Link>
         </div>
       </div>
+    </div>
+  );
+}
+
+function Row({
+  label,
+  value,
+  accent,
+}: {
+  label: string;
+  value: string;
+  accent?: boolean;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-2">
+      <span className="text-gray-400 text-xs">{label}</span>
+      <span
+        className={`font-bold text-xs text-right ${
+          accent ? 'text-cyan-400' : 'text-white'
+        }`}
+      >
+        {value}
+      </span>
     </div>
   );
 }

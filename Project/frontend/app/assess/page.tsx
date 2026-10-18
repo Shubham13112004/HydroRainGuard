@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import dynamic from 'next/dynamic';
+import { useForm, type FieldError, type UseFormRegisterReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
@@ -16,17 +17,19 @@ import {
   CheckCircle,
 } from 'lucide-react';
 
-import {
-  submitAssessment,
-  getWeatherPreview,
-} from '@/lib/api';
-
+import { submitAssessment, getWeatherPreview } from '@/lib/api';
 import type { WeatherData } from '@/lib/types';
+import { useI18n, type TranslationKey } from '@/lib/i18n';
 
-import {
-  ROOF_TYPE_LABELS,
-  SOIL_TYPE_LABELS,
-} from '@/lib/utils';
+/* Leaflet needs `window`, so the map is client-only. */
+const MapPicker = dynamic(() => import('@/components/MapPicker'), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[280px] rounded-xl border border-gray-200 bg-blue-50/50 flex items-center justify-center">
+      <Loader2 className="w-5 h-5 animate-spin text-primary-700" />
+    </div>
+  ),
+});
 
 
 /* ============================================================
@@ -34,91 +37,152 @@ import {
 ============================================================ */
 
 const schema = z.object({
-  name: z
-    .string()
-    .min(2, 'Name must be at least 2 characters'),
-
-  location: z
-    .string()
-    .min(2, 'Location name required'),
-
-  latitude: z
-    .coerce
-    .number()
-    .min(-90)
-    .max(90),
-
-  longitude: z
-    .coerce
-    .number()
-    .min(-180)
-    .max(180),
-
-  num_people: z
-    .coerce
-    .number()
-    .int()
-    .min(1)
-    .max(500),
-
-  roof_type: z.enum([
-    'RCC',
-    'METAL',
-    'TILE',
-    'GREEN',
-    'ASPHALT',
-  ]),
-
-  roof_area: z
-    .coerce
-    .number()
-    .min(5, 'Minimum 5 m²')
-    .max(10000),
-
-  open_space_area: z
-    .coerce
-    .number()
-    .min(0),
-
-  soil_type: z.enum([
-    'SANDY',
-    'LOAMY',
-    'CLAY',
-    'GRAVELLY',
-    'SILTY',
-  ]),
-
-  groundwater_depth: z
-    .coerce
-    .number()
-    .min(1)
-    .max(200),
+  name: z.string().min(2),
+  location: z.string().min(2),
+  latitude: z.coerce.number().min(-90).max(90),
+  longitude: z.coerce.number().min(-180).max(180),
+  num_people: z.coerce.number().int().min(1).max(500),
+  roof_type: z.enum(['RCC', 'METAL', 'TILE', 'GREEN', 'ASPHALT']),
+  roof_area: z.coerce.number().min(5).max(10000),
+  open_space_area: z.coerce.number().min(0),
+  soil_type: z.enum(['SANDY', 'LOAMY', 'CLAY', 'GRAVELLY', 'SILTY']),
+  groundwater_depth: z.coerce.number().min(1).max(200),
+  water_tariff_per_kl: z.coerce.number().min(0).max(1000),
 });
 
-
 type FormData = z.infer<typeof schema>;
+
+
+/* ============================================================
+   FIELD COMPONENTS
+
+   These live at MODULE scope on purpose. Declaring them inside
+   AssessPage gave React a brand-new component type on every
+   render, so every input was unmounted and recreated as you
+   typed — the Latitude/Longitude fields lost focus after each
+   keystroke. See ANALYSIS.md §4.3.
+============================================================ */
+
+type InputFieldProps = {
+  label: string;
+  error?: FieldError;
+  register: UseFormRegisterReturn;
+  type?: string;
+  placeholder?: string;
+  min?: string | number;
+  max?: string | number;
+  step?: string;
+  hint?: string;
+  suffix?: string;
+};
+
+function InputField({
+  label,
+  error,
+  register,
+  type = 'number',
+  placeholder,
+  min,
+  max,
+  step,
+  hint,
+  suffix,
+}: InputFieldProps) {
+  return (
+    <div>
+      <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+        {label}
+      </label>
+
+      <div className="relative">
+        <input
+          type={type}
+          step={step}
+          min={min}
+          max={max}
+          placeholder={placeholder}
+          {...register}
+          className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white text-gray-800 transition-all ${
+            error ? 'border-red-300' : 'border-gray-200'
+          } ${suffix ? 'pr-16' : ''}`}
+        />
+        {suffix && (
+          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold text-gray-400">
+            {suffix}
+          </span>
+        )}
+      </div>
+
+      {error ? (
+        <p className="text-red-500 text-xs mt-1">{String(error.message)}</p>
+      ) : hint ? (
+        <p className="text-gray-400 text-xs mt-1 leading-relaxed">{hint}</p>
+      ) : null}
+    </div>
+  );
+}
+
+type SelectFieldProps = {
+  label: string;
+  error?: FieldError;
+  register: UseFormRegisterReturn;
+  options: Record<string, string>;
+};
+
+function SelectField({ label, error, register, options }: SelectFieldProps) {
+  return (
+    <div>
+      <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+        {label}
+      </label>
+
+      <select
+        {...register}
+        className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white text-gray-800 transition-all ${
+          error ? 'border-red-300' : 'border-gray-200'
+        }`}
+      >
+        {Object.entries(options).map(([value, labelText]) => (
+          <option key={value} value={value}>
+            {labelText}
+          </option>
+        ))}
+      </select>
+
+      {error && (
+        <p className="text-red-500 text-xs mt-1">{String(error.message)}</p>
+      )}
+    </div>
+  );
+}
 
 
 /* ============================================================
    STEP INFORMATION
 ============================================================ */
 
-const stepTitles = [
+const stepMeta: { icon: string; titleKey: TranslationKey; descKey: TranslationKey }[] = [
   {
-    title: 'Basic Information',
     icon: '👤',
-    desc: 'Tell us about the project and location',
+    titleKey: 'assess.step1.title',
+    descKey: 'assess.step1.desc',
   },
   {
-    title: 'Roof Details',
     icon: '🏠',
-    desc: 'Rooftop specifications and rainfall data',
+    titleKey: 'assess.step2.title',
+    descKey: 'assess.step2.desc',
   },
   {
-    title: 'Site Condition',
     icon: '🌍',
-    desc: 'Soil and groundwater characteristics',
+    titleKey: 'assess.step3.title',
+    descKey: 'assess.step3.desc',
   },
+];
+
+const stepFields: (keyof FormData)[][] = [
+  ['name', 'location', 'latitude', 'longitude', 'num_people'],
+  ['roof_type', 'roof_area'],
+  ['open_space_area', 'soil_type', 'groundwater_depth', 'water_tariff_per_kl'],
 ];
 
 
@@ -126,386 +190,151 @@ const stepTitles = [
    MAIN COMPONENT
 ============================================================ */
 
-export default function AssessPage() {
+const DEFAULT_COORDS = { lat: 18.5204, lon: 73.8567 };
 
+export default function AssessPage() {
   const router = useRouter();
+  const { t, roofLabel, soilLabel } = useI18n();
 
   const [step, setStep] = useState(0);
-
   const [isLoading, setIsLoading] = useState(false);
+  const [weather, setWeather] = useState<WeatherData | null>(null);
+  const [weatherLoading, setWeatherLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const [weather, setWeather] =
-    useState<WeatherData | null>(null);
-
-  const [weatherLoading, setWeatherLoading] =
-    useState(false);
-
-  const [error, setError] =
-    useState<string | null>(null);
-
-
-  /* ==========================================================
-     FORM
-  ========================================================== */
+  /* Map pin position. Owned here so the map never needs a
+     `watch()` subscription — which is what forced a re-render on
+     every keystroke in the first place. */
+  const [coords, setCoords] = useState(DEFAULT_COORDS);
+  const [manualCoords, setManualCoords] = useState(false);
+  const [locationTouched, setLocationTouched] = useState(false);
 
   const {
     register,
     trigger,
-    watch,
+    getValues,
+    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
-
     defaultValues: {
-      latitude: 18.5204,
-      longitude: 73.8567,
-
+      latitude: DEFAULT_COORDS.lat,
+      longitude: DEFAULT_COORDS.lon,
       location: 'Pune, Maharashtra',
-
       num_people: 4,
-
       roof_type: 'RCC',
-
       roof_area: 100,
-
       open_space_area: 50,
-
       soil_type: 'LOAMY',
-
       groundwater_depth: 15,
+      water_tariff_per_kl: 35,
     },
   });
 
+  /* ---------- map → form ---------- */
 
-  /* ==========================================================
-     WATCH COORDINATES
-  ========================================================== */
+  const handleMapChange = (lat: number, lon: number, placeName?: string) => {
+    setCoords({ lat, lon });
+    setValue('latitude', lat, { shouldValidate: true });
+    setValue('longitude', lon, { shouldValidate: true });
 
-  const lat = watch('latitude');
-  const lon = watch('longitude');
+    // Auto-fill the location name until the user types their own.
+    if (placeName && !locationTouched) {
+      setValue('location', placeName, { shouldValidate: true });
+    }
+    setWeather(null);
+  };
 
-
-  /* ==========================================================
-     FIELDS FOR EACH STEP
-  ========================================================== */
-
-  const stepFields: (keyof FormData)[][] = [
-
-    // STEP 1
-    [
-      'name',
-      'location',
-      'latitude',
-      'longitude',
-      'num_people',
-    ],
-
-    // STEP 2
-    [
-      'roof_type',
-      'roof_area',
-    ],
-
-    // STEP 3
-    [
-      'open_space_area',
-      'soil_type',
-      'groundwater_depth',
-    ],
-  ];
-
-
-  /* ==========================================================
-     NEXT BUTTON
-     
-     IMPORTANT:
-     This function ONLY changes the step.
-     It NEVER submits the assessment.
-  ========================================================== */
+  /* ---------- navigation ---------- */
 
   const handleNext = async () => {
-
-    // Clear old error
     setError(null);
-
-    // Validate ONLY the current step
     const valid = await trigger(stepFields[step]);
-
-    if (!valid) {
-      return;
-    }
-
-    // STEP 1 → STEP 2
-    if (step === 0) {
-      setStep(1);
-      return;
-    }
-
-    // STEP 2 → STEP 3
-    if (step === 1) {
-      setStep(2);
-      return;
-    }
+    if (!valid) return;
+    if (step < 2) setStep(step + 1);
   };
-
-
-  /* ==========================================================
-     PREVIOUS BUTTON
-  ========================================================== */
 
   const handlePrevious = () => {
-
     setError(null);
-
-    if (step > 0) {
-      setStep((current) => current - 1);
-    }
+    if (step > 0) setStep((c) => c - 1);
   };
 
-
-  /* ==========================================================
-     WEATHER
-  ========================================================== */
+  /* ---------- rainfall preview ---------- */
 
   const handleFetchWeather = async () => {
-
     setWeatherLoading(true);
-
     setError(null);
-
     try {
-
-      const data = await getWeatherPreview(
-        lat,
-        lon
-      );
-
+      // Read on demand instead of subscribing with watch().
+      const { latitude, longitude } = getValues();
+      const data = await getWeatherPreview(latitude, longitude);
       setWeather(data);
-
-    } catch (err) {
-
-      console.error('Weather error:', err);
-
-      setError(
-        'Failed to fetch weather. Using regional estimates.'
-      );
-
+    } catch {
+      setError(t('assess.error.weather'));
     } finally {
-
       setWeatherLoading(false);
     }
   };
 
-
-  /* ==========================================================
-     FINAL ASSESSMENT
-     
-     THIS IS THE ONLY FUNCTION THAT CALLS THE BACKEND.
-  ========================================================== */
+  /* ---------- final submit ---------- */
 
   const onSubmit = async (data: FormData) => {
-
-    // Safety guard
-    // Even if something accidentally calls this function,
-    // do NOT submit unless we are on Step 3.
-
-    if (step !== 2) {
-      console.warn(
-        'Assessment submission blocked: user is not on Step 3.'
-      );
-
-      return;
-    }
+    if (step !== 2) return;
 
     setIsLoading(true);
-
     setError(null);
 
     try {
-
-      console.log(
-        'Submitting final assessment:',
-        data
-      );
-
       const result = await submitAssessment(data);
-
-      console.log(
-        'Assessment successful:',
-        result
-      );
-
-      localStorage.setItem(
-        'hydro_result',
-        JSON.stringify(result)
-      );
-
-      router.push(
-        `/results?id=${result.assessment_id}`
-      );
-
+      localStorage.setItem('hydro_result', JSON.stringify(result));
+      router.push(`/results?id=${result.assessment_id}`);
     } catch (e: any) {
-
-      console.error(
-        'Assessment submission error:',
-        e
-      );
-
-      setError(
+      // A network failure has no `response` — say something useful.
+      const detail =
         e?.response?.data?.detail ||
-        e?.message ||
-        'Assessment failed. Please try again.'
-      );
+        (e?.code === 'ERR_NETWORK' || e?.message === 'Network Error'
+          ? t('assess.error.backend')
+          : null) ||
+        t('assess.error.generic');
 
+      setError(detail);
     } finally {
-
       setIsLoading(false);
     }
   };
 
-
-  /* ============================================================
-     FINAL BUTTON HANDLER
-     
-     Instead of using <button type="submit">,
-     explicitly execute react-hook-form validation.
-  ============================================================ */
-
   const handleRunAssessment = () => {
-
-    if (step !== 2) {
-      return;
-    }
-
+    if (step !== 2) return;
     handleSubmit(onSubmit)();
   };
 
+  const roofOptions = {
+    RCC: roofLabel('RCC'),
+    METAL: roofLabel('METAL'),
+    TILE: roofLabel('TILE'),
+    GREEN: roofLabel('GREEN'),
+    ASPHALT: roofLabel('ASPHALT'),
+  };
 
-  /* ============================================================
-     INPUT COMPONENT
-  ============================================================ */
+  const soilOptions = {
+    SANDY: soilLabel('SANDY'),
+    LOAMY: soilLabel('LOAMY'),
+    CLAY: soilLabel('CLAY'),
+    GRAVELLY: soilLabel('GRAVELLY'),
+    SILTY: soilLabel('SILTY'),
+  };
 
-  const InputField = ({
-    label,
-    name,
-    type = 'number',
-    placeholder,
-    min,
-    max,
-    step: stepVal,
-  }: any) => (
-
-    <div>
-
-      <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-        {label}
-      </label>
-
-      <input
-        type={type}
-        step={stepVal}
-        min={min}
-        max={max}
-        placeholder={placeholder}
-        {...register(name)}
-        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white text-gray-800 transition-all"
-      />
-
-      {errors[name as keyof FormData] && (
-
-        <p className="text-red-500 text-xs mt-1">
-
-          {errors[name as keyof FormData]?.message as string}
-
-        </p>
-
-      )}
-
-    </div>
-  );
-
-
-  /* ============================================================
-     SELECT COMPONENT
-  ============================================================ */
-
-  const SelectField = ({
-    label,
-    name,
-    options,
-  }: {
-    label: string;
-    name: keyof FormData;
-    options: Record<string, string>;
-  }) => (
-
-    <div>
-
-      <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-        {label}
-      </label>
-
-      <select
-        {...register(name)}
-        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white text-gray-800 transition-all"
-      >
-
-        {Object.entries(options).map(
-          ([value, labelText]) => (
-
-            <option
-              key={value}
-              value={value}
-            >
-              {labelText}
-            </option>
-
-          )
-        )}
-
-      </select>
-
-      {errors[name] && (
-
-        <p className="text-red-500 text-xs mt-1">
-
-          {errors[name]?.message as string}
-
-        </p>
-
-      )}
-
-    </div>
-  );
-
-
-  /* ============================================================
-     UI
-  ============================================================ */
+  /* ---------- render ---------- */
 
   return (
-
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 py-12 px-4">
-
       <div className="max-w-2xl mx-auto">
-
-
-        {/* ======================================================
-            STEP INDICATOR
-        ====================================================== */}
-
+        {/* ---- step indicator ---- */}
         <div className="flex items-center justify-center mb-10">
-
-          {stepTitles.map((item, index) => (
-
-            <div
-              key={index}
-              className="flex items-center"
-            >
-
+          {stepMeta.map((item, index) => (
+            <div key={index} className="flex items-center">
               <div className="flex flex-col items-center">
-
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all ${
                     index < step
@@ -515,489 +344,375 @@ export default function AssessPage() {
                       : 'bg-gray-200 text-gray-500'
                   }`}
                 >
-
                   {index < step ? (
                     <CheckCircle className="w-5 h-5" />
                   ) : (
                     index + 1
                   )}
-
                 </div>
-
                 <span
                   className={`text-xs mt-1 font-medium hidden sm:block ${
-                    index === step
-                      ? 'text-primary-700'
-                      : 'text-gray-400'
+                    index === step ? 'text-primary-700' : 'text-gray-400'
                   }`}
                 >
-                  {item.title}
+                  {t(item.titleKey)}
                 </span>
-
               </div>
 
-
-              {index < stepTitles.length - 1 && (
-
+              {index < stepMeta.length - 1 && (
                 <div
                   className={`h-0.5 w-16 sm:w-24 mx-2 transition-all ${
-                    index < step
-                      ? 'bg-secondary-500'
-                      : 'bg-gray-200'
+                    index < step ? 'bg-secondary-500' : 'bg-gray-200'
                   }`}
                 />
-
               )}
-
             </div>
-
           ))}
-
         </div>
 
-
-        {/* ======================================================
-            CARD
-        ====================================================== */}
-
-        <div className="bg-white rounded-3xl shadow-xl p-8">
-
+        {/* ---- card ---- */}
+        <div className="bg-white rounded-3xl shadow-xl p-6 sm:p-8">
           <div className="mb-6">
-
-            <div className="text-3xl mb-2">
-              {stepTitles[step].icon}
-            </div>
-
+            <div className="text-3xl mb-2">{stepMeta[step].icon}</div>
             <h2 className="text-2xl font-bold text-gray-800">
-              {stepTitles[step].title}
+              {t(stepMeta[step].titleKey)}
             </h2>
-
             <p className="text-gray-500 text-sm mt-1">
-              {stepTitles[step].desc}
+              {t(stepMeta[step].descKey)}
             </p>
-
           </div>
 
-
-          {/* ====================================================
-              IMPORTANT:
-              NO <form onSubmit> around the wizard.
-              
-              This prevents Step 1/2 from ever submitting
-              the final assessment.
-          ==================================================== */}
-
+          {/* No <form> element: Next/Previous must never submit. */}
           <AnimatePresence mode="wait">
-
-
-            {/* ==================================================
-                STEP 1
-            ================================================== */}
-
+            {/* ================= STEP 1 ================= */}
             {step === 0 && (
-
               <motion.div
                 key="step0"
-                initial={{
-                  opacity: 0,
-                  x: 20,
-                }}
-                animate={{
-                  opacity: 1,
-                  x: 0,
-                }}
-                exit={{
-                  opacity: 0,
-                  x: -20,
-                }}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
                 className="space-y-4"
               >
-
                 <InputField
-                  label="Full Name / Project Name"
-                  name="name"
+                  label={t('assess.field.name')}
                   type="text"
-                  placeholder="e.g. Rahul Sharma / Shivaji Nagar Society"
+                  placeholder={t('assess.field.name.placeholder')}
+                  error={errors.name}
+                  register={register('name')}
                 />
 
                 <InputField
-                  label="Location Name"
-                  name="location"
-                  type="text"
-                  placeholder="e.g. Pune, Maharashtra"
-                />
-
-                <div className="grid grid-cols-2 gap-4">
-
-                  <InputField
-                    label="Latitude"
-                    name="latitude"
-                    type="number"
-                    stepVal="0.0001"
-                    placeholder="18.5204"
-                  />
-
-                  <InputField
-                    label="Longitude"
-                    name="longitude"
-                    type="number"
-                    stepVal="0.0001"
-                    placeholder="73.8567"
-                  />
-
-                </div>
-
-                <div className="bg-blue-50 rounded-xl p-3 flex items-start gap-2">
-
-                  <MapPin className="w-4 h-4 text-primary-600 mt-0.5 shrink-0" />
-
-                  <p className="text-xs text-blue-700">
-                    Default coordinates are set to Pune.
-                    Use Google Maps to find your exact coordinates:
-                    right-click on your location → "What's here?"
-                  </p>
-
-                </div>
-
-                <InputField
-                  label="Number of Occupants / People"
-                  name="num_people"
+                  label={t('assess.field.people')}
                   type="number"
                   min="1"
                   max="500"
                   placeholder="4"
+                  error={errors.num_people}
+                  register={register('num_people')}
                 />
 
-              </motion.div>
+                {/* ---- map pin ---- */}
+                <div className="border border-dashed border-primary-200 rounded-xl p-4">
+                  <p className="font-semibold text-sm text-gray-800">
+                    {t('assess.map.title')}
+                  </p>
+                  <p className="text-xs text-gray-400 mb-3">
+                    {t('assess.map.hint')}
+                  </p>
 
+                  <MapPicker
+                    latitude={coords.lat}
+                    longitude={coords.lon}
+                    onChange={handleMapChange}
+                  />
+
+                  <div className="mt-3 flex items-center justify-between">
+                    <button
+                      type="button"
+                      onClick={() => setManualCoords((v) => !v)}
+                      className="text-xs font-semibold text-primary-700 hover:underline"
+                    >
+                      {manualCoords
+                        ? t('assess.map.mapToggle')
+                        : t('assess.map.manualToggle')}
+                    </button>
+                  </div>
+
+                  {manualCoords && (
+                    <div className="grid grid-cols-2 gap-3 mt-3">
+                      <InputField
+                        label={t('assess.map.lat')}
+                        type="number"
+                        step="0.0001"
+                        error={errors.latitude}
+                        register={register('latitude', {
+                          onChange: (e) => {
+                            const v = parseFloat(e.target.value);
+                            if (!Number.isNaN(v)) {
+                              setCoords((c) => ({ ...c, lat: v }));
+                              setWeather(null);
+                            }
+                          },
+                        })}
+                      />
+                      <InputField
+                        label={t('assess.map.lon')}
+                        type="number"
+                        step="0.0001"
+                        error={errors.longitude}
+                        register={register('longitude', {
+                          onChange: (e) => {
+                            const v = parseFloat(e.target.value);
+                            if (!Number.isNaN(v)) {
+                              setCoords((c) => ({ ...c, lon: v }));
+                              setWeather(null);
+                            }
+                          },
+                        })}
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <InputField
+                  label={t('assess.field.location')}
+                  type="text"
+                  placeholder={t('assess.field.location.placeholder')}
+                  error={errors.location}
+                  register={register('location', {
+                    onChange: () => setLocationTouched(true),
+                  })}
+                />
+
+                <div className="bg-blue-50 rounded-xl p-3 flex items-start gap-2">
+                  <MapPin className="w-4 h-4 text-primary-600 mt-0.5 shrink-0" />
+                  <p className="text-xs text-blue-700">
+                    {t('assess.map.defaultNote')}
+                  </p>
+                </div>
+              </motion.div>
             )}
 
-
-            {/* ==================================================
-                STEP 2
-            ================================================== */}
-
+            {/* ================= STEP 2 ================= */}
             {step === 1 && (
-
               <motion.div
                 key="step1"
-                initial={{
-                  opacity: 0,
-                  x: 20,
-                }}
-                animate={{
-                  opacity: 1,
-                  x: 0,
-                }}
-                exit={{
-                  opacity: 0,
-                  x: -20,
-                }}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
                 className="space-y-4"
               >
-
                 <SelectField
-                  label="Roof Type"
-                  name="roof_type"
-                  options={ROOF_TYPE_LABELS}
+                  label={t('assess.field.roofType')}
+                  options={roofOptions}
+                  error={errors.roof_type}
+                  register={register('roof_type')}
                 />
 
                 <InputField
-                  label="Roof Area (m²)"
-                  name="roof_area"
+                  label={t('assess.field.roofArea')}
                   type="number"
                   min="5"
                   max="10000"
-                  stepVal="0.1"
+                  step="0.1"
                   placeholder="100"
+                  suffix="m²"
+                  error={errors.roof_area}
+                  register={register('roof_area')}
                 />
 
-
-                {/* WEATHER */}
-
+                {/* ---- rainfall ---- */}
                 <div className="border border-dashed border-primary-200 rounded-xl p-4">
-
-                  <div className="flex items-center justify-between mb-2">
-
+                  <div className="flex items-center justify-between mb-2 gap-3">
                     <div>
-
                       <p className="font-semibold text-sm text-gray-700">
-                        Rainfall Data Preview
+                        {t('assess.weather.title')}
                       </p>
-
                       <p className="text-xs text-gray-400">
-                        Fetch weather data for your coordinates
+                        {t('assess.weather.subtitle')}
                       </p>
-
                     </div>
-
                     <button
                       type="button"
                       onClick={handleFetchWeather}
                       disabled={weatherLoading}
-                      className="flex items-center gap-2 bg-primary-700 text-white text-sm px-4 py-2 rounded-lg hover:bg-primary-800 transition-colors disabled:opacity-50"
+                      className="flex shrink-0 items-center gap-2 bg-primary-700 text-white text-sm px-4 py-2 rounded-lg hover:bg-primary-800 transition-colors disabled:opacity-50"
                     >
-
                       {weatherLoading ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
                       ) : (
                         <Cloud className="w-4 h-4" />
                       )}
-
-                      Fetch Weather
-
+                      {t('assess.weather.fetch')}
                     </button>
-
                   </div>
 
-
                   {weather ? (
-
                     <div className="grid grid-cols-2 gap-3 mt-3">
-
-                      <div className="bg-blue-50 rounded-lg p-3">
-
-                        <p className="text-xs text-gray-500">
-                          Location
-                        </p>
-
-                        <p className="font-bold text-primary-700 text-sm">
-                          {weather.location_name}
-                        </p>
-
-                      </div>
-
-
-                      <div className="bg-green-50 rounded-lg p-3">
-
-                        <p className="text-xs text-gray-500">
-                          Annual Rainfall
-                        </p>
-
-                        <p className="font-bold text-green-700 text-sm">
-                          {weather.annual_rainfall} mm
-                        </p>
-
-                      </div>
-
-
-                      <div className="bg-orange-50 rounded-lg p-3">
-
-                        <p className="text-xs text-gray-500">
-                          Avg Temperature
-                        </p>
-
-                        <p className="font-bold text-orange-700 text-sm">
-                          {weather.avg_temperature}°C
-                        </p>
-
-                      </div>
-
-
-                      <div className="bg-cyan-50 rounded-lg p-3">
-
-                        <p className="text-xs text-gray-500">
-                          Humidity
-                        </p>
-
-                        <p className="font-bold text-cyan-700 text-sm">
-                          {weather.humidity}%
-                        </p>
-
-                      </div>
-
+                      <MiniStat
+                        label={t('assess.weather.location')}
+                        value={weather.location_name}
+                        tone="blue"
+                      />
+                      <MiniStat
+                        label={t('assess.weather.rainfall')}
+                        value={`${weather.annual_rainfall} ${t('common.mm')}`}
+                        tone="green"
+                      />
+                      <MiniStat
+                        label={t('assess.weather.temp')}
+                        value={`${weather.avg_temperature}°C`}
+                        tone="orange"
+                      />
+                      <MiniStat
+                        label={t('assess.weather.humidity')}
+                        value={`${weather.humidity}%`}
+                        tone="cyan"
+                      />
                     </div>
-
                   ) : (
-
                     <div className="text-center py-4 text-gray-400">
-
                       <Droplets className="w-8 h-8 mx-auto mb-1 opacity-40" />
-
-                      <p className="text-xs">
-                        Click "Fetch Weather" to preview rainfall data
-                      </p>
-
+                      <p className="text-xs">{t('assess.weather.empty')}</p>
                     </div>
-
                   )}
-
                 </div>
-
               </motion.div>
-
             )}
 
-
-            {/* ==================================================
-                STEP 3
-            ================================================== */}
-
+            {/* ================= STEP 3 ================= */}
             {step === 2 && (
-
               <motion.div
                 key="step2"
-                initial={{
-                  opacity: 0,
-                  x: 20,
-                }}
-                animate={{
-                  opacity: 1,
-                  x: 0,
-                }}
-                exit={{
-                  opacity: 0,
-                  x: -20,
-                }}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
                 className="space-y-4"
               >
-
                 <InputField
-                  label="Open Space / Garden Area (m²)"
-                  name="open_space_area"
+                  label={t('assess.field.openSpace')}
                   type="number"
                   min="0"
-                  stepVal="0.1"
+                  step="0.1"
                   placeholder="50"
+                  suffix="m²"
+                  error={errors.open_space_area}
+                  register={register('open_space_area')}
                 />
 
                 <SelectField
-                  label="Soil Type"
-                  name="soil_type"
-                  options={SOIL_TYPE_LABELS}
+                  label={t('assess.field.soil')}
+                  options={soilOptions}
+                  error={errors.soil_type}
+                  register={register('soil_type')}
                 />
 
                 <InputField
-                  label="Groundwater / Borewell Depth (meters)"
-                  name="groundwater_depth"
+                  label={t('assess.field.depth')}
                   type="number"
                   min="1"
                   max="200"
-                  stepVal="0.5"
+                  step="0.5"
                   placeholder="15"
+                  suffix="m"
+                  error={errors.groundwater_depth}
+                  register={register('groundwater_depth')}
                 />
 
                 <div className="bg-green-50 rounded-xl p-3">
-
                   <p className="text-xs text-green-700">
-
-                    💡 <strong>Tip:</strong> You can check your local
-                    groundwater depth from your building's borewell log,
-                    or ask your local groundwater authority.
-
-                    Typical values: Pune 10–25m, Mumbai 5–15m,
-                    Delhi 15–40m.
-
+                    💡 <strong>Tip:</strong> {t('assess.tip.depth')}
                   </p>
-
                 </div>
 
+                <InputField
+                  label={t('assess.field.tariff')}
+                  type="number"
+                  min="0"
+                  step="1"
+                  placeholder="35"
+                  suffix="₹/KL"
+                  hint={t('assess.field.tariff.hint')}
+                  error={errors.water_tariff_per_kl}
+                  register={register('water_tariff_per_kl')}
+                />
               </motion.div>
-
             )}
-
           </AnimatePresence>
 
-
-          {/* ====================================================
-              ERROR
-          ==================================================== */}
-
+          {/* ---- error ---- */}
           {error && (
-
             <div className="mt-4 bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm">
-
               ⚠️ {error}
-
             </div>
-
           )}
 
-
-          {/* ====================================================
-              NAVIGATION
-          ==================================================== */}
-
+          {/* ---- navigation ---- */}
           <div className="flex justify-between mt-8">
-
-
-            {/* PREVIOUS */}
-
             <button
               type="button"
               onClick={handlePrevious}
               disabled={step === 0 || isLoading}
-              className="flex items-center gap-2 px-6 py-3 rounded-xl border border-gray-200 text-gray-600 font-semibold hover:bg-gray-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-5 py-3 rounded-xl border border-gray-200 text-gray-600 font-semibold hover:bg-gray-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
             >
-
               <ChevronLeft className="w-4 h-4" />
-
-              Previous
-
+              {t('assess.button.previous')}
             </button>
 
-
-            {/* ==================================================
-                STEP 1 / STEP 2 NEXT
-            ================================================== */}
-
-            {step < 2 && (
-
+            {step < 2 ? (
               <button
                 type="button"
                 onClick={handleNext}
                 disabled={isLoading}
                 className="flex items-center gap-2 bg-primary-700 text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary-800 transition-all disabled:opacity-50"
               >
-
-                Next
-
+                {t('assess.button.next')}
                 <ChevronRight className="w-4 h-4" />
-
               </button>
-
-            )}
-
-
-            {/* ==================================================
-                STEP 3 FINAL BUTTON
-            ================================================== */}
-
-            {step === 2 && (
-
+            ) : (
               <button
                 type="button"
                 onClick={handleRunAssessment}
                 disabled={isLoading}
-                className="flex items-center gap-2 bg-secondary-500 text-white px-8 py-3 rounded-xl font-bold hover:bg-secondary-600 transition-all disabled:opacity-70"
+                className="flex items-center gap-2 bg-secondary-500 text-white px-7 py-3 rounded-xl font-bold hover:bg-secondary-600 transition-all disabled:opacity-70"
               >
-
                 {isLoading ? (
-
                   <>
                     <Loader2 className="w-5 h-5 animate-spin" />
-
-                    Analyzing...
+                    {t('assess.button.running')}
                   </>
-
                 ) : (
-
-                  <>
-                    Run Assessment 🚀
-                  </>
-
+                  <>{t('assess.button.run')} 🚀</>
                 )}
-
               </button>
-
             )}
-
           </div>
-
         </div>
-
       </div>
+    </div>
+  );
+}
 
+const TONES: Record<string, string> = {
+  blue: 'bg-blue-50 text-primary-700',
+  green: 'bg-green-50 text-green-700',
+  orange: 'bg-orange-50 text-orange-700',
+  cyan: 'bg-cyan-50 text-cyan-700',
+};
+
+function MiniStat({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: string;
+  tone: keyof typeof TONES;
+}) {
+  return (
+    <div className={`rounded-lg p-3 ${TONES[tone]}`}>
+      <p className="text-xs text-gray-500">{label}</p>
+      <p className="font-bold text-sm truncate">{value}</p>
     </div>
   );
 }

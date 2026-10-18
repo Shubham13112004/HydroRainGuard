@@ -12,6 +12,8 @@ export interface AssessmentRequest {
   open_space_area: number;
   soil_type: SoilType;
   groundwater_depth: number;
+  /** Rs per 1000 L. Optional; the backend defaults to 35. */
+  water_tariff_per_kl?: number | null;
 }
 
 export interface RunoffResult {
@@ -40,9 +42,20 @@ export interface StructureRecommendation {
 
 export interface CostBenefitAnalysis {
   estimated_cost: number;
+  /** Capital cost breakdown */
+  storage_cost: number;
+  recharge_cost: number;
+  plumbing_cost: number;
+  /** Tariff actually used, so the UI can state the assumption */
+  water_tariff_per_kl: number;
   annual_water_savings_liters: number;
   annual_savings_inr: number;
-  payback_period_years: number;
+  annual_recharge_value_inr: number;
+  annual_maintenance_inr: number;
+  net_annual_savings_inr: number;
+  /** null == never pays back at the modelled tariff */
+  payback_period_years: number | null;
+  economically_viable: boolean;
   roi_percentage: number;
   monthly_savings: number[];
 }

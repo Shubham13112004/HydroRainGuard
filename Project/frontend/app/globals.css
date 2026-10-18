@@ -1,4 +1,8 @@
+/* Inter for Latin, Noto Sans Devanagari for Hindi / Marathi.
+   Loaded via CSS (not next/font) so the build never depends on
+   reaching Google Fonts from CI. */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,7 +13,26 @@
 }
 
 * { box-sizing: border-box; }
-body { font-family: 'Inter', system-ui, sans-serif; }
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* Devanagari text renders best in Noto Sans Devanagari; list it
+   first so Marathi/Hindi don't fall back to a Latin face. */
+html[lang='hi'] body,
+html[lang='mr'] body,
+[lang='hi'],
+[lang='mr'] {
+  font-family: 'Noto Sans Devanagari', 'Inter', system-ui, sans-serif;
+}
+
+/* Numeric readouts should keep Latin digits/tabular alignment
+   even inside Devanagari paragraphs. */
+.font-numeric {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+}
 
 .gradient-water {
   background: linear-gradient(135deg, #0d5c8c 0%, #27ae60 50%, #00bcd4 100%);

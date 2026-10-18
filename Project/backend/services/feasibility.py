@@ -4,16 +4,26 @@ based on site conditions using a multi-criteria scoring approach.
 """
 from models.schemas import AssessmentRequest, WeatherData, RunoffResult, RechargeResult, StructureRecommendation
 
+# Minimum annual harvestable volume (litres) below which a
+# structure is oversized for the catchment. Sizing a structure
+# against the yield it will actually receive is standard
+# practice (CGWB Manual on Artificial Recharge, 2007); without
+# it the scoring is blind to roof area and happily recommends a
+# Rs 45,000 borewell recharge for a 100 m2 roof.
+OVERSIZED_PENALTY = 25
+
 STRUCTURES = [
     {
         'name': 'Rooftop Storage Tank',
         'always_include': True,
+        'min_harvestable_l': 0,
         'base_score': 85,
         'description': 'A dedicated storage tank collects and stores harvested rooftop runoff for direct use in toilets, gardening, and non-potable purposes. Most cost-effective first step for any building.',
         'installation_notes': 'Install at ground level or underground. Connect to rooftop downpipes via first-flush diverter. Include overflow pipe to recharge pit.',
     },
     {
         'name': 'Recharge Pit',
+        'min_harvestable_l': 20000,
         'min_open_space': 9,  # m²
         'preferred_soil': ['SANDY', 'GRAVELLY', 'LOAMY'],
         'min_depth': 5,
@@ -23,6 +33,7 @@ STRUCTURES = [
     },
     {
         'name': 'Recharge Well / Borewell Recharge',
+        'min_harvestable_l': 60000,
         'min_open_space': 4,
         'preferred_soil': ['ALL'],
         'min_depth': 15,
@@ -32,6 +43,7 @@ STRUCTURES = [
     },
     {
         'name': 'Percolation Tank',
+        'min_harvestable_l': 200000,
         'min_open_space': 100,
         'preferred_soil': ['SANDY', 'GRAVELLY', 'LOAMY'],
         'min_depth': 3,
@@ -42,6 +54,7 @@ STRUCTURES = [
     },
     {
         'name': 'Soak Pit / French Drain',
+        'min_harvestable_l': 10000,
         'min_open_space': 6,
         'preferred_soil': ['LOAMY', 'SILTY', 'SANDY'],
         'min_depth': 3,
@@ -75,7 +88,13 @@ def get_recommendations(request: AssessmentRequest, weather: WeatherData, runoff
             score += 10
         elif weather.annual_rainfall < 600:
             score -= 10
-        
+
+        # Penalise structures that are oversized for the volume
+        # this catchment can actually deliver.
+        min_yield = s.get('min_harvestable_l', 0)
+        if min_yield and runoff.harvestable_volume < min_yield:
+            score -= OVERSIZED_PENALTY
+
         score = max(0, min(100, score))
         
         # Calculate dimensions

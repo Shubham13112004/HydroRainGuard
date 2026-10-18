@@ -18,6 +18,13 @@ GREY = colors.HexColor('#6c757d')
 LIGHT_GREY = colors.HexColor('#f8f9fa')
 
 
+def _payback_text(years: float | None) -> str:
+    """Render the payback period, including the "never" case."""
+    if years is None:
+        return "Not viable"
+    return f"{years:.1f}"
+
+
 def generate_pdf_report(assessment: AssessmentResponse) -> bytes:
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(
@@ -89,8 +96,9 @@ def generate_pdf_report(assessment: AssessmentResponse) -> bytes:
         ['Groundwater Recharge Potential', f"{rc.annual_recharge_potential/1000:.1f}", 'KL/year'],
         ['Recharge Feasibility Score', f"{rc.recharge_feasibility_score:.0f}/100", 'Score'],
         ['Annual Water Cost Savings', f"₹{cb.annual_savings_inr:,.0f}", 'INR/year'],
+        ['Groundwater Recharge Value', f"₹{cb.annual_recharge_value_inr:,.0f}", 'INR/year'],
         ['Estimated Installation Cost', f"₹{cb.estimated_cost:,.0f}", 'INR'],
-        ['Payback Period', f"{cb.payback_period_years:.1f}", 'Years'],
+        ['Payback Period', _payback_text(cb.payback_period_years), 'Years'],
         ['10-Year ROI', f"{cb.roi_percentage:.1f}%", ''],
     ]
     summary_table = Table(summary_data, colWidths=[9*cm, 4*cm, 3*cm])
@@ -228,11 +236,16 @@ def generate_pdf_report(assessment: AssessmentResponse) -> bytes:
     cb_data = [
         ['Item', 'Amount (INR)'],
         ['Total Installation Cost', f"₹{cb.estimated_cost:,.0f}"],
+        ['  - Storage structures', f"₹{cb.storage_cost:,.0f}"],
+        ['  - Recharge structures', f"₹{cb.recharge_cost:,.0f}"],
+        ['  - Plumbing & conveyance', f"₹{cb.plumbing_cost:,.0f}"],
         ['Annual Water Savings (volume)', f"{cb.annual_water_savings_liters/1000:.1f} KL"],
         ['Annual Cost Savings', f"₹{cb.annual_savings_inr:,.0f}"],
-        ['Annual Maintenance (2%)', f"₹{cb.estimated_cost*0.02:,.0f}"],
-        ['Net Annual Savings', f"₹{(cb.annual_savings_inr - cb.estimated_cost*0.02):,.0f}"],
-        ['Payback Period', f"{cb.payback_period_years:.1f} years"],
+        ['Groundwater Recharge Value', f"₹{cb.annual_recharge_value_inr:,.0f}"],
+        ['Annual Maintenance (2%)', f"₹{cb.annual_maintenance_inr:,.0f}"],
+        ['Net Annual Savings', f"₹{cb.net_annual_savings_inr:,.0f}"],
+        ['Water Tariff Assumption', f"₹{cb.water_tariff_per_kl:,.1f} / KL"],
+        ['Payback Period', _payback_text(cb.payback_period_years)],
         ['10-Year ROI', f"{cb.roi_percentage:.1f}%"],
     ]
     cb_table = Table(cb_data, colWidths=[10*cm, 6*cm])
