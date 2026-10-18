@@ -156,7 +156,11 @@ export default function MapPicker({
   const [searchError, setSearchError] = useState(false);
   const [place, setPlace] = useState('');
   const [looking, setLooking] = useState(false);
-  const [tilesFailed, setTilesFailed] = useState(false);
+  /* Tile loading is counted, not treated as boolean: a single 404
+     tile (routine while panning or at the edge of coverage) must not
+     blank the map. We only warn when nothing at all has loaded. */
+  const [tiles, setTiles] = useState({ loaded: 0, failed: 0 });
+  const tilesBlocked = tiles.failed >= 3 && tiles.loaded === 0;
 
   // Keep the latest onChange without re-creating map callbacks.
   const onChangeRef = useRef(onChange);
@@ -279,12 +283,12 @@ export default function MapPicker({
         className="relative rounded-xl overflow-hidden border border-gray-200 h-[280px]"
         style={{ height: 280 }}
       >
-        {tilesFailed && (
-          <div className="absolute inset-0 z-[500] flex flex-col items-center justify-center gap-1 bg-gray-100 text-center px-6">
-            <p className="text-sm font-semibold text-gray-700">
+        {tilesBlocked && (
+          <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-[500] bg-amber-50/95 border-t border-amber-200 px-3 py-2 text-center">
+            <p className="text-xs font-semibold text-amber-800">
               {t('assess.map.tilesFailed')}
             </p>
-            <p className="text-xs text-gray-500">
+            <p className="text-[11px] text-amber-700">
               {t('assess.map.tilesFailedHint')}
             </p>
           </div>
@@ -299,10 +303,10 @@ export default function MapPicker({
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
             maxZoom={19}
-            crossOrigin
             eventHandlers={{
-              tileerror: () => setTilesFailed(true),
-              load: () => setTilesFailed(false),
+              load: () => setTiles((s) => ({ loaded: s.loaded + 1, failed: s.failed })),
+              tileerror: () =>
+                setTiles((s) => ({ loaded: s.loaded, failed: s.failed + 1 })),
             }}
           />
           <Recenter lat={latitude} lon={longitude} />
