@@ -1,5 +1,10 @@
 import type { Metadata } from 'next';
 import './globals.css';
+/* Loaded here, not only inside MapPicker: MapPicker is lazy-loaded
+   via next/dynamic, and when its CSS chunk arrives after the map
+   mounts the map renders unstyled for a beat (or stays that way in
+   dev). Importing it in the root layout guarantees it is present. */
+import 'leaflet/dist/leaflet.css';
 import Link from 'next/link';
 
 import { LanguageProvider } from '@/lib/i18n';

@@ -99,6 +99,8 @@ export const hi: Partial<Record<TranslationKey, string>> = {
   'assess.map.detected': 'पहचाना गया क्षेत्र',
   'assess.map.manualToggle': 'निर्देशांक स्वयं दर्ज करें',
   'assess.map.mapToggle': 'मानचित्र पर चुनें',
+  'assess.map.tilesFailed': 'मानचित्र टाइलें लोड नहीं हो सकीं',
+  'assess.map.tilesFailedHint': 'आपके निर्देशांक अभी भी काम करते हैं — वर्षा गणना के लिए मानचित्र आवश्यक नहीं। नेटवर्क या विज्ञापन-रोधक जाँचें।',
   'assess.map.tip': 'सुझाव: मानचित्र पर कहीं भी राइट-क्लिक करें और पिन वहाँ रखें।',
   'assess.map.defaultNote': 'डिफ़ॉल्ट पिन पुणे पर सेट है। इसे अपने सटीक स्थान पर खींचें।',
 

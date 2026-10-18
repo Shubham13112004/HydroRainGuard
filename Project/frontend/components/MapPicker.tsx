@@ -156,6 +156,7 @@ export default function MapPicker({
   const [searchError, setSearchError] = useState(false);
   const [place, setPlace] = useState('');
   const [looking, setLooking] = useState(false);
+  const [tilesFailed, setTilesFailed] = useState(false);
 
   // Keep the latest onChange without re-creating map callbacks.
   const onChangeRef = useRef(onChange);
@@ -271,7 +272,23 @@ export default function MapPicker({
       )}
 
       {/* ---- map ---- */}
-      <div className="rounded-xl overflow-hidden border border-gray-200 h-[280px]">
+      {/* Height is set inline as well as via h-[280px]: Leaflet
+          measures its container on mount, and a container that is
+          still 0px tall gives you a blank map. */}
+      <div
+        className="relative rounded-xl overflow-hidden border border-gray-200 h-[280px]"
+        style={{ height: 280 }}
+      >
+        {tilesFailed && (
+          <div className="absolute inset-0 z-[500] flex flex-col items-center justify-center gap-1 bg-gray-100 text-center px-6">
+            <p className="text-sm font-semibold text-gray-700">
+              {t('assess.map.tilesFailed')}
+            </p>
+            <p className="text-xs text-gray-500">
+              {t('assess.map.tilesFailedHint')}
+            </p>
+          </div>
+        )}
         <MapContainer
           center={[latitude, longitude]}
           zoom={13}
@@ -280,7 +297,13 @@ export default function MapPicker({
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+            maxZoom={19}
+            crossOrigin
+            eventHandlers={{
+              tileerror: () => setTilesFailed(true),
+              load: () => setTilesFailed(false),
+            }}
           />
           <Recenter lat={latitude} lon={longitude} />
           <ClickToPin onPick={handlePick} />
