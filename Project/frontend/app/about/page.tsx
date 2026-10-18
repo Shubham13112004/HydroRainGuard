@@ -29,6 +29,10 @@ export default function AboutPage() {
     '[11] Hari & Kasa, "Geospatial approach for rooftop rainwater harvesting potential assessment," Grassroots J., 2025.',
     '[12] "Design and analysis of rooftop rainwater harvesting with borewell recharge," IRJMETS, 2025.',
     '[13] Hansen et al., "Augmented reality for subsurface utility engineering," IEEE TVCG, vol. 27, 2021.',
+    '[14] NOAA PSL, CPC Merged Analysis of Precipitation (CMAP) monthly long-term means, 1991–2020. Public domain.',
+    '[15] USDA-NRCS, Urban Hydrology for Small Watersheds, TR-55, 1986 — SCS Curve Number method.',
+    '[16] Saaty T.L., The Analytic Hierarchy Process, McGraw-Hill, 1980.',
+    '[17] Xie & Arkin, "Global precipitation: a 17-year monthly analysis based on gauge observations, satellite estimates and numerical model outputs," J. Climate, 1997 — the CMAP method.',
   ];
 
   return (
@@ -85,6 +89,41 @@ export default function AboutPage() {
           </ol>
         </div>
 
+        {/* What is actually implemented */}
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <h2 className="text-xl font-bold text-gray-800 mb-3">
+            ✅ Implemented in this build
+          </h2>
+          <ul className="space-y-2 text-sm text-gray-600">
+            <li>
+              <strong className="text-gray-800">Gridded rainfall (GIS).</strong>{' '}
+              NOAA PSL CMAP 2.5° monthly climatology (1991–2020), bilinearly
+              interpolated to your exact coordinates — real gauge + satellite
+              data, public domain, no API key.
+            </li>
+            <li>
+              <strong className="text-gray-800">Two runoff methods.</strong>{' '}
+              Rational/volumetric (CGWB 2007) for the result, SCS Curve Number
+              (USDA-NRCS TR-55) reported alongside as a cross-check.
+            </li>
+            <li>
+              <strong className="text-gray-800">Structure ranking.</strong>{' '}
+              Analytic Hierarchy Process (Saaty, 1980) — weighted,
+              consistency-checked (CR = 0.015) multi-criteria scoring.
+              Deterministic and auditable; <em>not</em> machine learning.
+            </li>
+            <li>
+              <strong className="text-gray-800">Multi-script PDF.</strong>{' '}
+              HarfBuzz shaping renders English, हिन्दी and मराठी correctly —
+              conjuncts, half-forms and matra placement included.
+            </li>
+            <li>
+              <strong className="text-gray-800">3D / AR preview</strong> of the
+              recommended structures, sized from your own assessment data.
+            </li>
+          </ul>
+        </div>
+
         {/* Technology Stack */}
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
           <h2 className="text-xl font-bold text-gray-800 mb-4">⚙️ {t('about.techStack')}</h2>
@@ -96,8 +135,12 @@ export default function AboutPage() {
               { name: 'SQLite/PostgreSQL', color: 'bg-blue-100 text-blue-800', emoji: '🗄️' },
               { name: 'Recharts', color: 'bg-purple-100 text-purple-800', emoji: '📊' },
               { name: 'React Three Fiber (3D/AR)', color: 'bg-orange-100 text-orange-800', emoji: '🥽' },
-              { name: 'OpenWeatherMap', color: 'bg-cyan-100 text-cyan-800', emoji: '🌤️' },
+              { name: 'OpenWeatherMap (optional)', color: 'bg-cyan-100 text-cyan-800', emoji: '🌤️' },
               { name: 'ReportLab', color: 'bg-red-100 text-red-800', emoji: '📄' },
+              { name: 'NOAA CMAP gridded rainfall', color: 'bg-blue-100 text-blue-800', emoji: '🌧️' },
+              { name: 'HarfBuzz + fontTools', color: 'bg-indigo-100 text-indigo-800', emoji: '🔤' },
+              { name: 'AHP decision engine', color: 'bg-teal-100 text-teal-800', emoji: '⚖️' },
+              { name: 'Leaflet / OpenStreetMap', color: 'bg-emerald-100 text-emerald-800', emoji: '🗺️' },
             ].map((tech, i) => (
               <div key={i} className={`${tech.color} rounded-xl px-3 py-2 text-center`}>
                 <div className="text-xl">{tech.emoji}</div>

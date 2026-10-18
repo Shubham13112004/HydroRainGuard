@@ -31,6 +31,15 @@ class AssessmentRequest(BaseModel):
     groundwater_depth: float  # meters
     # Economics override (Rs per 1000 L). Optional.
     water_tariff_per_kl: float | None = None
+    # Rainfall override (mm/yr). The grid is 2.5 deg (~278 km), so a
+    # station total from IMD is far more accurate where you have one.
+    # The grid still supplies the monthly distribution.
+    annual_rainfall_override: float | None = None
+    # 'rational' (CGWB) or 'scs_cn' (USDA-NRCS). Both are reported
+    # either way; this picks the one used for costing.
+    runoff_method: str = "rational"
+    # Human-readable place name supplied by the browser's reverse geocoder.
+    location_name: str | None = None
 
 class RunoffResult(BaseModel):
     annual_runoff_volume: float  # liters
@@ -38,6 +47,12 @@ class RunoffResult(BaseModel):
     runoff_coefficient: float
     peak_runoff_rate: float  # m³/hr
     harvestable_volume: float  # liters after first flush loss
+    # --- SCS-CN cross-check (USDA-NRCS TR-55) ---
+    runoff_method: str = "rational"
+    curve_number: float = 0.0
+    scs_cn_annual_runoff: float = 0.0  # liters
+    scs_cn_monthly_runoff: list[float] = []  # 12 months, liters
+    scs_cn_vs_rational_pct: float = 0.0  # % difference
 
 class RechargeResult(BaseModel):
     annual_recharge_potential: float  # liters
@@ -46,12 +61,34 @@ class RechargeResult(BaseModel):
     aquifer_type: str
     recharge_feasibility_score: float  # 0-100
 
+class CriterionScore(BaseModel):
+    """One AHP criterion, normalised to 0-1, times its AHP weight."""
+    name: str
+    raw: float          # as measured
+    normalised: float   # 0-1 suitability for this structure
+    weight: float       # AHP weight for this criterion
+
+
 class StructureRecommendation(BaseModel):
     structure_type: str
     suitability_score: float
     description: str
     dimensions: dict
     installation_notes: str
+    # Per-criterion breakdown of the AHP weighted score. Auditable.
+    criteria: list[CriterionScore] = []
+
+
+class MCDAInfo(BaseModel):
+    """Analytic Hierarchy Process (Saaty, 1980) audit trail."""
+    method: str
+    criteria: list[str]
+    weights: dict[str, float]
+    pairwise_matrix: list[list[float]]
+    lambda_max: float
+    consistency_index: float
+    consistency_ratio: float
+    consistent: bool  # CR <= 0.10
 
 class CostBenefitAnalysis(BaseModel):
     estimated_cost: float  # INR
@@ -81,6 +118,17 @@ class WeatherData(BaseModel):
     avg_temperature: float
     humidity: float
     current_rainfall: float
+    # --- provenance: where the rainfall numbers came from ---
+    rainfall_source: str = ""
+    rainfall_method: str = ""
+    grid_cell: str = ""
+    grid_resolution_deg: float = 0.0
+    climatology_period: str = ""
+    # True when the total is straight from the grid (coarse), False
+    # when the caller supplied a local annual total.
+    rainfall_is_grid_estimate: bool = True
+    # True when temperature/humidity came from OpenWeatherMap.
+    rainfall_is_live: bool = False
 
 class HydroGeoInfo(BaseModel):
     aquifer_type: str
@@ -101,3 +149,4 @@ class AssessmentResponse(BaseModel):
     recommended_structures: list[StructureRecommendation]
     cost_benefit: CostBenefitAnalysis
     hydrogeo_info: HydroGeoInfo
+    mcda: MCDAInfo | None = None

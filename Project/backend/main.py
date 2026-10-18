@@ -24,7 +24,7 @@ from models.db_models import Assessment
 
 from services.weather import get_weather_data
 from services.hydrology import calculate_runoff, calculate_recharge
-from services.feasibility import get_recommendations
+from services.feasibility import get_recommendations, get_mcda_info
 from services.cost_benefit import calculate_cost_benefit
 from services.pdf_report import generate_pdf_report
 
@@ -136,13 +136,28 @@ async def health():
 # ============================================================
 
 @app.get("/api/weather")
-async def weather_preview(lat: float, lon: float):
+async def weather_preview(
+    lat: float,
+    lon: float,
+    annual_rainfall_override: float | None = None,
+    location_name: str | None = None,
+):
     """
-    Fetch weather/rainfall information for the supplied coordinates.
+    Rainfall climatology for the supplied coordinates.
+
+    `annual_rainfall_override` (mm/yr) replaces the grid's annual total
+    while keeping its monthly distribution -- use a local station value
+    (e.g. IMD) where you have one, because the grid cell is ~278 km
+    across and cannot resolve orographic gradients such as the Western
+    Ghats.
     """
 
     try:
-        weather = await get_weather_data(lat, lon)
+        weather = await get_weather_data(
+            lat, lon,
+            annual_rainfall_override=annual_rainfall_override,
+            location_name=location_name,
+        )
         return weather
 
     except Exception as e:
@@ -228,6 +243,8 @@ async def assess(
         weather = await get_weather_data(
             request.latitude,
             request.longitude,
+            annual_rainfall_override=request.annual_rainfall_override,
+            location_name=request.location_name,
         )
 
         # ----------------------------------------------------
@@ -343,6 +360,7 @@ async def assess(
             recommended_structures=structures,
             cost_benefit=cost_benefit,
             hydrogeo_info=hydrogeo,
+            mcda=get_mcda_info(),
         )
 
         # ----------------------------------------------------

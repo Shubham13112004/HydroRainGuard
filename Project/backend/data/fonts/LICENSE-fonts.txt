@@ -1,0 +1,13 @@
+Bundled fonts
+=============
+
+Noto Sans (Regular, Bold)
+Noto Sans Devanagari (Regular, Bold)
+
+Source : https://github.com/googlefonts/noto-fonts
+Licence: SIL Open Font License 1.1  (see OFL-LICENSE.txt)
+Copyright 2022 The Noto Project Authors.
+
+These are embedded in generated PDF reports so that Devanagari
+(Marathi / Hindi) text renders with correct conjunct formation and
+matra reordering, which ReportLab's built-in Type1 fonts cannot do.

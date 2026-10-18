@@ -205,6 +205,7 @@ function ResultsContent() {
     recommended_structures,
     hydrogeo_info: hg,
     request,
+    mcda,
   } = data;
 
   const monthlyChartData = MONTHS.map((m, i) => ({
@@ -358,6 +359,29 @@ function ResultsContent() {
                   label={t('results.key.humidity')}
                   value={`${weather.humidity}%`}
                 />
+                <div className="mt-3 pt-3 border-t border-gray-100 space-y-1">
+                  <StatRow
+                    label={t('results.rain.source')}
+                    value={weather.rainfall_source}
+                  />
+                  <StatRow
+                    label={t('results.rain.period')}
+                    value={weather.climatology_period}
+                  />
+                  <StatRow
+                    label={t('results.rain.cell')}
+                    value={`${weather.grid_cell} · ${weather.grid_resolution_deg}°`}
+                  />
+                </div>
+                {weather.rainfall_is_grid_estimate ? (
+                  <p className="mt-2 text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                    {t('results.rain.gridNote')}
+                  </p>
+                ) : (
+                  <p className="mt-2 text-[11px] text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                    {t('results.rain.localTotal')}
+                  </p>
+                )}
               </Panel>
 
               <Panel title={`🏠 ${t('results.overview.runoffSummary')}`}>
@@ -381,6 +405,24 @@ function ResultsContent() {
                   label={t('results.key.roofType')}
                   value={roofLabel(request.roof_type)}
                 />
+                <div className="mt-3 pt-3 border-t border-gray-100 space-y-1">
+                  <StatRow
+                    label={t('results.runoff.method')}
+                    value={
+                      runoff.runoff_method === 'scs_cn'
+                        ? 'SCS-CN (TR-55)'
+                        : 'Rational (Q = C·R·A)'
+                    }
+                  />
+                  <StatRow
+                    label={t('results.runoff.scsCn')}
+                    value={formatLiters(runoff.scs_cn_annual_runoff)}
+                  />
+                  <StatRow
+                    label={t('results.runoff.delta')}
+                    value={`${runoff.scs_cn_vs_rational_pct > 0 ? '+' : ''}${runoff.scs_cn_vs_rational_pct}%`}
+                  />
+                </div>
               </Panel>
 
               <Panel title={`🌊 ${t('results.overview.rechargeSummary')}`}>
@@ -533,6 +575,55 @@ function ResultsContent() {
               animate={{ opacity: 1 }}
               className="space-y-4"
             >
+              {mcda && (
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                  <h3 className="font-bold text-gray-800 mb-1">
+                    {t('results.mcda.title')}
+                  </h3>
+                  <p className="text-xs text-gray-400 mb-4">
+                    {t('results.mcda.note')}
+                  </p>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-4">
+                    {Object.entries(mcda.weights).map(([k, v]) => (
+                      <div
+                        key={k}
+                        className="bg-blue-50 border border-blue-100 rounded-xl p-3 text-center"
+                      >
+                        <div className="text-lg font-extrabold text-primary-700 font-numeric">
+                          {(v * 100).toFixed(1)}%
+                        </div>
+                        <div className="text-[11px] text-gray-500 mt-0.5">
+                          {t(`crit.${k}` as TranslationKey)}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-3 text-xs">
+                    <span className="text-gray-500">
+                      {t('results.mcda.cr')}:{' '}
+                      <strong className="font-numeric">
+                        {mcda.consistency_ratio.toFixed(3)}
+                      </strong>
+                    </span>
+                    <span
+                      className={`px-2 py-1 rounded-full font-semibold ${
+                        mcda.consistent
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-red-100 text-red-700'
+                      }`}
+                    >
+                      {mcda.consistent
+                        ? t('results.mcda.consistent')
+                        : t('results.mcda.inconsistent')}
+                    </span>
+                    <span className="text-gray-400 font-numeric">
+                      λmax = {mcda.lambda_max.toFixed(3)}
+                    </span>
+                  </div>
+                </div>
+              )}
               {recommended_structures.map((s, i) => (
                 <div
                   key={i}
@@ -571,6 +662,32 @@ function ResultsContent() {
                   </div>
 
                   <ScoreBar score={s.suitability_score} />
+
+                  {s.criteria && s.criteria.length > 0 && (
+                    <div className="mt-3">
+                      <p className="text-xs font-semibold text-gray-500 mb-2">
+                        {t('results.structures.criteria')}
+                      </p>
+                      <div className="grid grid-cols-5 gap-2">
+                        {s.criteria.map((c) => (
+                          <div key={c.name} className="text-center">
+                            <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                              <div
+                                className="h-full bg-primary-500 rounded-full"
+                                style={{ width: `${c.normalised * 100}%` }}
+                              />
+                            </div>
+                            <div className="text-[11px] font-numeric text-gray-600 mt-1">
+                              {c.normalised.toFixed(2)}
+                            </div>
+                            <div className="text-[10px] text-gray-400">
+                              {t(`crit.${c.name}` as TranslationKey)}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   <p className="text-sm text-gray-600 mt-4 leading-relaxed">
                     {s.description}

@@ -23,10 +23,17 @@ export async function submitAssessment(
 export async function getWeatherPreview(
   lat: number,
   lon: number,
+  opts?: {
+    annualRainfallOverride?: number | null;
+    locationName?: string | null;
+  },
 ): Promise<WeatherData> {
-  const response = await api.get<WeatherData>('/api/weather', {
-    params: { lat, lon },
-  });
+  const params: Record<string, unknown> = { lat, lon };
+  if (opts?.annualRainfallOverride) {
+    params.annual_rainfall_override = opts.annualRainfallOverride;
+  }
+  if (opts?.locationName) params.location_name = opts.locationName;
+  const response = await api.get<WeatherData>('/api/weather', { params });
   return response.data;
 }
 

@@ -14,6 +14,37 @@ export interface AssessmentRequest {
   groundwater_depth: number;
   /** Rs per 1000 L. Optional; the backend defaults to 35. */
   water_tariff_per_kl?: number | null;
+  /**
+   * Local annual rainfall in mm. The bundled grid is 2.5 degrees
+   * (~278 km) so it cannot resolve orographic gradients; supply an IMD
+   * / rain-gauge total to keep the grid's monthly shape but correct
+   * the annual total.
+   */
+  annual_rainfall_override?: number | null;
+  /** 'rational' (CGWB) or 'scs_cn' (USDA-NRCS). Both are reported. */
+  runoff_method?: 'rational' | 'scs_cn';
+  /** Place name from the browser-side reverse geocoder. */
+  location_name?: string | null;
+}
+
+/** One AHP criterion, normalised to 0-1, times its weight. */
+export interface CriterionScore {
+  name: string;
+  raw: number;
+  normalised: number;
+  weight: number;
+}
+
+/** Analytic Hierarchy Process audit trail (Saaty, 1980). */
+export interface MCDAInfo {
+  method: string;
+  criteria: string[];
+  weights: Record<string, number>;
+  pairwise_matrix: number[][];
+  lambda_max: number;
+  consistency_index: number;
+  consistency_ratio: number;
+  consistent: boolean;
 }
 
 export interface RunoffResult {
@@ -22,6 +53,14 @@ export interface RunoffResult {
   runoff_coefficient: number;
   peak_runoff_rate: number;
   harvestable_volume: number;
+  /** Which method produced the primary figures. */
+  runoff_method: string;
+  curve_number: number;
+  /** SCS-CN cross-check, always reported. */
+  scs_cn_annual_runoff: number;
+  scs_cn_monthly_runoff: number[];
+  /** Percent difference SCS-CN vs Rational. */
+  scs_cn_vs_rational_pct: number;
 }
 
 export interface RechargeResult {
@@ -38,6 +77,7 @@ export interface StructureRecommendation {
   description: string;
   dimensions: Record<string, string | number>;
   installation_notes: string;
+  criteria: CriterionScore[];
 }
 
 export interface CostBenefitAnalysis {
@@ -67,6 +107,16 @@ export interface WeatherData {
   avg_temperature: number;
   humidity: number;
   current_rainfall: number;
+  /* ---- provenance ---- */
+  rainfall_source: string;
+  rainfall_method: string;
+  grid_cell: string;
+  grid_resolution_deg: number;
+  climatology_period: string;
+  /** true = straight from the coarse grid; false = local override used */
+  rainfall_is_grid_estimate: boolean;
+  /** true = temperature/humidity came from OpenWeatherMap */
+  rainfall_is_live: boolean;
 }
 
 export interface HydroGeoInfo {
@@ -89,4 +139,5 @@ export interface AssessmentResponse {
   recommended_structures: StructureRecommendation[];
   cost_benefit: CostBenefitAnalysis;
   hydrogeo_info: HydroGeoInfo;
+  mcda: MCDAInfo | null;
 }
