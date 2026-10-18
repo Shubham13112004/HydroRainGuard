@@ -115,10 +115,27 @@ async def get_db():
 # INITIALIZE DATABASE
 # ============================================================
 
-async def init_db():
+# Guard so concurrent serverless invocations (or uvicorn
+# --reload workers) do not race while creating the tables.
+_db_initialised = False
+
+
+async def init_db(force: bool = False):
+    """
+    Create all tables if they do not exist.
+
+    Safe to call more than once; subsequent calls are no-ops
+    unless `force` is True.
+    """
+    global _db_initialised
+
+    if _db_initialised and not force:
+        return
 
     # Register SQLAlchemy models
     from models import db_models  # noqa: F401
 
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+
+    _db_initialised = True

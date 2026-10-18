@@ -1,4 +1,6 @@
-from fastapi import FastAPI, HTTPException, Depends
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI, HTTPException, Depends, Header
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
@@ -8,9 +10,11 @@ from sqlalchemy import select
 import uuid
 import json
 import io
+import logging
 from datetime import datetime
 
 from database import get_db, init_db
+from config import settings
 from models.schemas import (
     AssessmentRequest,
     AssessmentResponse,
@@ -20,9 +24,39 @@ from models.db_models import Assessment
 
 from services.weather import get_weather_data
 from services.hydrology import calculate_runoff, calculate_recharge
-from services.feasibility import get_recommendations
+from services.feasibility import get_recommendations, get_mcda_info
 from services.cost_benefit import calculate_cost_benefit
 from services.pdf_report import generate_pdf_report
+
+
+# ============================================================
+# LOGGING
+# ============================================================
+
+logger = logging.getLogger("hydro_rain_guard")
+
+
+# ============================================================
+# DATABASE STARTUP
+# ============================================================
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """
+    Create database tables on startup.
+
+    Without this, POST /api/assess fails with
+    `no such table: assessments` on a fresh clone.
+    """
+    try:
+        await init_db()
+        logger.info("Database initialised")
+    except Exception as exc:  # pragma: no cover
+        # Do not crash the process: the health endpoint still
+        # has to answer so the platform can report the failure.
+        logger.error("Database init failed: %s", exc)
+
+    yield
 
 
 # ============================================================
@@ -36,6 +70,7 @@ app = FastAPI(
         "Groundwater Recharge Assessment System"
     ),
     version="1.0.0",
+    lifespan=lifespan,
 )
 
 
@@ -45,14 +80,31 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "https://hydro-rain-guard-mhus.vercel.app",
-    ],
+    allow_origins=settings.cors_origin_list,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# ============================================================
+# MAINTENANCE AUTH
+# ============================================================
+
+def _authorised(admin_token: str | None) -> bool:
+    """
+    Maintenance endpoints are open in development so the
+    documented local workflow keeps working, and require
+    `X-Admin-Token` (or `?token=`) in production.
+    """
+    if not settings.is_production:
+        return True
+
+    expected = settings.admin_token
+    if not expected:
+        return False
+
+    return admin_token == expected
 
 
 # ============================================================
@@ -84,13 +136,28 @@ async def health():
 # ============================================================
 
 @app.get("/api/weather")
-async def weather_preview(lat: float, lon: float):
+async def weather_preview(
+    lat: float,
+    lon: float,
+    annual_rainfall_override: float | None = None,
+    location_name: str | None = None,
+):
     """
-    Fetch weather/rainfall information for the supplied coordinates.
+    Rainfall climatology for the supplied coordinates.
+
+    `annual_rainfall_override` (mm/yr) replaces the grid's annual total
+    while keeping its monthly distribution -- use a local station value
+    (e.g. IMD) where you have one, because the grid cell is ~278 km
+    across and cannot resolve orographic gradients such as the Western
+    Ghats.
     """
 
     try:
-        weather = await get_weather_data(lat, lon)
+        weather = await get_weather_data(
+            lat, lon,
+            annual_rainfall_override=annual_rainfall_override,
+            location_name=location_name,
+        )
         return weather
 
     except Exception as e:
@@ -107,17 +174,29 @@ async def weather_preview(lat: float, lon: float):
 # ============================================================
 
 @app.post("/api/init-db")
-async def initialize_database():
+async def initialize_database(
+    x_admin_token: str | None = Header(default=None),
+):
     """
     Initialize database tables manually.
 
-    This is intentionally NOT executed during application startup,
-    because Vercel serverless functions should not depend on
-    startup-time SQLite initialization.
+    Tables are also created automatically on application
+    startup (see `lifespan`). This endpoint remains as a
+    manual escape hatch for serverless platforms where the
+    filesystem is ephemeral.
+
+    In production it requires the `X-Admin-Token` header to
+    match `settings.admin_token`.
     """
 
+    if not _authorised(x_admin_token):
+        raise HTTPException(
+            status_code=403,
+            detail="Not authorised",
+        )
+
     try:
-        await init_db()
+        await init_db(force=True)
 
         return {
             "status": "success",
@@ -164,6 +243,8 @@ async def assess(
         weather = await get_weather_data(
             request.latitude,
             request.longitude,
+            annual_rainfall_override=request.annual_rainfall_override,
+            location_name=request.location_name,
         )
 
         # ----------------------------------------------------
@@ -279,6 +360,7 @@ async def assess(
             recommended_structures=structures,
             cost_benefit=cost_benefit,
             hydrogeo_info=hydrogeo,
+            mcda=get_mcda_info(),
         )
 
         # ----------------------------------------------------
@@ -344,6 +426,54 @@ async def assess(
         raise HTTPException(
             status_code=500,
             detail=f"Assessment failed: {str(e)}",
+        )
+
+
+# ============================================================
+# FETCH ONE ASSESSMENT
+# ============================================================
+
+@app.get("/api/assessment/{assessment_id}")
+async def get_assessment(
+    assessment_id: str,
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Return a previously stored assessment.
+
+    Lets /results?id=<assessment_id> rehydrate on another
+    device or after a reload, instead of depending on
+    localStorage alone.
+    """
+
+    try:
+
+        result = await db.execute(
+            select(Assessment).where(
+                Assessment.id == assessment_id
+            )
+        )
+
+        db_item = result.scalar_one_or_none()
+
+        if not db_item:
+            raise HTTPException(
+                status_code=404,
+                detail="Assessment not found",
+            )
+
+        return json.loads(db_item.full_response_json)
+
+    except HTTPException:
+        raise
+
+    except Exception as e:
+
+        logger.exception("Fetch assessment failed")
+
+        raise HTTPException(
+            status_code=500,
+            detail="Could not load assessment",
         )
 
 
@@ -423,10 +553,18 @@ async def download_report(
 @app.get("/api/assessments")
 async def list_assessments(
     db: AsyncSession = Depends(get_db),
+    x_admin_token: str | None = Header(default=None),
 ):
     """
     Return the latest 20 assessments.
+
+    These records contain personal data (name, location and
+    precise coordinates), so in production this endpoint
+    requires `X-Admin-Token`. Without it, records are
+    returned with the identifying fields redacted.
     """
+
+    authorised = _authorised(x_admin_token)
 
     try:
 
@@ -440,8 +578,9 @@ async def list_assessments(
 
         items = result.scalars().all()
 
-        return [
-            {
+        out = []
+        for i in items:
+            record = {
                 "id": i.id,
                 "name": i.name,
                 "location": i.location,
@@ -457,8 +596,15 @@ async def list_assessments(
                     i.estimated_cost
                 ),
             }
-            for i in items
-        ]
+
+            if not authorised:
+                # Hide personally identifying information
+                record["name"] = "—"
+                record["location"] = "—"
+
+            out.append(record)
+
+        return out
 
     except Exception as e:
 

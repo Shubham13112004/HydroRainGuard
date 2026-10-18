@@ -1,0 +1,22 @@
+{
+  "source": "NOAA PSL CMAP (CPC Merged Analysis of Precipitation)",
+  "source_url": "https://psl.noaa.gov/data/gridded/data.cmap.html",
+  "product": "precip.mon.ltm (long-term monthly means)",
+  "license": "Public domain (US Government work)",
+  "variable": "precipitation rate, converted to monthly total mm",
+  "climatology_period": "1991/01/01 - 2020/12/31",
+  "grid": {
+    "cell_size_deg": 2.5,
+    "n_lat": 72,
+    "n_lon": 144,
+    "n_months": 12,
+    "lat_centers_first": 88.75,
+    "lat_centers_last": -88.75,
+    "lat_order": "descending (north -> south)",
+    "lon_convention": "0..360, centre of first cell = 1.25E",
+    "lon_centers_first": 1.25
+  },
+  "layout": "uint16 little-endian, month-major then row-major; 65535 = no data. Followed by one uint8 valid_yr_count per grid value in the same order.",
+  "built": "2026-10-18",
+  "builder": "scripts/build_rainfall_grid.py"
+}
