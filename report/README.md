@@ -18,6 +18,40 @@ reference/bibliography pages follow as pages 79-81 and are excluded from the
 limit. Page numbers are Word fields; press `Ctrl+A` then `F9` in Microsoft Word
 after any editing to refresh them.
 
+## Copy-paste pack (text + figures + tables)
+
+`report/direct/` holds the same report as material that can be pasted into Word
+by hand:
+
+- `direct/index.html` - landing page with a link to every chapter and the
+  sample outputs.
+- `direct/full_report.html` - the complete report on one page (also prints to
+  PDF cleanly).
+- `direct/00_Cover.html`, `direct/Ch01_Introduction.html` ...
+  `direct/12_References.html` - one file per chapter / appendix / front-matter
+  page, so chapters can be pasted one at a time.
+- `direct/images/` - all 53 figures as `Fig_<chapter>.<n>_<title>.png`.
+- `direct/full_report.md` - plain Markdown mirror of the whole text.
+- `direct/sample_outputs/` - `sample_report.pdf`, `scenarios.json` and
+  `ui_assessment.json` reproduced in the appendices and results chapter.
+- `direct/hydrorainguard_report_pack.zip` - everything above in one download.
+
+Open the HTML in a browser, press `Ctrl+A` then `Ctrl+C`, and paste into Word
+with *Keep Source Formatting*: chapter titles, justified 12 pt Times New Roman
+text, real bordered tables and inline pictures come across. Then set A4 with the
+four template margins and add the footer.
+
+The pack is generated from the built DOCX:
+
+```bash
+.venv/bin/python report/build_report.py      # rebuild the DOCX first
+.venv/bin/python report/build_direct.py      # write report/direct/
+python -m http.server 8000 --directory report/direct   # optional preview
+```
+
+`direct/images/`, `direct/sample_outputs/` and the zip are generated and
+git-ignored; `build_direct.py` recreates them.
+
 ## Regeneration
 
 From the repository root:

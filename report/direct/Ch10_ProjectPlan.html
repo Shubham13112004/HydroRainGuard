@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>10. Project Plan</title>
+<style>
+:root { --ink:#111; --rule:#333; }
+* { box-sizing: border-box; }
+body { margin:0; background:#eceff1; color:var(--ink);
+       font-family:"Times New Roman", Times, Georgia, serif; font-size:12pt; line-height:1.5; }
+.sheet { width:210mm; min-height:297mm; padding:23.4mm 23.4mm 32mm 37mm; margin:14px auto;
+         background:#fff; box-shadow:0 2px 10px rgba(0,0,0,.18); }
+.sheet-body { width:149.6mm; }
+p { margin:0 0 12pt 0; }
+p.body, p.cert { text-align:justify; text-indent:36pt; }
+p.cert { margin-bottom:10pt; }
+p.blank { margin:0; line-height:1; font-size:12pt; }
+h1 { font-size:14pt; font-weight:bold; text-align:center; text-transform:uppercase;
+     margin:0 0 10pt 0; line-height:1.5; page-break-before:always; }
+h1.front { margin-bottom:12pt; }
+h2 { font-size:12pt; font-weight:bold; text-align:left; margin:8pt 0 6pt 0; line-height:1.5;
+     page-break-after:avoid; }
+h3 { font-size:12pt; font-weight:bold; text-align:left; margin:6pt 0 4pt 0; line-height:1.5;
+     page-break-after:avoid; }
+p.cover-title { font-size:16pt; font-weight:bold; text-align:center; line-height:1.1; margin:0 0 6pt 0; }
+p.cover-line { font-size:12pt; font-weight:bold; text-align:center; line-height:1.15; margin:0 0 5pt 0; }
+p.caption { font-size:12pt; text-align:center; text-indent:0; line-height:1.1; margin:2pt 0 0 0; }
+p.legend  { font-size:10pt; text-align:center; text-indent:0; line-height:1.1; margin:0 0 8pt 0; }
+p.tablecap{ font-size:12pt; font-weight:bold; text-align:center; text-indent:0; line-height:1.1;
+            margin:6pt 0 4pt 0; }
+p.sig     { font-size:12pt; text-align:center; text-indent:0; line-height:1.2; margin:4pt 0; }
+p.toc     { font-size:10pt; text-indent:0; line-height:1.2; margin:0; }
+p.list    { font-size:9pt; text-indent:0; line-height:1.2; margin:0 0 1pt 0; }
+p.ref     { font-size:10.5pt; text-align:justify; text-indent:-21.6pt; margin:0 0 7pt 21.6pt;
+            line-height:1.15; }
+p.code    { font-family:"Courier New", monospace; font-size:9pt; text-indent:0; line-height:1.1;
+            margin:0; }
+p.figure  { text-align:center; text-indent:0; margin:6pt 0 0 0; page-break-inside:avoid; }
+p.figure img { max-width:100%; height:auto; }
+table.grid { border-collapse:collapse; width:100%; margin:4pt 0 10pt 0; font-size:9pt;
+             line-height:1.15; page-break-inside:auto; }
+table.grid th, table.grid td { border:0.5pt solid var(--rule); padding:2.5pt 4pt; vertical-align:top;
+                               text-align:left; }
+table.grid th { font-weight:bold; text-align:center; background:#f2f2f2; }
+@media print {
+  body { background:#fff; }
+  .sheet { width:auto; min-height:0; margin:0; padding:0; box-shadow:none; }
+  .sheet-body { width:auto; }
+  @page { size:A4; margin:23.4mm 23.4mm 32mm 37mm; }
+  h1, h1.front { page-break-before:always; }
+  .sheet-body > :first-child { page-break-before:avoid; }
+}
+</style>
+</head><body>
+<div class="sheet"><div class="sheet-body">
+<h1 class="chapter">10 PROJECT PLAN</h1>
+<h2>10.1 Phases and Timeline</h2>
+<p class="body">The project was executed in sixteen relative weeks grouped into eight overlapping work streams. Early weeks focused on literature review, problem definition and requirements. Middle weeks produced architecture and core backend services. Later weeks added frontend pages, rainfall raster, AHP, PDF, 3D/AR, multilingual support, testing, deployment and report preparation.</p>
+<p class="body">The iterative approach allowed findings from testing to feed back into requirements. For example, the need for a local rainfall override emerged from the coarse-grid limitation; the need for nullable payback emerged from economic sensitivity; and the need for admin-token protection emerged from security review. The Gantt chart uses relative weeks rather than invented calendar dates.</p>
+<p class="figure"><img src="images/Fig_10.1_Project_phase_timeline.png" style="width:384.0pt" alt="Fig_10.1_Project_phase_timeline.png"></p>
+<p class="caption">Figure 10.1: Project phase timeline</p>
+<p class="legend">Legend: W denotes a relative project week; all phases are marked complete for Stage II.</p>
+<h2>10.2 Work Allocation</h2>
+<p class="body">The project team consisted of four students under the guidance of Dr. Dipali H. Patil. Work was divided by technical domain while maintaining shared code review responsibilities. Shubham Desai focused on hydrological modelling and backend integration; Siddhesh Mahadik on GIS data and map interaction; Kaushal Agale on recommendation logic and results; Omkar Kshirsagar on 3D/AR and frontend presentation.</p>
+<p class="body">All members contributed to literature survey, testing, documentation and report preparation. The division of labour is indicative of primary ownership rather than exclusive contribution; the final repository is the result of integrated work. The guide reviewed the research direction, paper structure, methodology and validation expectations.</p>
+<p class="tablecap">Table 10.1: Work allocation</p>
+<table class="grid"><thead><tr><th><b>Team member</b></th><th><b>Primary responsibility</b></th><th><b>Deliverables</b></th></tr></thead><tbody><tr><td>Mr. Shubham Desai</td><td>Hydrology and backend</td><td>Services, API, calculations</td></tr><tr><td>Mr. Siddhesh Mahadik</td><td>GIS and data</td><td>Rainfall grid, map picker, provenance</td></tr><tr><td>Mr. Kaushal Agale</td><td>Recommendation and results</td><td>AHP, charts, cost-benefit</td></tr><tr><td>Mr. Omkar Kshirsagar</td><td>Frontend and AR</td><td>UI, 3D/AR, multilingual support</td></tr><tr><td>Dr. Dipali H. Patil</td><td>Guidance and review</td><td>Research direction and validation</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+<h2>10.3 Current Stage-II Status</h2>
+<p class="body">At the end of Stage II, all planned software modules are implemented. The frontend is publicly deployed at the URL provided by the team. The backend exposes the full assessment and reporting API. The rainfall raster, AHP engine, cost model, multilingual PDF, database lifecycle, 3D/AR route and automated tests are present in the repository.</p>
+<p class="body">Verification status is 38/38 backend tests passing and a successful Next.js production build. The survey paper associated with the project is accepted for ICICIS 2026 under Paper ID 195; the official acceptance proof and institution-approved plagiarism report are to be inserted in the appendices by the students. No publication date, volume, DOI or plagiarism score has been invented in this report.</p>
+<p class="tablecap">Table 10.2: Stage-II completion status</p>
+<table class="grid"><thead><tr><th><b>Item</b></th><th><b>Status</b></th><th><b>Evidence</b></th></tr></thead><tbody><tr><td>Survey paper</td><td>Accepted</td><td>Paper ID 195 / ICICIS 2026; proof to be inserted</td></tr><tr><td>Backend implementation</td><td>Completed</td><td>FastAPI services and 38 tests</td></tr><tr><td>Frontend implementation</td><td>Completed</td><td>Production build succeeded</td></tr><tr><td>Deployment</td><td>Live frontend</td><td>Vercel URL provided by team</td></tr><tr><td>Database</td><td>Implemented</td><td>SQLite local / PostgreSQL path</td></tr><tr><td>Documentation</td><td>Completed</td><td>This Stage-II report and README</td></tr><tr><td>Plagiarism report</td><td>Pending attachment</td><td>Official report to be inserted</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+</div></div>
+</body></html>

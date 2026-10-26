@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>9. Other Specifications</title>
+<style>
+:root { --ink:#111; --rule:#333; }
+* { box-sizing: border-box; }
+body { margin:0; background:#eceff1; color:var(--ink);
+       font-family:"Times New Roman", Times, Georgia, serif; font-size:12pt; line-height:1.5; }
+.sheet { width:210mm; min-height:297mm; padding:23.4mm 23.4mm 32mm 37mm; margin:14px auto;
+         background:#fff; box-shadow:0 2px 10px rgba(0,0,0,.18); }
+.sheet-body { width:149.6mm; }
+p { margin:0 0 12pt 0; }
+p.body, p.cert { text-align:justify; text-indent:36pt; }
+p.cert { margin-bottom:10pt; }
+p.blank { margin:0; line-height:1; font-size:12pt; }
+h1 { font-size:14pt; font-weight:bold; text-align:center; text-transform:uppercase;
+     margin:0 0 10pt 0; line-height:1.5; page-break-before:always; }
+h1.front { margin-bottom:12pt; }
+h2 { font-size:12pt; font-weight:bold; text-align:left; margin:8pt 0 6pt 0; line-height:1.5;
+     page-break-after:avoid; }
+h3 { font-size:12pt; font-weight:bold; text-align:left; margin:6pt 0 4pt 0; line-height:1.5;
+     page-break-after:avoid; }
+p.cover-title { font-size:16pt; font-weight:bold; text-align:center; line-height:1.1; margin:0 0 6pt 0; }
+p.cover-line { font-size:12pt; font-weight:bold; text-align:center; line-height:1.15; margin:0 0 5pt 0; }
+p.caption { font-size:12pt; text-align:center; text-indent:0; line-height:1.1; margin:2pt 0 0 0; }
+p.legend  { font-size:10pt; text-align:center; text-indent:0; line-height:1.1; margin:0 0 8pt 0; }
+p.tablecap{ font-size:12pt; font-weight:bold; text-align:center; text-indent:0; line-height:1.1;
+            margin:6pt 0 4pt 0; }
+p.sig     { font-size:12pt; text-align:center; text-indent:0; line-height:1.2; margin:4pt 0; }
+p.toc     { font-size:10pt; text-indent:0; line-height:1.2; margin:0; }
+p.list    { font-size:9pt; text-indent:0; line-height:1.2; margin:0 0 1pt 0; }
+p.ref     { font-size:10.5pt; text-align:justify; text-indent:-21.6pt; margin:0 0 7pt 21.6pt;
+            line-height:1.15; }
+p.code    { font-family:"Courier New", monospace; font-size:9pt; text-indent:0; line-height:1.1;
+            margin:0; }
+p.figure  { text-align:center; text-indent:0; margin:6pt 0 0 0; page-break-inside:avoid; }
+p.figure img { max-width:100%; height:auto; }
+table.grid { border-collapse:collapse; width:100%; margin:4pt 0 10pt 0; font-size:9pt;
+             line-height:1.15; page-break-inside:auto; }
+table.grid th, table.grid td { border:0.5pt solid var(--rule); padding:2.5pt 4pt; vertical-align:top;
+                               text-align:left; }
+table.grid th { font-weight:bold; text-align:center; background:#f2f2f2; }
+@media print {
+  body { background:#fff; }
+  .sheet { width:auto; min-height:0; margin:0; padding:0; box-shadow:none; }
+  .sheet-body { width:auto; }
+  @page { size:A4; margin:23.4mm 23.4mm 32mm 37mm; }
+  h1, h1.front { page-break-before:always; }
+  .sheet-body > :first-child { page-break-before:avoid; }
+}
+</style>
+</head><body>
+<div class="sheet"><div class="sheet-body">
+<h1 class="chapter">9 OTHER SPECIFICATIONS</h1>
+<h2>9.1 Advantages</h2>
+<p class="body">The principal advantage is integration. A single validated request produces rainfall, runoff, recharge, structure ranking, dimensions, economics, hydrogeology, charts, PDF and 3D geometry. This removes duplicated arithmetic and ensures that every output refers to the same assessment. The system also records data provenance and exposes model uncertainty through a second runoff method.</p>
+<p class="body">Additional advantages include offline-capable climatology, a local annual rainfall override, deterministic and auditable AHP, multilingual output, responsive UI, shareable assessment IDs, automatic table creation, graceful degradation when optional APIs fail and a test suite that protects the end-to-end workflow. The architecture is modular enough to replace rainfall data or recommendation criteria without rewriting the entire application.</p>
+<p class="tablecap">Table 9.1: Advantages and user value</p>
+<table class="grid"><thead><tr><th><b>Advantage</b></th><th><b>User value</b></th></tr></thead><tbody><tr><td>Integrated workflow</td><td>One input produces all feasibility outputs</td></tr><tr><td>Dual runoff methods</td><td>Visible cross-check and uncertainty</td></tr><tr><td>AHP audit trail</td><td>Reviewable and replaceable judgements</td></tr><tr><td>Provenance fields</td><td>Dataset, period, resolution and override status</td></tr><tr><td>3D/AR and charts</td><td>Better understanding for non-specialists</td></tr><tr><td>Automated PDF</td><td>Consistent documentation</td></tr><tr><td>38 automated tests</td><td>Regression protection</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+<h2>9.2 Limitations</h2>
+<p class="body">The rainfall climatology is 2.5 degrees and represents 1991-2020 monthly means, not real-time station rainfall. Annual override improves the total but cannot correct monthly distribution. Soil infiltration is represented by lookup values rather than field infiltration tests. Recharge assumes 120 rainy days, eight hours per day and 70 percent efficiency. No groundwater modelling, water-quality analysis or structural safety certification is performed.</p>
+<p class="body">AHP is deterministic multi-criteria decision support, not a learned AI model. The pairwise weights are engineering priors and should be reviewed for each region. WebXR immersive AR requires a compatible Android device and secure origin; the desktop 3D view is universally available. Production deployment should use PostgreSQL because SQLite on serverless filesystems is ephemeral. Field validation and expert approval remain necessary.</p>
+<p class="tablecap">Table 9.2: Limitations and mitigation</p>
+<table class="grid"><thead><tr><th><b>Limitation</b></th><th><b>Effect</b></th><th><b>Mitigation / future work</b></th></tr></thead><tbody><tr><td>Coarse 2.5-degree grid</td><td>Local rainfall error</td><td>IMD 0.25-degree grid or gauge</td></tr><tr><td>Lookup infiltration rates</td><td>Recharge uncertainty</td><td>Field infiltration tests</td></tr><tr><td>Monthly SCS-CN approximation</td><td>Storm-intensity error</td><td>Daily/event rainfall data</td></tr><tr><td>No trained ML model</td><td>No learned prediction</td><td>Collect labelled datasets</td></tr><tr><td>AR device dependence</td><td>Not all users see immersive mode</td><td>Desktop 3D fallback</td></tr><tr><td>SQLite on serverless</td><td>Persistence may vanish</td><td>PostgreSQL/Neon in production</td></tr><tr><td>No water-quality model</td><td>Potability unknown</td><td>Laboratory testing and treatment</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+<h2>9.3 Applications</h2>
+<p class="body">The system can support preliminary feasibility assessment for homes, apartments, educational campuses, small commercial buildings and municipal awareness programmes. Engineers can use the PDF as a structured starting point for detailed design. Educators can use the visualisations to demonstrate rainfall-runoff relationships, recharge structures and the effect of roof material or tariff assumptions.</p>
+<p class="body">Researchers can replace the rainfall raster, coefficients, AHP matrix or cost tables while preserving the API contract. Local governments could adapt the framework for ward-level screening, provided that local hydrogeological datasets and regulatory rules are added. The same architecture can also be extended to IoT sensor validation and predictive maintenance in future work.</p>
+<p class="tablecap">Table 9.3: Application contexts</p>
+<table class="grid"><thead><tr><th><b>Context</b></th><th><b>Use</b></th><th><b>Required adaptation</b></th></tr></thead><tbody><tr><td>Individual residence</td><td>Estimate tank and recharge options</td><td>Local rainfall and soil data</td></tr><tr><td>Housing society</td><td>Compare roof-scale alternatives</td><td>Actual tariff and maintenance costs</td></tr><tr><td>Campus / institution</td><td>Screen multiple buildings</td><td>Batch assessment interface</td></tr><tr><td>Consultancy</td><td>Prepare preliminary report</td><td>Expert review and structural design</td></tr><tr><td>Municipality</td><td>Awareness and hotspot screening</td><td>High-resolution GIS layers</td></tr><tr><td>Teaching / research</td><td>Demonstrate hydrological models</td><td>Calibration datasets</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+</div></div>
+</body></html>

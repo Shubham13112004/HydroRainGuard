@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nomenclature</title>
+<style>
+:root { --ink:#111; --rule:#333; }
+* { box-sizing: border-box; }
+body { margin:0; background:#eceff1; color:var(--ink);
+       font-family:"Times New Roman", Times, Georgia, serif; font-size:12pt; line-height:1.5; }
+.sheet { width:210mm; min-height:297mm; padding:23.4mm 23.4mm 32mm 37mm; margin:14px auto;
+         background:#fff; box-shadow:0 2px 10px rgba(0,0,0,.18); }
+.sheet-body { width:149.6mm; }
+p { margin:0 0 12pt 0; }
+p.body, p.cert { text-align:justify; text-indent:36pt; }
+p.cert { margin-bottom:10pt; }
+p.blank { margin:0; line-height:1; font-size:12pt; }
+h1 { font-size:14pt; font-weight:bold; text-align:center; text-transform:uppercase;
+     margin:0 0 10pt 0; line-height:1.5; page-break-before:always; }
+h1.front { margin-bottom:12pt; }
+h2 { font-size:12pt; font-weight:bold; text-align:left; margin:8pt 0 6pt 0; line-height:1.5;
+     page-break-after:avoid; }
+h3 { font-size:12pt; font-weight:bold; text-align:left; margin:6pt 0 4pt 0; line-height:1.5;
+     page-break-after:avoid; }
+p.cover-title { font-size:16pt; font-weight:bold; text-align:center; line-height:1.1; margin:0 0 6pt 0; }
+p.cover-line { font-size:12pt; font-weight:bold; text-align:center; line-height:1.15; margin:0 0 5pt 0; }
+p.caption { font-size:12pt; text-align:center; text-indent:0; line-height:1.1; margin:2pt 0 0 0; }
+p.legend  { font-size:10pt; text-align:center; text-indent:0; line-height:1.1; margin:0 0 8pt 0; }
+p.tablecap{ font-size:12pt; font-weight:bold; text-align:center; text-indent:0; line-height:1.1;
+            margin:6pt 0 4pt 0; }
+p.sig     { font-size:12pt; text-align:center; text-indent:0; line-height:1.2; margin:4pt 0; }
+p.toc     { font-size:10pt; text-indent:0; line-height:1.2; margin:0; }
+p.list    { font-size:9pt; text-indent:0; line-height:1.2; margin:0 0 1pt 0; }
+p.ref     { font-size:10.5pt; text-align:justify; text-indent:-21.6pt; margin:0 0 7pt 21.6pt;
+            line-height:1.15; }
+p.code    { font-family:"Courier New", monospace; font-size:9pt; text-indent:0; line-height:1.1;
+            margin:0; }
+p.figure  { text-align:center; text-indent:0; margin:6pt 0 0 0; page-break-inside:avoid; }
+p.figure img { max-width:100%; height:auto; }
+table.grid { border-collapse:collapse; width:100%; margin:4pt 0 10pt 0; font-size:9pt;
+             line-height:1.15; page-break-inside:auto; }
+table.grid th, table.grid td { border:0.5pt solid var(--rule); padding:2.5pt 4pt; vertical-align:top;
+                               text-align:left; }
+table.grid th { font-weight:bold; text-align:center; background:#f2f2f2; }
+@media print {
+  body { background:#fff; }
+  .sheet { width:auto; min-height:0; margin:0; padding:0; box-shadow:none; }
+  .sheet-body { width:auto; }
+  @page { size:A4; margin:23.4mm 23.4mm 32mm 37mm; }
+  h1, h1.front { page-break-before:always; }
+  .sheet-body > :first-child { page-break-before:avoid; }
+}
+</style>
+</head><body>
+<div class="sheet"><div class="sheet-body">
+<h1 class="front">NOMENCLATURE</h1>
+<p class="body">The following symbols and notations are used in this report. All symbolic definitions are confined to this section in accordance with the institute report guidelines.</p>
+<table class="grid"><thead><tr><th><b>SYMBOL</b></th><th><b>DESCRIPTION</b></th><th><b>UNIT</b></th></tr></thead><tbody><tr><td>A</td><td>Rooftop catchment area</td><td>m2</td></tr><tr><td>C</td><td>Rational-method runoff coefficient</td><td>dimensionless</td></tr><tr><td>R</td><td>Rainfall depth over the period</td><td>mm or m</td></tr><tr><td>V</td><td>Harvestable runoff volume</td><td>L</td></tr><tr><td>Q</td><td>Runoff depth or peak runoff rate</td><td>mm or m3/hr</td></tr><tr><td>CN</td><td>SCS Curve Number</td><td>dimensionless</td></tr><tr><td>S</td><td>Potential maximum retention after runoff begins</td><td>mm</td></tr><tr><td>Ia</td><td>Initial abstraction</td><td>mm</td></tr><tr><td>lambda</td><td>Initial abstraction coefficient</td><td>dimensionless</td></tr><tr><td>P</td><td>Rainfall depth for a storm or month</td><td>mm</td></tr><tr><td>Ks</td><td>Soil infiltration rate</td><td>mm/hr</td></tr><tr><td>T</td><td>Effective recharge duration</td><td>hr</td></tr><tr><td>Rg</td><td>Annual groundwater recharge potential</td><td>L</td></tr><tr><td>w_i</td><td>AHP weight of criterion i</td><td>dimensionless</td></tr><tr><td>u_i</td><td>Normalised utility of criterion i</td><td>0-1</td></tr><tr><td>lambda_max</td><td>Principal eigenvalue of AHP matrix</td><td>dimensionless</td></tr><tr><td>CI</td><td>Consistency Index</td><td>dimensionless</td></tr><tr><td>RI</td><td>Random Consistency Index</td><td>dimensionless</td></tr><tr><td>CR</td><td>Consistency Ratio</td><td>dimensionless</td></tr><tr><td>Rs</td><td>Estimated capital cost</td><td>INR</td></tr><tr><td>B_a</td><td>Net annual benefit</td><td>INR/year</td></tr><tr><td>n</td><td>Number of AHP criteria</td><td>dimensionless</td></tr></tbody></table>
+</div></div>
+</body></html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>List of Tables</title>
+<style>
+:root { --ink:#111; --rule:#333; }
+* { box-sizing: border-box; }
+body { margin:0; background:#eceff1; color:var(--ink);
+       font-family:"Times New Roman", Times, Georgia, serif; font-size:12pt; line-height:1.5; }
+.sheet { width:210mm; min-height:297mm; padding:23.4mm 23.4mm 32mm 37mm; margin:14px auto;
+         background:#fff; box-shadow:0 2px 10px rgba(0,0,0,.18); }
+.sheet-body { width:149.6mm; }
+p { margin:0 0 12pt 0; }
+p.body, p.cert { text-align:justify; text-indent:36pt; }
+p.cert { margin-bottom:10pt; }
+p.blank { margin:0; line-height:1; font-size:12pt; }
+h1 { font-size:14pt; font-weight:bold; text-align:center; text-transform:uppercase;
+     margin:0 0 10pt 0; line-height:1.5; page-break-before:always; }
+h1.front { margin-bottom:12pt; }
+h2 { font-size:12pt; font-weight:bold; text-align:left; margin:8pt 0 6pt 0; line-height:1.5;
+     page-break-after:avoid; }
+h3 { font-size:12pt; font-weight:bold; text-align:left; margin:6pt 0 4pt 0; line-height:1.5;
+     page-break-after:avoid; }
+p.cover-title { font-size:16pt; font-weight:bold; text-align:center; line-height:1.1; margin:0 0 6pt 0; }
+p.cover-line { font-size:12pt; font-weight:bold; text-align:center; line-height:1.15; margin:0 0 5pt 0; }
+p.caption { font-size:12pt; text-align:center; text-indent:0; line-height:1.1; margin:2pt 0 0 0; }
+p.legend  { font-size:10pt; text-align:center; text-indent:0; line-height:1.1; margin:0 0 8pt 0; }
+p.tablecap{ font-size:12pt; font-weight:bold; text-align:center; text-indent:0; line-height:1.1;
+            margin:6pt 0 4pt 0; }
+p.sig     { font-size:12pt; text-align:center; text-indent:0; line-height:1.2; margin:4pt 0; }
+p.toc     { font-size:10pt; text-indent:0; line-height:1.2; margin:0; }
+p.list    { font-size:9pt; text-indent:0; line-height:1.2; margin:0 0 1pt 0; }
+p.ref     { font-size:10.5pt; text-align:justify; text-indent:-21.6pt; margin:0 0 7pt 21.6pt;
+            line-height:1.15; }
+p.code    { font-family:"Courier New", monospace; font-size:9pt; text-indent:0; line-height:1.1;
+            margin:0; }
+p.figure  { text-align:center; text-indent:0; margin:6pt 0 0 0; page-break-inside:avoid; }
+p.figure img { max-width:100%; height:auto; }
+table.grid { border-collapse:collapse; width:100%; margin:4pt 0 10pt 0; font-size:9pt;
+             line-height:1.15; page-break-inside:auto; }
+table.grid th, table.grid td { border:0.5pt solid var(--rule); padding:2.5pt 4pt; vertical-align:top;
+                               text-align:left; }
+table.grid th { font-weight:bold; text-align:center; background:#f2f2f2; }
+@media print {
+  body { background:#fff; }
+  .sheet { width:auto; min-height:0; margin:0; padding:0; box-shadow:none; }
+  .sheet-body { width:auto; }
+  @page { size:A4; margin:23.4mm 23.4mm 32mm 37mm; }
+  h1, h1.front { page-break-before:always; }
+  .sheet-body > :first-child { page-break-before:avoid; }
+}
+</style>
+</head><body>
+<div class="sheet"><div class="sheet-body">
+<h1 class="front">LIST OF TABLES</h1>
+<table class="grid"><thead><tr><th><b>TABLE</b></th><th><b>ILLUSTRATION</b></th><th><b>PAGE NO.</b></th></tr></thead><tbody><tr><td>1.1</td><td>Stakeholder needs addressed by the system</td><td>2</td></tr><tr><td>1.2</td><td>Objectives and measurable outcomes</td><td>3</td></tr><tr><td>1.3</td><td>Chapter map</td><td>5</td></tr><tr><td>2.1</td><td>Representative hydrological and implementation studies</td><td>7</td></tr><tr><td>2.2</td><td>Machine learning and AHP decision-support comparison</td><td>9</td></tr><tr><td>2.3</td><td>Comparative analysis of recent studies (2021-2025)</td><td>11</td></tr><tr><td>2.4</td><td>Technology rationale</td><td>12</td></tr><tr><td>3.1</td><td>Existing-system limitations and required response</td><td>14</td></tr><tr><td>3.2</td><td>Feasibility dimensions and principal assumptions</td><td>16</td></tr><tr><td>4.1</td><td>User classes</td><td>18</td></tr><tr><td>4.2</td><td>Functional requirements FR-01 to FR-12</td><td>19</td></tr><tr><td>4.3</td><td>Input fields and validation</td><td>20</td></tr><tr><td>4.4</td><td>Core computation requirements</td><td>21</td></tr><tr><td>4.5</td><td>Output requirements</td><td>22</td></tr><tr><td>4.6</td><td>Use case catalogue</td><td>23</td></tr><tr><td>4.7</td><td>External interfaces</td><td>24</td></tr><tr><td>4.8</td><td>Nonfunctional requirements</td><td>25</td></tr><tr><td>5.1</td><td>API endpoints</td><td>28</td></tr><tr><td>5.2</td><td>Principal data contracts</td><td>29</td></tr><tr><td>5.3</td><td>Assessment table summary</td><td>33</td></tr><tr><td>6.1</td><td>Implemented modules</td><td>38</td></tr><tr><td>6.2</td><td>Rainfall provenance fields</td><td>43</td></tr><tr><td>6.3</td><td>Roof coefficients and curve numbers</td><td>44</td></tr></tbody></table>
+<h1 class="front">LIST OF TABLES (CONTINUED)</h1>
+<table class="grid"><thead><tr><th><b>TABLE</b></th><th><b>ILLUSTRATION</b></th><th><b>PAGE NO.</b></th></tr></thead><tbody><tr><td>6.4</td><td>Recharge structure catalogue</td><td>45</td></tr><tr><td>6.5</td><td>Economic parameters</td><td>47</td></tr><tr><td>7.1</td><td>Representative unit test cases</td><td>50</td></tr><tr><td>7.2</td><td>API integration test cases</td><td>51</td></tr><tr><td>7.3</td><td>PDF and shaping test cases</td><td>52</td></tr><tr><td>7.4</td><td>Acceptance criteria</td><td>53</td></tr><tr><td>7.5</td><td>Defect log and resolution</td><td>54</td></tr><tr><td>8.1</td><td>Experimental scenarios</td><td>55</td></tr><tr><td>8.2</td><td>Runoff method comparison</td><td>58</td></tr><tr><td>8.3</td><td>Recommended structures and dimensions</td><td>59</td></tr><tr><td>9.1</td><td>Advantages and user value</td><td>62</td></tr><tr><td>9.2</td><td>Limitations and mitigation</td><td>63</td></tr><tr><td>9.3</td><td>Application contexts</td><td>64</td></tr><tr><td>10.1</td><td>Work allocation</td><td>66</td></tr><tr><td>10.2</td><td>Stage-II completion status</td><td>67</td></tr><tr><td>11.1</td><td>Objective achievement</td><td>68</td></tr><tr><td>11.2</td><td>Critical evaluation</td><td>69</td></tr><tr><td>11.3</td><td>Consolidated limitations</td><td>70</td></tr><tr><td>A.1</td><td>Survey paper metadata</td><td>72</td></tr><tr><td>A.2</td><td>Research gap to implementation mapping</td><td>73</td></tr><tr><td>B.1</td><td>Implementation and publication details</td><td>74</td></tr><tr><td>C.1</td><td>Plagiarism report attachment record</td><td>75</td></tr><tr><td>F.1</td><td>Deployment and submission status</td><td>78</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+</div></div>
+</body></html>

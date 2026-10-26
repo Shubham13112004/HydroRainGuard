@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>8. Results and Discussion</title>
+<style>
+:root { --ink:#111; --rule:#333; }
+* { box-sizing: border-box; }
+body { margin:0; background:#eceff1; color:var(--ink);
+       font-family:"Times New Roman", Times, Georgia, serif; font-size:12pt; line-height:1.5; }
+.sheet { width:210mm; min-height:297mm; padding:23.4mm 23.4mm 32mm 37mm; margin:14px auto;
+         background:#fff; box-shadow:0 2px 10px rgba(0,0,0,.18); }
+.sheet-body { width:149.6mm; }
+p { margin:0 0 12pt 0; }
+p.body, p.cert { text-align:justify; text-indent:36pt; }
+p.cert { margin-bottom:10pt; }
+p.blank { margin:0; line-height:1; font-size:12pt; }
+h1 { font-size:14pt; font-weight:bold; text-align:center; text-transform:uppercase;
+     margin:0 0 10pt 0; line-height:1.5; page-break-before:always; }
+h1.front { margin-bottom:12pt; }
+h2 { font-size:12pt; font-weight:bold; text-align:left; margin:8pt 0 6pt 0; line-height:1.5;
+     page-break-after:avoid; }
+h3 { font-size:12pt; font-weight:bold; text-align:left; margin:6pt 0 4pt 0; line-height:1.5;
+     page-break-after:avoid; }
+p.cover-title { font-size:16pt; font-weight:bold; text-align:center; line-height:1.1; margin:0 0 6pt 0; }
+p.cover-line { font-size:12pt; font-weight:bold; text-align:center; line-height:1.15; margin:0 0 5pt 0; }
+p.caption { font-size:12pt; text-align:center; text-indent:0; line-height:1.1; margin:2pt 0 0 0; }
+p.legend  { font-size:10pt; text-align:center; text-indent:0; line-height:1.1; margin:0 0 8pt 0; }
+p.tablecap{ font-size:12pt; font-weight:bold; text-align:center; text-indent:0; line-height:1.1;
+            margin:6pt 0 4pt 0; }
+p.sig     { font-size:12pt; text-align:center; text-indent:0; line-height:1.2; margin:4pt 0; }
+p.toc     { font-size:10pt; text-indent:0; line-height:1.2; margin:0; }
+p.list    { font-size:9pt; text-indent:0; line-height:1.2; margin:0 0 1pt 0; }
+p.ref     { font-size:10.5pt; text-align:justify; text-indent:-21.6pt; margin:0 0 7pt 21.6pt;
+            line-height:1.15; }
+p.code    { font-family:"Courier New", monospace; font-size:9pt; text-indent:0; line-height:1.1;
+            margin:0; }
+p.figure  { text-align:center; text-indent:0; margin:6pt 0 0 0; page-break-inside:avoid; }
+p.figure img { max-width:100%; height:auto; }
+table.grid { border-collapse:collapse; width:100%; margin:4pt 0 10pt 0; font-size:9pt;
+             line-height:1.15; page-break-inside:auto; }
+table.grid th, table.grid td { border:0.5pt solid var(--rule); padding:2.5pt 4pt; vertical-align:top;
+                               text-align:left; }
+table.grid th { font-weight:bold; text-align:center; background:#f2f2f2; }
+@media print {
+  body { background:#fff; }
+  .sheet { width:auto; min-height:0; margin:0; padding:0; box-shadow:none; }
+  .sheet-body { width:auto; }
+  @page { size:A4; margin:23.4mm 23.4mm 32mm 37mm; }
+  h1, h1.front { page-break-before:always; }
+  .sheet-body > :first-child { page-break-before:avoid; }
+}
+</style>
+</head><body>
+<div class="sheet"><div class="sheet-body">
+<h1 class="chapter">8 RESULTS AND DISCUSSION</h1>
+<h2>8.1 Experimental Setup and Scenarios</h2>
+<p class="body">Five scenarios were executed through the real API using the same software version. The Pune residence uses a 100 m2 RCC roof, four occupants, loamy soil, 50 m2 open space, 15 m groundwater depth and a 700 mm annual override. The Mumbai scenario uses a 500 m2 metal roof with 2300 mm rainfall, sandy soil and 300 m2 open space.</p>
+<p class="body">The green-roof scenario changes only roof material from RCC to GREEN. The Kolhapur scenario uses a 150 m2 RCC roof and Devanagari owner name to exercise PDF shaping. The Delhi scenario uses a 1000 m2 RCC roof, clay soil, 400 m2 open space, deeper groundwater and a higher tariff. These cases test roof material, rainfall, soil, scale and language sensitivity.</p>
+<p class="tablecap">Table 8.1: Experimental scenarios</p>
+<table class="grid"><thead><tr><th><b>Scenario</b></th><th><b>Rain (mm)</b></th><th><b>Roof / material</b></th><th><b>Soil / depth</b></th><th><b>Special purpose</b></th></tr></thead><tbody><tr><td>Pune residence</td><td>700 override</td><td>100 m2 RCC</td><td>Loamy / 15 m</td><td>Reference case</td></tr><tr><td>Mumbai large roof</td><td>2300 override</td><td>500 m2 metal</td><td>Sandy / 20 m</td><td>High rainfall</td></tr><tr><td>Pune green roof</td><td>700 override</td><td>100 m2 green</td><td>Loamy / 15 m</td><td>Material sensitivity</td></tr><tr><td>Kolhapur</td><td>Grid</td><td>150 m2 RCC</td><td>Loamy / 12 m</td><td>Devanagari PDF</td></tr><tr><td>Delhi campus</td><td>780 override</td><td>1000 m2 RCC</td><td>Clay / 30 m</td><td>Scale and low infiltration</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+<h2>8.2 Reference Pune Assessment</h2>
+<p class="body">The reference assessment produced 63.0 KL annual runoff from 700 mm rainfall, a runoff coefficient of 0.90 and a peak rate of 0.0775 m3/hr. After first-flush deduction, harvestable volume is 43.0 KL. Recharge potential is 24.5 KL/year, equivalent to 67.1 L/day, and the feasibility score is 55/100 with a semi-confined aquifer classification.</p>
+<p class="body">The results dashboard presents these values as summary cards and detailed tabs. The overview also displays the rainfall source, climatology period and SCS-CN cross-check. Because the same response object powers the PDF, AR dimensions and charts, there is no divergence between displayed outputs. The assessment ID supports reload and sharing.</p>
+<p class="figure"><img src="images/Fig_8.1_Results_dashboard_overview.png" style="width:327.6pt" alt="Fig_8.1_Results_dashboard_overview.png"></p>
+<p class="caption">Figure 8.1: Results dashboard - overview</p>
+<p class="legend">Legend: summary cards show runoff, recharge, savings and feasibility score.</p>
+<h2>8.3 Monthly Rainfall and Runoff Analysis</h2>
+<p class="body">The CMAP-derived monthly distribution is strongly monsoonal. Rainfall rises from 14.5 mm in May to 157.7 mm in June, peaks at 206.7 mm in July and remains high in August and September. Rational-method runoff follows the same pattern, peaking at 18.6 KL in July. This seasonality is important because storage sizing cannot be based on annual total alone.</p>
+<p class="body">The results dashboard plots rainfall and runoff on dual axes, while the report chart separates them into two panels for black-and-white printing. The monthly series is also used to allocate first-flush loss and compute monthly savings. This keeps the annual summary consistent with the time distribution shown to the user.</p>
+<p class="figure"><img src="images/Fig_8.2_Monthly_rainfall_and_rooftop_runoff.png" style="width:266.2pt" alt="Fig_8.2_Monthly_rainfall_and_rooftop_runoff.png"></p>
+<p class="caption">Figure 8.2: Monthly rainfall and rooftop runoff</p>
+<p class="legend">Legend: upper panel is rainfall in mm; lower panel is runoff in KL.</p>
+<p class="figure"><img src="images/Fig_8.3_Results_dashboard_monthly_analysis.png" style="width:227.1pt" alt="Fig_8.3_Results_dashboard_monthly_analysis.png"></p>
+<p class="caption">Figure 8.3: Results dashboard - monthly analysis</p>
+<p class="legend">Legend: interactive bars use the same monthly response values.</p>
+<h2>8.4 Rational and SCS-CN Cross-Check</h2>
+<p class="body">The SCS-CN method produced 65.3 KL annual runoff for the Pune sample, 3.7 percent above the Rational result of 63.0 KL. Monthly values differ more in low-rainfall months because initial abstraction suppresses SCS-CN runoff until rainfall exceeds the threshold. This behaviour is expected when the method is applied to monthly totals rather than individual storms.</p>
+<p class="body">Reporting both methods is scientifically preferable to presenting a single unexplained number. The user can select the primary method for economics while still seeing the alternative. The current implementation does not calibrate CN values to local roof condition or rainfall intensity, so the cross-check is treated as an uncertainty indicator rather than a validated design standard.</p>
+<p class="figure"><img src="images/Fig_8.4_Rational_method_and_SCS_CN_monthly_cross.png" style="width:384.0pt" alt="Fig_8.4_Rational_method_and_SCS_CN_monthly_cross.png"></p>
+<p class="caption">Figure 8.4: Rational method and SCS-CN monthly cross-check</p>
+<p class="legend">Legend: black bars are Rational method; grey bars are SCS-CN.</p>
+<p class="tablecap">Table 8.2: Runoff method comparison</p>
+<table class="grid"><thead><tr><th><b>Metric</b></th><th><b>Rational</b></th><th><b>SCS-CN</b></th></tr></thead><tbody><tr><td>Annual runoff</td><td>63.0 KL</td><td>65.3 KL</td></tr><tr><td>Difference</td><td>Baseline</td><td>+3.7%</td></tr><tr><td>Low-rainfall months</td><td>Proportional to rainfall</td><td>Zero below initial abstraction</td></tr><tr><td>Primary use</td><td>Default costing basis</td><td>Cross-check and alternative basis</td></tr><tr><td>Calibration</td><td>Roof coefficient</td><td>Curve number and initial abstraction</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+<h2>8.5 Structure Recommendation Results</h2>
+<p class="body">The AHP engine ranked rooftop storage tank first at 93.0/100, followed by soak pit at 72.8, recharge pit at 69.0 and recharge well at 51.8. The percolation tank was excluded because 50 m2 of open space is below the hard physical threshold. Each recommendation includes dimensions, installation notes and normalised criterion utilities.</p>
+<p class="body">The ranking is consistent with the site: a moderate-yield roof and limited open space favour storage and small infiltration structures. The recharge well remains feasible because it bypasses low-permeability surface soil, but its deeper-drilling cost and lower depth utility reduce its score. Returning the full AHP audit trail allows an engineer to challenge or replace the pairwise judgements.</p>
+<p class="figure"><img src="images/Fig_8.5_Structure_suitability_scores.png" style="width:384.0pt" alt="Fig_8.5_Structure_suitability_scores.png"></p>
+<p class="caption">Figure 8.5: Structure suitability scores</p>
+<p class="legend">Legend: bars are weighted sums of five normalised criteria, scaled to 100.</p>
+<p class="tablecap">Table 8.3: Recommended structures and dimensions</p>
+<table class="grid"><thead><tr><th><b>Rank</b></th><th><b>Structure</b></th><th><b>Score</b></th><th><b>Key dimensions</b></th></tr></thead><tbody><tr><td>1</td><td>Rooftop Storage Tank</td><td>93.0</td><td>16.2 m3; diameter 3.21 m; depth 2 m</td></tr><tr><td>2</td><td>Soak Pit / French Drain</td><td>72.8</td><td>Diameter 1 m; depth 1.5 m</td></tr><tr><td>3</td><td>Recharge Pit</td><td>69.0</td><td>1.5 m x 1.5 m x 2 m; layered filter</td></tr><tr><td>4</td><td>Recharge Well</td><td>51.8</td><td>250 mm diameter; depth 20 m</td></tr><tr><td>-</td><td>Percolation Tank</td><td>Filtered</td><td>Requires at least 100 m2 open space</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+<h2>8.6 Cost-Benefit and Sensitivity</h2>
+<p class="body">For the Pune reference case, estimated installation cost is Rs. 53,000, annual savings Rs. 1,505, recharge value Rs. 429, maintenance Rs. 1,060 and net annual benefit Rs. 874. Payback is 60.6 years and ten-year ROI is -83.5 percent. The dashboard displays a warning that the system does not repay its capital cost within ten years at the selected tariff.</p>
+<p class="body">This result is not a contradiction of rainwater harvesting; it shows that direct monetary savings at Rs. 35/KL are small for a 100 m2 roof. The model is sensitive to tariff, roof area and rainfall. Users can raise the tariff to represent tanker water or avoided pumping costs, while the report preserves the chosen value. Environmental benefits such as flood reduction are reported but not fully monetised.</p>
+<p class="figure"><img src="images/Fig_8.6_Results_dashboard_cost_benefit_tab.png" style="width:227.1pt" alt="Fig_8.6_Results_dashboard_cost_benefit_tab.png"></p>
+<p class="caption">Figure 8.6: Results dashboard - cost-benefit tab</p>
+<p class="legend">Legend: warning explains the ten-year economic viability criterion.</p>
+<p class="figure"><img src="images/Fig_8.7_Monthly_cost_savings.png" style="width:266.2pt" alt="Fig_8.7_Monthly_cost_savings.png"></p>
+<p class="caption">Figure 8.7: Monthly cost savings</p>
+<p class="legend">Legend: monsoon months dominate the annual savings series.</p>
+<h2>8.7 Scenario Comparison and Discussion</h2>
+<p class="body">The five scenarios demonstrate that roof area, rainfall and roof material dominate runoff volume. The green roof produces far less harvestable water than RCC at identical rainfall. Mumbai&#x27;s larger roof and higher rainfall produce much greater runoff and a shorter payback, while the Delhi campus illustrates how clay soil and deep groundwater alter recharge suitability even with a large catchment.</p>
+<p class="body">The results also reveal the limitation of coarse rainfall grids. A local override is essential in orographic regions such as the Western Ghats. The system therefore exposes dataset, grid resolution and override status rather than presenting rainfall as exact. Overall, the objectives of integrated computation, transparent ranking, visualisation and reporting are met, but field validation and high-resolution hydrogeological data remain necessary before construction decisions.</p>
+<p class="figure"><img src="images/Fig_8.8_Scenario_comparison_rainfall_and_runoff.png" style="width:266.2pt" alt="Fig_8.8_Scenario_comparison_rainfall_and_runoff.png"></p>
+<p class="caption">Figure 8.8: Scenario comparison - rainfall and runoff</p>
+<p class="legend">Legend: each pair shows annual rainfall and computed runoff.</p>
+<p class="figure"><img src="images/Fig_8.9_Scenario_comparison_cost_and_payback.png" style="width:266.2pt" alt="Fig_8.9_Scenario_comparison_cost_and_payback.png"></p>
+<p class="caption">Figure 8.9: Scenario comparison - cost and payback</p>
+<p class="legend">Legend: payback is highly sensitive to tariff, roof area and rainfall.</p>
+</div></div>
+</body></html>

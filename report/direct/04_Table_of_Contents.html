@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Table of Contents</title>
+<style>
+:root { --ink:#111; --rule:#333; }
+* { box-sizing: border-box; }
+body { margin:0; background:#eceff1; color:var(--ink);
+       font-family:"Times New Roman", Times, Georgia, serif; font-size:12pt; line-height:1.5; }
+.sheet { width:210mm; min-height:297mm; padding:23.4mm 23.4mm 32mm 37mm; margin:14px auto;
+         background:#fff; box-shadow:0 2px 10px rgba(0,0,0,.18); }
+.sheet-body { width:149.6mm; }
+p { margin:0 0 12pt 0; }
+p.body, p.cert { text-align:justify; text-indent:36pt; }
+p.cert { margin-bottom:10pt; }
+p.blank { margin:0; line-height:1; font-size:12pt; }
+h1 { font-size:14pt; font-weight:bold; text-align:center; text-transform:uppercase;
+     margin:0 0 10pt 0; line-height:1.5; page-break-before:always; }
+h1.front { margin-bottom:12pt; }
+h2 { font-size:12pt; font-weight:bold; text-align:left; margin:8pt 0 6pt 0; line-height:1.5;
+     page-break-after:avoid; }
+h3 { font-size:12pt; font-weight:bold; text-align:left; margin:6pt 0 4pt 0; line-height:1.5;
+     page-break-after:avoid; }
+p.cover-title { font-size:16pt; font-weight:bold; text-align:center; line-height:1.1; margin:0 0 6pt 0; }
+p.cover-line { font-size:12pt; font-weight:bold; text-align:center; line-height:1.15; margin:0 0 5pt 0; }
+p.caption { font-size:12pt; text-align:center; text-indent:0; line-height:1.1; margin:2pt 0 0 0; }
+p.legend  { font-size:10pt; text-align:center; text-indent:0; line-height:1.1; margin:0 0 8pt 0; }
+p.tablecap{ font-size:12pt; font-weight:bold; text-align:center; text-indent:0; line-height:1.1;
+            margin:6pt 0 4pt 0; }
+p.sig     { font-size:12pt; text-align:center; text-indent:0; line-height:1.2; margin:4pt 0; }
+p.toc     { font-size:10pt; text-indent:0; line-height:1.2; margin:0; }
+p.list    { font-size:9pt; text-indent:0; line-height:1.2; margin:0 0 1pt 0; }
+p.ref     { font-size:10.5pt; text-align:justify; text-indent:-21.6pt; margin:0 0 7pt 21.6pt;
+            line-height:1.15; }
+p.code    { font-family:"Courier New", monospace; font-size:9pt; text-indent:0; line-height:1.1;
+            margin:0; }
+p.figure  { text-align:center; text-indent:0; margin:6pt 0 0 0; page-break-inside:avoid; }
+p.figure img { max-width:100%; height:auto; }
+table.grid { border-collapse:collapse; width:100%; margin:4pt 0 10pt 0; font-size:9pt;
+             line-height:1.15; page-break-inside:auto; }
+table.grid th, table.grid td { border:0.5pt solid var(--rule); padding:2.5pt 4pt; vertical-align:top;
+                               text-align:left; }
+table.grid th { font-weight:bold; text-align:center; background:#f2f2f2; }
+@media print {
+  body { background:#fff; }
+  .sheet { width:auto; min-height:0; margin:0; padding:0; box-shadow:none; }
+  .sheet-body { width:auto; }
+  @page { size:A4; margin:23.4mm 23.4mm 32mm 37mm; }
+  h1, h1.front { page-break-before:always; }
+  .sheet-body > :first-child { page-break-before:avoid; }
+}
+</style>
+</head><body>
+<div class="sheet"><div class="sheet-body">
+<h1 class="front">TABLE OF CONTENTS</h1>
+<table class="grid"><thead><tr><th><b>SR. NO.</b></th><th><b>TITLE OF CHAPTER / SECTION</b></th><th><b>PAGE NO.</b></th></tr></thead><tbody><tr><td></td><td>CERTIFICATE</td><td>i</td></tr><tr><td></td><td>ACKNOWLEDGEMENT</td><td>ii</td></tr><tr><td></td><td>ABSTRACT</td><td>iii</td></tr><tr><td></td><td>TABLE OF CONTENTS</td><td>iv</td></tr><tr><td></td><td>LIST OF ABBREVIATIONS</td><td>vi</td></tr><tr><td></td><td>NOMENCLATURE</td><td>vii</td></tr><tr><td></td><td>LIST OF FIGURES</td><td>viii</td></tr><tr><td></td><td>LIST OF TABLES</td><td>x</td></tr><tr><td>1</td><td>1 INTRODUCTION</td><td>1</td></tr><tr><td></td><td>    1.1 Water Security and Urban Context</td><td>1</td></tr><tr><td></td><td>    1.2 Motivation and Stakeholder Need</td><td>2</td></tr><tr><td></td><td>    1.3 Aim and Objectives</td><td>3</td></tr><tr><td>2</td><td>2 LITERATURE SURVEY</td><td>6</td></tr><tr><td></td><td>    2.1 Systematic Review Methodology</td><td>6</td></tr><tr><td></td><td>    2.2 Hydrological Modelling Studies</td><td>7</td></tr><tr><td></td><td>    2.3 GIS, Remote Sensing and Rainfall Data</td><td>8</td></tr><tr><td>3</td><td>3 PROBLEM STATEMENT</td><td>13</td></tr><tr><td></td><td>    3.1 Detailed Problem Definition</td><td>13</td></tr><tr><td></td><td>    3.2 Limitations of the Existing Manual System</td><td>14</td></tr><tr><td></td><td>    3.3 Proposed Solution</td><td>15</td></tr><tr><td>4</td><td>4 SOFTWARE REQUIREMENTS SPECIFICATION</td><td>17</td></tr><tr><td></td><td>    4.1 Introduction and Project Scope</td><td>17</td></tr><tr><td></td><td>    4.2 User Classes and Characteristics</td><td>18</td></tr><tr><td></td><td>    4.3 Functional Requirements Overview</td><td>19</td></tr><tr><td>5</td><td>5 SYSTEM DESIGN</td><td>26</td></tr><tr><td></td><td>    5.1 System Architecture</td><td>26</td></tr><tr><td></td><td>    5.2 Frontend Design</td><td>27</td></tr><tr><td></td><td>    5.3 Backend API Design</td><td>28</td></tr><tr><td>6</td><td>6 PROJECT IMPLEMENTATION</td><td>38</td></tr><tr><td></td><td>    6.1 Implementation Overview</td><td>38</td></tr><tr><td></td><td>    6.2 Landing and About Pages</td><td>39</td></tr><tr><td></td><td>    6.3 Assessment Wizard - Basic Information</td><td>40</td></tr><tr><td>7</td><td>7 SOFTWARE TESTING</td><td>49</td></tr></tbody></table>
+<h1 class="front">TABLE OF CONTENTS (CONTINUED)</h1>
+<table class="grid"><thead><tr><th><b>SR. NO.</b></th><th><b>TITLE OF CHAPTER / SECTION</b></th><th><b>PAGE NO.</b></th></tr></thead><tbody><tr><td></td><td>    7.1 Testing Strategy and Experimental Setup</td><td>49</td></tr><tr><td></td><td>    7.2 Unit Test Cases and Results</td><td>50</td></tr><tr><td></td><td>    7.3 API Integration Test Cases</td><td>51</td></tr><tr><td>8</td><td>8 RESULTS AND DISCUSSION</td><td>55</td></tr><tr><td></td><td>    8.1 Experimental Setup and Scenarios</td><td>55</td></tr><tr><td></td><td>    8.2 Reference Pune Assessment</td><td>56</td></tr><tr><td></td><td>    8.3 Monthly Rainfall and Runoff Analysis</td><td>57</td></tr><tr><td>9</td><td>9 OTHER SPECIFICATIONS</td><td>62</td></tr><tr><td></td><td>    9.1 Advantages</td><td>62</td></tr><tr><td></td><td>    9.2 Limitations</td><td>63</td></tr><tr><td></td><td>    9.3 Applications</td><td>64</td></tr><tr><td>10</td><td>10 PROJECT PLAN</td><td>65</td></tr><tr><td></td><td>    10.1 Phases and Timeline</td><td>65</td></tr><tr><td></td><td>    10.2 Work Allocation</td><td>66</td></tr><tr><td></td><td>    10.3 Current Stage-II Status</td><td>67</td></tr><tr><td>11</td><td>11 CONCLUSIONS AND FUTURE WORK</td><td>68</td></tr><tr><td></td><td>    11.1 Conclusion</td><td>68</td></tr><tr><td></td><td>    11.2 Critical Evaluation</td><td>69</td></tr><tr><td></td><td>    11.3 Limitations</td><td>70</td></tr><tr><td>A</td><td>APPENDIX A</td><td>72</td></tr><tr><td></td><td>    A.1 Survey Paper Details</td><td>72</td></tr><tr><td>B</td><td>APPENDIX B</td><td>74</td></tr><tr><td></td><td>    B.1 Implementation Paper and Project Details</td><td>74</td></tr><tr><td>C</td><td>APPENDIX C</td><td>75</td></tr><tr><td></td><td>    C.1 Plagiarism Check Report</td><td>75</td></tr><tr><td>D</td><td>APPENDIX D</td><td>76</td></tr><tr><td></td><td>    D.1 Sample Generated Assessment Report</td><td>76</td></tr><tr><td>E</td><td>APPENDIX E</td><td>77</td></tr><tr><td></td><td>    E.1 Detailed Test and Build Evidence</td><td>77</td></tr><tr><td>F</td><td>APPENDIX F</td><td>78</td></tr><tr><td></td><td>    F.1 Use Case Details and Deployment Status</td><td>78</td></tr><tr><td>12</td><td>12 REFERENCES</td><td>79</td></tr><tr><td></td><td>    12.3 Bibliography</td><td>81</td></tr></tbody></table>
+</div></div>
+</body></html>

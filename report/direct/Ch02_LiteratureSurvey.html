@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2. Literature Survey</title>
+<style>
+:root { --ink:#111; --rule:#333; }
+* { box-sizing: border-box; }
+body { margin:0; background:#eceff1; color:var(--ink);
+       font-family:"Times New Roman", Times, Georgia, serif; font-size:12pt; line-height:1.5; }
+.sheet { width:210mm; min-height:297mm; padding:23.4mm 23.4mm 32mm 37mm; margin:14px auto;
+         background:#fff; box-shadow:0 2px 10px rgba(0,0,0,.18); }
+.sheet-body { width:149.6mm; }
+p { margin:0 0 12pt 0; }
+p.body, p.cert { text-align:justify; text-indent:36pt; }
+p.cert { margin-bottom:10pt; }
+p.blank { margin:0; line-height:1; font-size:12pt; }
+h1 { font-size:14pt; font-weight:bold; text-align:center; text-transform:uppercase;
+     margin:0 0 10pt 0; line-height:1.5; page-break-before:always; }
+h1.front { margin-bottom:12pt; }
+h2 { font-size:12pt; font-weight:bold; text-align:left; margin:8pt 0 6pt 0; line-height:1.5;
+     page-break-after:avoid; }
+h3 { font-size:12pt; font-weight:bold; text-align:left; margin:6pt 0 4pt 0; line-height:1.5;
+     page-break-after:avoid; }
+p.cover-title { font-size:16pt; font-weight:bold; text-align:center; line-height:1.1; margin:0 0 6pt 0; }
+p.cover-line { font-size:12pt; font-weight:bold; text-align:center; line-height:1.15; margin:0 0 5pt 0; }
+p.caption { font-size:12pt; text-align:center; text-indent:0; line-height:1.1; margin:2pt 0 0 0; }
+p.legend  { font-size:10pt; text-align:center; text-indent:0; line-height:1.1; margin:0 0 8pt 0; }
+p.tablecap{ font-size:12pt; font-weight:bold; text-align:center; text-indent:0; line-height:1.1;
+            margin:6pt 0 4pt 0; }
+p.sig     { font-size:12pt; text-align:center; text-indent:0; line-height:1.2; margin:4pt 0; }
+p.toc     { font-size:10pt; text-indent:0; line-height:1.2; margin:0; }
+p.list    { font-size:9pt; text-indent:0; line-height:1.2; margin:0 0 1pt 0; }
+p.ref     { font-size:10.5pt; text-align:justify; text-indent:-21.6pt; margin:0 0 7pt 21.6pt;
+            line-height:1.15; }
+p.code    { font-family:"Courier New", monospace; font-size:9pt; text-indent:0; line-height:1.1;
+            margin:0; }
+p.figure  { text-align:center; text-indent:0; margin:6pt 0 0 0; page-break-inside:avoid; }
+p.figure img { max-width:100%; height:auto; }
+table.grid { border-collapse:collapse; width:100%; margin:4pt 0 10pt 0; font-size:9pt;
+             line-height:1.15; page-break-inside:auto; }
+table.grid th, table.grid td { border:0.5pt solid var(--rule); padding:2.5pt 4pt; vertical-align:top;
+                               text-align:left; }
+table.grid th { font-weight:bold; text-align:center; background:#f2f2f2; }
+@media print {
+  body { background:#fff; }
+  .sheet { width:auto; min-height:0; margin:0; padding:0; box-shadow:none; }
+  .sheet-body { width:auto; }
+  @page { size:A4; margin:23.4mm 23.4mm 32mm 37mm; }
+  h1, h1.front { page-break-before:always; }
+  .sheet-body > :first-child { page-break-before:avoid; }
+}
+</style>
+</head><body>
+<div class="sheet"><div class="sheet-body">
+<h1 class="chapter">2 LITERATURE SURVEY</h1>
+<h2>2.1 Systematic Review Methodology</h2>
+<p class="body">The review considered studies published from 2021 to 2025 and indexed through IEEE Xplore, Springer, ScienceDirect and Google Scholar. Search terms combined rooftop rainwater harvesting, artificial recharge, hydrological modelling, GIS, AI, AR and groundwater recharge. Duplicate records, non-English publications and studies outside the rooftop/artificial-recharge context were excluded. The objective was qualitative synthesis rather than meta-analysis [11].</p>
+<p class="body">Each selected study was classified by technology, data source, major contribution and limitation. This made it possible to distinguish hydrological accuracy, spatial planning capability, intelligent recommendation and interactive communication. The review directly informed the functional requirements: rainfall provenance, dual runoff methods, auditable ranking, automated reporting and accessible visualisation.</p>
+<p class="figure"><img src="images/Fig_2.1_Systematic_literature_review_funnel.png" style="width:384.0pt" alt="Fig_2.1_Systematic_literature_review_funnel.png"></p>
+<p class="caption">Figure 2.1: Systematic literature review funnel</p>
+<p class="legend">Legend: stages show identification, screening, classification and synthesis.</p>
+<h2>2.2 Hydrological Modelling Studies</h2>
+<p class="body">Manual rooftop-harvesting design remains common in site-specific studies. Mane and Patil demonstrated a village-level design based on rainfall records, roof area and demand, but the approach depends on expert calculation and does not provide software automation [4]. Lu et al. connected rooftop harvesting to hydrological connectivity and flood mitigation, showing that runoff reduction has value beyond household supply [3].</p>
+<p class="body">Implementation-oriented work such as the Nashik apartment study estimated annual runoff and borewell recharge, yet it evaluated a single structure and a single site [12]. The literature therefore supports the volumetric method as a baseline but reveals a need for transparent coefficients, first-flush assumptions, monthly distributions and an independent cross-check method.</p>
+<p class="tablecap">Table 2.1: Representative hydrological and implementation studies</p>
+<table class="grid"><thead><tr><th><b>Study</b></th><th><b>Contribution</b></th><th><b>Limitation</b></th></tr></thead><tbody><tr><td>Mane and Patil (2021)</td><td>Site-specific manual RTRWH design</td><td>Manual and static</td></tr><tr><td>Lu et al. (2025)</td><td>Runoff connectivity and flood mitigation</td><td>No integrated decision support</td></tr><tr><td>Deshmukh et al. (2022)</td><td>Recent technology review</td><td>Limited automation</td></tr><tr><td>IRJMETS (2025)</td><td>Borewell recharge case study</td><td>Single site and structure</td></tr><tr><td>CGWB (2007)</td><td>Artificial recharge design guidance</td><td>Manual interpretation required</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+<h2>2.3 GIS, Remote Sensing and Rainfall Data</h2>
+<p class="body">GIS-based studies identify suitable rooftops and recharge zones using spatial layers and remote sensing. Preeti and Rahman showed that geospatial methods improve site selection, while Hari and Kasa assessed rooftop harvesting potential at municipal scale [7][13]. However, these approaches often stop at suitability mapping and do not generate structure dimensions, costs or downloadable engineering reports.</p>
+<p class="body">Rainfall data quality is equally important. IMD gridded products provide local observations [14], whereas the NOAA PSL CMAP merged gauge-satellite climatology provides global coverage and a documented monthly distribution [15]. The implementation uses a 2.5-degree CMAP raster with bilinear interpolation and allows a local annual total to override the coarse grid estimate, preserving seasonality while correcting local magnitude.</p>
+<p class="figure"><img src="images/Fig_2.2_GIS_centric_rainfall_data_flow.png" style="width:384.0pt" alt="Fig_2.2_GIS_centric_rainfall_data_flow.png"></p>
+<p class="caption">Figure 2.2: GIS-centric rainfall data flow</p>
+<p class="legend">Legend: coordinate input, raster sampling and local override are chained with provenance.</p>
+<h2>2.4 AI and Multi-Criteria Decision Support</h2>
+<p class="body">AI in the water domain is often associated with forecasting, anomaly detection and optimisation [6]. For structure selection, however, a trained model would require labelled site data that are not available in this project. A deterministic multi-criteria method is more defensible because weights and utilities can be inspected by a civil engineer. Saaty&#x27;s AHP provides a published pairwise-comparison procedure and consistency test [16].</p>
+<p class="body">The implementation therefore describes its recommendation layer as intelligent decision support rather than machine learning. Five criteria are normalised to 0-1 utilities, multiplied by AHP weights and summed. Hard physical constraints are applied before scoring, and the pairwise matrix, lambda-max, CI and CR are returned in the API response and PDF report.</p>
+<p class="tablecap">Table 2.2: Machine learning and AHP decision-support comparison</p>
+<table class="grid"><thead><tr><th><b>Aspect</b></th><th><b>Supervised ML</b></th><th><b>Implemented AHP</b></th></tr></thead><tbody><tr><td>Data requirement</td><td>Labelled historical cases</td><td>Expert pairwise judgements</td></tr><tr><td>Transparency</td><td>Depends on model</td><td>Weights and utilities exposed</td></tr><tr><td>Validation</td><td>Hold-out accuracy</td><td>Consistency ratio and unit tests</td></tr><tr><td>Cold-start behaviour</td><td>Poor without data</td><td>Works for first site</td></tr><tr><td>Academic suitability</td><td>Requires dataset</td><td>Auditable and reproducible</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+<h2>2.5 Augmented Reality and Visualisation</h2>
+<p class="body">Subsurface recharge structures are difficult for non-specialists to interpret from two-dimensional drawings. Hansen et al. demonstrated that AR can improve understanding of underground utilities by placing spatial information in the user&#x27;s physical environment [17]. Similar principles apply to recharge pits, borewells and storage tanks, where depth and scale influence feasibility.</p>
+<p class="body">The project adopts react-three-fiber for a desktop three-dimensional scene and @react-three/xr for WebXR placement on supported devices [18][19]. Geometry is derived from the assessment dimensions rather than a static model. A cutaway view and labels expose underground components; immersive AR remains device-dependent and is treated as an enhancement rather than a requirement for the core calculation.</p>
+<p class="figure"><img src="images/Fig_2.3_AR_assisted_visualisation_workflow.png" style="width:384.0pt" alt="Fig_2.3_AR_assisted_visualisation_workflow.png"></p>
+<p class="caption">Figure 2.3: AR-assisted visualisation workflow</p>
+<p class="legend">Legend: assessment data drives geometry, which is rendered in desktop or immersive mode.</p>
+<h2>2.6 Comparative Analysis of Existing Approaches</h2>
+<p class="body">The comparative review shows that recent work advances individual components but rarely combines them. GIS studies provide spatial potential; hydrological studies improve runoff estimates; AI work improves prediction and decision support; AR work improves visualisation. Yet a user still needs separate tools to obtain rainfall, runoff, recharge, structure dimensions, cost and a shareable report.</p>
+<p class="body">Table 2.1 summarises seven representative studies from 2021 to 2025. The last column identifies the gap that motivated HYDRO RAIN GUARD. This comparison is also reproduced in Appendix A as part of the accepted survey paper details.</p>
+<p class="tablecap">Table 2.3: Comparative analysis of recent studies (2021-2025)</p>
+<table class="grid"><thead><tr><th><b>Ref.</b></th><th><b>Study / source</b></th><th><b>Technology</b></th><th><b>Major contribution</b></th><th><b>Identified limitation</b></th></tr></thead><tbody><tr><td>[13]</td><td>Hari and Kasa (2025)</td><td>GIS rooftop mapping</td><td>Large-scale urban potential</td><td>No recharge structure design</td></tr><tr><td>[12]</td><td>Nashik apartments (2025)</td><td>Borewell recharge</td><td>Annual runoff and cost</td><td>One site, one approach</td></tr><tr><td>[3]</td><td>Lu et al. (2025)</td><td>Hydrological connectivity</td><td>Flood mitigation assessment</td><td>No GIS/AI/AR integration</td></tr><tr><td>[14]</td><td>IMD gridded data (2024)</td><td>Rainfall datasets</td><td>Localised rainfall</td><td>No feasibility workflow</td></tr><tr><td>[5]</td><td>CEEW (2023)</td><td>Recharge structures</td><td>Groundwater recharge</td><td>Region-dependent design</td></tr><tr><td>[11]</td><td>Deshmukh et al. (2022)</td><td>GIS / remote sensing</td><td>Quality and site review</td><td>Limited automation</td></tr><tr><td>[4]</td><td>Mane and Patil (2021)</td><td>Manual design</td><td>Practical village case</td><td>Manual calculations only</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+<h2>2.7 Research Gaps and Technology Rationale</h2>
+<p class="body">Six gaps emerge from the review: limited real-time environmental integration; manual runoff computation; weak intelligent recommendation; limited interactive visualisation; lack of a unified assessment framework; and static reporting. The proposed modules map directly to these gaps. The technology stack was chosen to support separation of concerns, type-safe contracts, reproducible calculations and accessible visual output.</p>
+<p class="body">FastAPI and Pydantic provide validated asynchronous APIs [9][20]. Next.js, React, Tailwind and Recharts provide a responsive frontend with interactive graphics [10][21][22][23]. ReportLab, HarfBuzz and Noto fonts support multilingual PDF output [24][25][26]. pytest and HTTPX provide deterministic backend verification [27][28].</p>
+<p class="figure"><img src="images/Fig_2.4_Research_gaps_mapped_to_implementation_mod.png" style="width:384.0pt" alt="Fig_2.4_Research_gaps_mapped_to_implementation_mod.png"></p>
+<p class="caption">Figure 2.4: Research gaps mapped to implementation modules</p>
+<p class="legend">Legend: upper boxes are gaps; lower boxes are the corresponding implemented modules.</p>
+<p class="tablecap">Table 2.4: Technology rationale</p>
+<table class="grid"><thead><tr><th><b>Layer</b></th><th><b>Selected technology</b></th><th><b>Reason</b></th></tr></thead><tbody><tr><td>Backend</td><td>FastAPI + Pydantic</td><td>Async routes and strict validation</td></tr><tr><td>Frontend</td><td>Next.js 14 + React 18</td><td>App Router and static pages</td></tr><tr><td>Charts</td><td>Recharts</td><td>Responsive dashboard graphics</td></tr><tr><td>Database</td><td>SQLAlchemy async</td><td>SQLite locally, PostgreSQL in production</td></tr><tr><td>PDF</td><td>ReportLab + HarfBuzz</td><td>Tables and Indic text shaping</td></tr><tr><td>Testing</td><td>pytest</td><td>Unit, API and rendering tests</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+</div></div>
+</body></html>
