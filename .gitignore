@@ -41,3 +41,5 @@ Thumbs.db
 report/direct/images/
 report/direct/sample_outputs/
 report/direct/*.zip
+report/paper/preview/
+report/paper/__pycache__/
