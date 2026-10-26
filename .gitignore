@@ -43,3 +43,4 @@ report/direct/sample_outputs/
 report/direct/*.zip
 report/paper/preview/
 report/paper/__pycache__/
+report/paper/figures_extra/

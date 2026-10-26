@@ -19,6 +19,7 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[2]
 RAW = ROOT / "report" / "figures_raw"
 OUT = ROOT / "report" / "paper" / "figures"
+EXTRA = ROOT / "report" / "paper" / "figures_extra"   # not used in the paper
 DATA = json.loads((ROOT / "report" / "data" / "scenarios.json").read_text())
 S = DATA["scenarios"]
 
@@ -80,7 +81,6 @@ def screenshots():
     for src, dst in [
         ("assess_step2.png", "fig3_wizard.png"),
         ("results_overview.png", "fig4_results.png"),
-        ("ar_view.png", "fig7_xr.png"),
         ("results_costbenefit.png", "fig8_cost.png"),
     ]:
         im = Image.open(RAW / src).convert("RGB")
@@ -235,7 +235,11 @@ def ahp():
         ax2.text(b.get_x() + b.get_width() / 2, v + 2.5, f"{v:.0f}", ha="center", fontsize=5.4,
                  fontweight="bold", color=SLATE)
     ax2.set_title("(b) Ranked structures", loc="left", pad=3)
-    save(fig, "fig6_ahp.png")
+    EXTRA.mkdir(parents=True, exist_ok=True)
+    fig.savefig(EXTRA / "fig6_ahp_weights.png", bbox_inches="tight", pad_inches=0.02,
+                facecolor=PAPER)
+    plt.close(fig)
+    print("wrote figures_extra/fig6_ahp_weights.png")
 
 
 # --------------------------------------------------------------------------- #
