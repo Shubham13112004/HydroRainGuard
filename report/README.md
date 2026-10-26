@@ -70,14 +70,32 @@ figures with captions and legends, tables and references) is available at:
 Notes for the Google Docs copy:
 
 - A4 page size and template margins (top 23.4 mm, left 37 mm, bottom 32 mm,
-  right 23.4 mm) are applied to the document style.
-- Chapter and appendix titles use Heading 1 with a page break before, section
-  headings use Heading 2, so the automatic outline/summary works.
-- All 53 figures are inserted with their captions and legends.
-- Add the footer with `Insert > Headers & footers > Footer` and then
-  `Insert > Page numbers > Footer` to get the
-  "RSCOE, Department of Information Technology 2026-27" line with page numbers.
-  Page numbers in the table of contents are the print estimates from the DOCX
+  right 23.4 mm) are applied to the document style; body text is Times New
+  Roman 12 pt, justified, 1.5 line spacing with a 36 pt first-line indent.
+- The cover page, certificate, acknowledgement, abstract, TOC, lists,
+  11 chapters, 6 appendices and references are all present, in the template
+  order, with centred 14 pt bold capitals for chapter/appendix titles and
+  page breaks before each one.
+- All 53 figures are inserted with their 12 pt caption and 10 pt legend.
+- Table content is carried as pipe-delimited rows at 9 pt (see the limitation
+  below); the DOCX has the same tables as true Word tables.
+- The footer "RSCOE, Department of Information Technology 2026-27" is already
+  in place, centred, 10 pt Times New Roman. Live page-number fields cannot be
+  created through the Docs connector, so add them from the UI with
+  `Insert > Page numbers > Bottom of page`. Google Docs numbers a document as
+  a single sequence, so the Roman (i-xi) to Arabic (1-81) switch used in the
+  DOCX is not reproducible there; use the DOCX/PDF for the numbered print copy.
+- TOC and list-of-figures page numbers are the print estimates from the DOCX
   build; update them after the final pagination.
-- `google_docs_export.py` regenerates the plain-text stream used to build the
-  Google Docs copy.
+
+Known Google Docs limitations (both come from the connector, not the report):
+
+- Tables cannot be inserted in bulk cheaply, so each table block is a set of
+  `A | B | C` paragraphs. To convert one: select its rows, then
+  `Format > Convert > Text to table`, separator "Other" = `|`.
+- For a print-exact Google Doc with native tables and live page numbers, upload
+  `report/HydroRainGuard_BE_Project_Stage_II_Report.docx` to Drive and open it
+  with Google Docs (Drive converts it, keeping tables, footers and figures).
+
+`google_docs_export.py` regenerates the plain-text stream used to build the
+Google Docs copy.
