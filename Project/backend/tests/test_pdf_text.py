@@ -7,9 +7,11 @@ reordered in front of its consonant, and the reph must be emitted as a
 zero-advance mark. A renderer that only walks codepoints would fail
 every one of these.
 """
-import io
+import os
+import sys
 
 import pytest
+from fastapi.testclient import TestClient
 
 from services.text_shaper import (
     DEVA_REGULAR, LATIN_REGULAR, HAS_FONTS,
@@ -19,6 +21,41 @@ from services.text_shaper import (
 )
 from services import pdf_report
 from models.schemas import AssessmentRequest
+
+
+# ------------------------------------------------------------ test app wiring
+
+BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def _purge_backend_modules():
+    """Allow each app fixture to build its own SQLAlchemy engine."""
+    stale = [
+        name
+        for name, mod in list(sys.modules.items())
+        if getattr(mod, "__file__", None)
+        and os.path.abspath(mod.__file__).startswith(BACKEND_DIR)
+    ]
+    for name in stale:
+        sys.modules.pop(name, None)
+
+
+@pytest.fixture(scope="module")
+def client(tmp_path_factory):
+    """TestClient with a throwaway database and normal startup lifecycle."""
+    db_file = tmp_path_factory.mktemp("pdf_db") / "test.db"
+
+    with pytest.MonkeyPatch.context() as mp:
+        mp.setenv("DATABASE_URL", f"sqlite+aiosqlite:///{db_file}")
+        mp.setenv("ENVIRONMENT", "development")
+        _purge_backend_modules()
+
+        import main
+
+        with TestClient(main.app) as c:
+            yield c
+
+        _purge_backend_modules()
 
 
 # ------------------------------------------------------------------ shaping
@@ -112,12 +149,7 @@ def test_shaped_paragraph_reports_zero_for_empty():
 # ---------------------------------------------------------------- report
 
 @pytest.fixture(scope="module")
-def sample_pdf():
-    from fastapi.testclient import TestClient
-    import importlib
-
-    main = importlib.import_module("main")
-    client = TestClient(main.app)
+def sample_pdf(client):
     payload = dict(
         name="श्रीमती सुनीता पाटील",
         location="कोल्हापूर, महाराष्ट्र",
@@ -152,13 +184,8 @@ def test_report_embeds_only_the_latin_face(sample_pdf):
     assert b"NotoSansDevanagari" not in sample_pdf
 
 
-def test_devanagari_adds_vector_outline_data():
+def test_devanagari_adds_vector_outline_data(client):
     """Same inputs, Devanagari name -> a bigger file (glyph outlines)."""
-    from fastapi.testclient import TestClient
-    import importlib
-
-    main = importlib.import_module("main")
-    client = TestClient(main.app)
     base = dict(
         latitude=16.7050, longitude=74.2433, num_people=6,
         roof_type="RCC", roof_area=150.0, open_space_area=80.0,
@@ -184,13 +211,8 @@ def raw_page_count(data: bytes) -> int:
     return data.count(b"/Type /Page\n") or data.count(b"/Type/Page") or 1
 
 
-def test_report_is_deterministic_in_size():
+def test_report_is_deterministic_in_size(client):
     """Two reports for the same inputs should be within 5% of each other."""
-    from fastapi.testclient import TestClient
-    import importlib
-
-    main = importlib.import_module("main")
-    client = TestClient(main.app)
     payload = dict(
         name="Test", location="Pune", latitude=18.52, longitude=73.85,
         num_people=4, roof_type="RCC", roof_area=100.0,

@@ -1,0 +1,2055 @@
+{
+  "generated_with": "Project backend TestClient",
+  "scenarios": {
+    "pune_home": {
+      "label": "Pune residence",
+      "input": {
+        "name": "Shubham Desai",
+        "location": "Pune, Maharashtra",
+        "location_name": "Pune, Maharashtra",
+        "latitude": 18.5204,
+        "longitude": 73.8567,
+        "num_people": 4,
+        "roof_type": "RCC",
+        "roof_area": 100.0,
+        "open_space_area": 50.0,
+        "soil_type": "LOAMY",
+        "groundwater_depth": 15.0,
+        "water_tariff_per_kl": 35.0,
+        "annual_rainfall_override": 700.0,
+        "runoff_method": "rational"
+      },
+      "response": {
+        "assessment_id": "84AD5926",
+        "timestamp": "2026-10-26T07:29:47.558769",
+        "request": {
+          "name": "Shubham Desai",
+          "location": "Pune, Maharashtra",
+          "latitude": 18.5204,
+          "longitude": 73.8567,
+          "num_people": 4,
+          "roof_type": "RCC",
+          "roof_area": 100.0,
+          "open_space_area": 50.0,
+          "soil_type": "LOAMY",
+          "groundwater_depth": 15.0,
+          "water_tariff_per_kl": 35.0,
+          "annual_rainfall_override": 700.0,
+          "runoff_method": "rational",
+          "location_name": "Pune, Maharashtra"
+        },
+        "weather": {
+          "location_name": "Pune, Maharashtra",
+          "annual_rainfall": 700.0,
+          "monthly_rainfall": [
+            0.6,
+            0.6,
+            2.2,
+            3.1,
+            14.5,
+            157.7,
+            206.7,
+            149.9,
+            108.3,
+            44.7,
+            8.9,
+            2.9
+          ],
+          "avg_temperature": 27.0,
+          "humidity": 65.0,
+          "current_rainfall": 0.0,
+          "rainfall_source": "NOAA PSL CMAP (CPC Merged Analysis of Precipitation)",
+          "rainfall_method": "NOAA PSL CMAP (CPC Merged Analysis of Precipitation), 2.5° grid (monthly distribution) + local annual total",
+          "grid_cell": "18.75°, 73.75°",
+          "grid_resolution_deg": 2.5,
+          "climatology_period": "1991/01/01 - 2020/12/31",
+          "rainfall_is_grid_estimate": false,
+          "rainfall_is_live": false
+        },
+        "runoff": {
+          "annual_runoff_volume": 63000.0,
+          "monthly_runoff": [
+            54.0,
+            54.0,
+            198.0,
+            279.0,
+            1305.0,
+            14193.0,
+            18603.0,
+            13491.0,
+            9747.0,
+            4023.0,
+            801.0,
+            261.0
+          ],
+          "runoff_coefficient": 0.9,
+          "peak_runoff_rate": 0.0775,
+          "harvestable_volume": 43000.0,
+          "runoff_method": "rational",
+          "curve_number": 98.0,
+          "scs_cn_annual_runoff": 65320.79,
+          "scs_cn_monthly_runoff": [
+            0.0,
+            0.0,
+            21.32,
+            58.74,
+            972.06,
+            15164.56,
+            20060.7,
+            14385.4,
+            10231.86,
+            3902.97,
+            473.91,
+            49.27
+          ],
+          "scs_cn_vs_rational_pct": 3.7
+        },
+        "recharge": {
+          "annual_recharge_potential": 24500.0,
+          "groundwater_recharge_rate": 67.12,
+          "infiltration_rate": 12.5,
+          "aquifer_type": "Semi-Confined Aquifer",
+          "recharge_feasibility_score": 55.0
+        },
+        "recommended_structures": [
+          {
+            "structure_type": "Rooftop Storage Tank",
+            "suitability_score": 93.0,
+            "description": "A dedicated storage tank collects and stores harvested rooftop runoff for direct use in toilets, gardening, and non-potable purposes. Most cost-effective first step for any building.",
+            "dimensions": {
+              "volume_m3": 16.2,
+              "diameter_m": 3.21,
+              "depth_m": 2.0,
+              "material": "RCC/PVC"
+            },
+            "installation_notes": "Install at ground level or underground. Connect to rooftop downpipes via first-flush diverter. Include overflow pipe to recharge pit.",
+            "criteria": [
+              {
+                "name": "harvestable_yield",
+                "raw": 43000.0,
+                "normalised": 1.0,
+                "weight": 0.4174
+              },
+              {
+                "name": "annual_rainfall",
+                "raw": 700.0,
+                "normalised": 0.733,
+                "weight": 0.2634
+              },
+              {
+                "name": "soil_infiltration",
+                "raw": 12.5,
+                "normalised": 1.0,
+                "weight": 0.1602
+              },
+              {
+                "name": "open_space",
+                "raw": 50.0,
+                "normalised": 1.0,
+                "weight": 0.0975
+              },
+              {
+                "name": "groundwater_depth",
+                "raw": 15.0,
+                "normalised": 1.0,
+                "weight": 0.0615
+              }
+            ]
+          },
+          {
+            "structure_type": "Soak Pit / French Drain",
+            "suitability_score": 72.8,
+            "description": "A soak pit (1m diameter, 1.5–2m deep) filled with gravel provides a simple low-cost solution for small rooftop areas, distributing water slowly into surrounding soil.",
+            "dimensions": {
+              "diameter_m": 1.0,
+              "depth_m": 1.5,
+              "fill_material": "40mm stone aggregate"
+            },
+            "installation_notes": "Dig 1m diameter × 1.5m depth. Line sides with dry-brick or perforated concrete rings. Fill with 40mm stone aggregate. Cover with perforated slab.",
+            "criteria": [
+              {
+                "name": "harvestable_yield",
+                "raw": 43000.0,
+                "normalised": 1.0,
+                "weight": 0.4174
+              },
+              {
+                "name": "annual_rainfall",
+                "raw": 700.0,
+                "normalised": 0.444,
+                "weight": 0.2634
+              },
+              {
+                "name": "soil_infiltration",
+                "raw": 12.5,
+                "normalised": 0.214,
+                "weight": 0.1602
+              },
+              {
+                "name": "open_space",
+                "raw": 50.0,
+                "normalised": 1.0,
+                "weight": 0.0975
+              },
+              {
+                "name": "groundwater_depth",
+                "raw": 15.0,
+                "normalised": 1.0,
+                "weight": 0.0615
+              }
+            ]
+          },
+          {
+            "structure_type": "Recharge Pit",
+            "suitability_score": 69.0,
+            "description": "A recharge pit (1.5m × 1.5m × 2m) filled with gravel and sand filters allows harvested water to percolate directly into the groundwater table. Highly effective for shallow aquifers.",
+            "dimensions": {
+              "length_m": 1.5,
+              "width_m": 1.5,
+              "depth_m": 2.0,
+              "filter_layers": "0.5m gravel + 1.0m stone + 0.5m sand"
+            },
+            "installation_notes": "Excavate 2m deep, fill with 0.5m gravel at bottom, 1m stone/brick, 0.5m sand. Install inlet pipe from tank overflow. Provide removable top cover for cleaning.",
+            "criteria": [
+              {
+                "name": "harvestable_yield",
+                "raw": 43000.0,
+                "normalised": 1.0,
+                "weight": 0.4174
+              },
+              {
+                "name": "annual_rainfall",
+                "raw": 700.0,
+                "normalised": 0.3,
+                "weight": 0.2634
+              },
+              {
+                "name": "soil_infiltration",
+                "raw": 12.5,
+                "normalised": 0.214,
+                "weight": 0.1602
+              },
+              {
+                "name": "open_space",
+                "raw": 50.0,
+                "normalised": 1.0,
+                "weight": 0.0975
+              },
+              {
+                "name": "groundwater_depth",
+                "raw": 15.0,
+                "normalised": 1.0,
+                "weight": 0.0615
+              }
+            ]
+          },
+          {
+            "structure_type": "Recharge Well / Borewell Recharge",
+            "suitability_score": 51.8,
+            "description": "A dedicated recharge well (200–300mm diameter, 10–30m deep) channels treated rooftop runoff directly into deeper aquifers. Ideal where surface soil has low permeability but deep aquifers are present.",
+            "dimensions": {
+              "diameter_mm": 250,
+              "depth_m": 20.0,
+              "casing_type": "MS perforated pipe"
+            },
+            "installation_notes": "Drill 200–300mm bore to aquifer depth. Install casing with perforations. Connect via first-flush diverter → settling tank → filter media → well. Annual cleaning required.",
+            "criteria": [
+              {
+                "name": "harvestable_yield",
+                "raw": 43000.0,
+                "normalised": 0.288,
+                "weight": 0.4174
+              },
+              {
+                "name": "annual_rainfall",
+                "raw": 700.0,
+                "normalised": 0.3,
+                "weight": 0.2634
+              },
+              {
+                "name": "soil_infiltration",
+                "raw": 12.5,
+                "normalised": 1.0,
+                "weight": 0.1602
+              },
+              {
+                "name": "open_space",
+                "raw": 50.0,
+                "normalised": 1.0,
+                "weight": 0.0975
+              },
+              {
+                "name": "groundwater_depth",
+                "raw": 15.0,
+                "normalised": 1.0,
+                "weight": 0.0615
+              }
+            ]
+          }
+        ],
+        "cost_benefit": {
+          "estimated_cost": 53000.0,
+          "storage_cost": 25000.0,
+          "recharge_cost": 8000.0,
+          "plumbing_cost": 20000.0,
+          "water_tariff_per_kl": 35.0,
+          "annual_water_savings_liters": 43009.0,
+          "annual_savings_inr": 1505.33,
+          "annual_recharge_value_inr": 428.75,
+          "annual_maintenance_inr": 1060.0,
+          "net_annual_savings_inr": 874.08,
+          "payback_period_years": 60.6,
+          "economically_viable": false,
+          "roi_percentage": -83.5,
+          "monthly_savings": [
+            1.29,
+            1.29,
+            4.73,
+            6.67,
+            31.18,
+            339.08,
+            444.43,
+            322.31,
+            232.86,
+            96.11,
+            19.14,
+            6.24
+          ]
+        },
+        "hydrogeo_info": {
+          "aquifer_type": "Semi-Confined Aquifer",
+          "aquifer_depth": 15.0,
+          "permeability": "Moderate (10-15 mm/hr)",
+          "storage_coefficient": 0.15,
+          "transmissivity": 125.0,
+          "groundwater_quality": "Potable - requires testing",
+          "seasonal_fluctuation": 2.8
+        },
+        "mcda": {
+          "method": "Analytic Hierarchy Process (Saaty, 1980) — geometric mean weights, consistency-checked",
+          "criteria": [
+            "harvestable_yield",
+            "annual_rainfall",
+            "soil_infiltration",
+            "open_space",
+            "groundwater_depth"
+          ],
+          "weights": {
+            "harvestable_yield": 0.4174,
+            "annual_rainfall": 0.2634,
+            "soil_infiltration": 0.1602,
+            "open_space": 0.0975,
+            "groundwater_depth": 0.0615
+          },
+          "pairwise_matrix": [
+            [
+              1.0,
+              2.0,
+              3.0,
+              4.0,
+              5.0
+            ],
+            [
+              0.5,
+              1.0,
+              2.0,
+              3.0,
+              4.0
+            ],
+            [
+              0.3333,
+              0.5,
+              1.0,
+              2.0,
+              3.0
+            ],
+            [
+              0.25,
+              0.3333,
+              0.5,
+              1.0,
+              2.0
+            ],
+            [
+              0.2,
+              0.25,
+              0.3333,
+              0.5,
+              1.0
+            ]
+          ],
+          "lambda_max": 5.068,
+          "consistency_index": 0.017,
+          "consistency_ratio": 0.0152,
+          "consistent": true
+        }
+      }
+    },
+    "mumbai_large": {
+      "label": "Mumbai large roof",
+      "input": {
+        "name": "Coastal Housing Society",
+        "location": "Mumbai, Maharashtra",
+        "location_name": "Mumbai, Maharashtra",
+        "latitude": 19.076,
+        "longitude": 72.8777,
+        "num_people": 20,
+        "roof_type": "METAL",
+        "roof_area": 500.0,
+        "open_space_area": 300.0,
+        "soil_type": "SANDY",
+        "groundwater_depth": 20.0,
+        "water_tariff_per_kl": 35.0,
+        "annual_rainfall_override": 2300.0,
+        "runoff_method": "rational"
+      },
+      "response": {
+        "assessment_id": "DDAB1DB7",
+        "timestamp": "2026-10-26T07:29:47.570716",
+        "request": {
+          "name": "Coastal Housing Society",
+          "location": "Mumbai, Maharashtra",
+          "latitude": 19.076,
+          "longitude": 72.8777,
+          "num_people": 20,
+          "roof_type": "METAL",
+          "roof_area": 500.0,
+          "open_space_area": 300.0,
+          "soil_type": "SANDY",
+          "groundwater_depth": 20.0,
+          "water_tariff_per_kl": 35.0,
+          "annual_rainfall_override": 2300.0,
+          "runoff_method": "rational",
+          "location_name": "Mumbai, Maharashtra"
+        },
+        "weather": {
+          "location_name": "Mumbai, Maharashtra",
+          "annual_rainfall": 2300.0,
+          "monthly_rainfall": [
+            2.6,
+            2.6,
+            6.3,
+            7.9,
+            42.2,
+            530.8,
+            693.4,
+            479.7,
+            351.1,
+            138.1,
+            33.0,
+            12.4
+          ],
+          "avg_temperature": 27.0,
+          "humidity": 65.0,
+          "current_rainfall": 0.0,
+          "rainfall_source": "NOAA PSL CMAP (CPC Merged Analysis of Precipitation)",
+          "rainfall_method": "NOAA PSL CMAP (CPC Merged Analysis of Precipitation), 2.5° grid (monthly distribution) + local annual total",
+          "grid_cell": "21.25°, 71.25°",
+          "grid_resolution_deg": 2.5,
+          "climatology_period": "1991/01/01 - 2020/12/31",
+          "rainfall_is_grid_estimate": false,
+          "rainfall_is_live": false
+        },
+        "runoff": {
+          "annual_runoff_volume": 977500.0,
+          "monthly_runoff": [
+            1105.0,
+            1105.0,
+            2677.5,
+            3357.5,
+            17935.0,
+            225590.0,
+            294695.0,
+            203872.5,
+            149217.5,
+            58692.5,
+            14025.0,
+            5270.0
+          ],
+          "runoff_coefficient": 0.85,
+          "peak_runoff_rate": 1.2279,
+          "harvestable_volume": 877500.0,
+          "runoff_method": "rational",
+          "curve_number": 97.0,
+          "scs_cn_annual_runoff": 1108600.66,
+          "scs_cn_monthly_runoff": [
+            59.57,
+            59.57,
+            888.48,
+            1411.91,
+            17023.0,
+            260744.05,
+            342030.7,
+            235200.09,
+            170922.94,
+            64550.3,
+            12572.04,
+            3138.01
+          ],
+          "scs_cn_vs_rational_pct": 13.4
+        },
+        "recharge": {
+          "annual_recharge_potential": 483000.0,
+          "groundwater_recharge_rate": 1323.29,
+          "infiltration_rate": 25.0,
+          "aquifer_type": "Semi-Confined Aquifer",
+          "recharge_feasibility_score": 90.0
+        },
+        "recommended_structures": [
+          {
+            "structure_type": "Rooftop Storage Tank",
+            "suitability_score": 100.0,
+            "description": "A dedicated storage tank collects and stores harvested rooftop runoff for direct use in toilets, gardening, and non-potable purposes. Most cost-effective first step for any building.",
+            "dimensions": {
+              "volume_m3": 147.3,
+              "diameter_m": 9.69,
+              "depth_m": 2.0,
+              "material": "RCC/PVC"
+            },
+            "installation_notes": "Install at ground level or underground. Connect to rooftop downpipes via first-flush diverter. Include overflow pipe to recharge pit.",
+            "criteria": [
+              {
+                "name": "harvestable_yield",
+                "raw": 877500.0,
+                "normalised": 1.0,
+                "weight": 0.4174
+              },
+              {
+                "name": "annual_rainfall",
+                "raw": 2300.0,
+                "normalised": 1.0,
+                "weight": 0.2634
+              },
+              {
+                "name": "soil_infiltration",
+                "raw": 25.0,
+                "normalised": 1.0,
+                "weight": 0.1602
+              },
+              {
+                "name": "open_space",
+                "raw": 300.0,
+                "normalised": 1.0,
+                "weight": 0.0975
+              },
+              {
+                "name": "groundwater_depth",
+                "raw": 20.0,
+                "normalised": 1.0,
+                "weight": 0.0615
+              }
+            ]
+          },
+          {
+            "structure_type": "Recharge Well / Borewell Recharge",
+            "suitability_score": 100.0,
+            "description": "A dedicated recharge well (200–300mm diameter, 10–30m deep) channels treated rooftop runoff directly into deeper aquifers. Ideal where surface soil has low permeability but deep aquifers are present.",
+            "dimensions": {
+              "diameter_mm": 250,
+              "depth_m": 25.0,
+              "casing_type": "MS perforated pipe"
+            },
+            "installation_notes": "Drill 200–300mm bore to aquifer depth. Install casing with perforations. Connect via first-flush diverter → settling tank → filter media → well. Annual cleaning required.",
+            "criteria": [
+              {
+                "name": "harvestable_yield",
+                "raw": 877500.0,
+                "normalised": 1.0,
+                "weight": 0.4174
+              },
+              {
+                "name": "annual_rainfall",
+                "raw": 2300.0,
+                "normalised": 1.0,
+                "weight": 0.2634
+              },
+              {
+                "name": "soil_infiltration",
+                "raw": 25.0,
+                "normalised": 1.0,
+                "weight": 0.1602
+              },
+              {
+                "name": "open_space",
+                "raw": 300.0,
+                "normalised": 1.0,
+                "weight": 0.0975
+              },
+              {
+                "name": "groundwater_depth",
+                "raw": 20.0,
+                "normalised": 1.0,
+                "weight": 0.0615
+              }
+            ]
+          },
+          {
+            "structure_type": "Soak Pit / French Drain",
+            "suitability_score": 93.1,
+            "description": "A soak pit (1m diameter, 1.5–2m deep) filled with gravel provides a simple low-cost solution for small rooftop areas, distributing water slowly into surrounding soil.",
+            "dimensions": {
+              "diameter_m": 1.0,
+              "depth_m": 1.5,
+              "fill_material": "40mm stone aggregate"
+            },
+            "installation_notes": "Dig 1m diameter × 1.5m depth. Line sides with dry-brick or perforated concrete rings. Fill with 40mm stone aggregate. Cover with perforated slab.",
+            "criteria": [
+              {
+                "name": "harvestable_yield",
+                "raw": 877500.0,
+                "normalised": 1.0,
+                "weight": 0.4174
+              },
+              {
+                "name": "annual_rainfall",
+                "raw": 2300.0,
+                "normalised": 1.0,
+                "weight": 0.2634
+              },
+              {
+                "name": "soil_infiltration",
+                "raw": 25.0,
+                "normalised": 0.571,
+                "weight": 0.1602
+              },
+              {
+                "name": "open_space",
+                "raw": 300.0,
+                "normalised": 1.0,
+                "weight": 0.0975
+              },
+              {
+                "name": "groundwater_depth",
+                "raw": 20.0,
+                "normalised": 1.0,
+                "weight": 0.0615
+              }
+            ]
+          },
+          {
+            "structure_type": "Percolation Tank",
+            "suitability_score": 92.0,
+            "description": "A large open-surface impoundment (percolation tank) captures runoff from rooftops and open spaces, allowing slow percolation over a large area. Best for large plots and community use.",
+            "dimensions": {
+              "surface_area_m2": 90.0,
+              "depth_m": 2.5,
+              "storage_volume_m3": 135.0
+            },
+            "installation_notes": "Suitable for land area >100m². Depth 1.5–3m. Provide inlet, spillway, and de-silting arrangement. Plant grass on bunds to prevent erosion.",
+            "criteria": [
+              {
+                "name": "harvestable_yield",
+                "raw": 877500.0,
+                "normalised": 1.0,
+                "weight": 0.4174
+              },
+              {
+                "name": "annual_rainfall",
+                "raw": 2300.0,
+                "normalised": 1.0,
+                "weight": 0.2634
+              },
+              {
+                "name": "soil_infiltration",
+                "raw": 25.0,
+                "normalised": 0.5,
+                "weight": 0.1602
+              },
+              {
+                "name": "open_space",
+                "raw": 300.0,
+                "normalised": 1.0,
+                "weight": 0.0975
+              },
+              {
+                "name": "groundwater_depth",
+                "raw": 20.0,
+                "normalised": 1.0,
+                "weight": 0.0615
+              }
+            ]
+          },
+          {
+            "structure_type": "Recharge Pit",
+            "suitability_score": 91.1,
+            "description": "A recharge pit (1.5m × 1.5m × 2m) filled with gravel and sand filters allows harvested water to percolate directly into the groundwater table. Highly effective for shallow aquifers.",
+            "dimensions": {
+              "length_m": 1.5,
+              "width_m": 1.5,
+              "depth_m": 2.0,
+              "filter_layers": "0.5m gravel + 1.0m stone + 0.5m sand"
+            },
+            "installation_notes": "Excavate 2m deep, fill with 0.5m gravel at bottom, 1m stone/brick, 0.5m sand. Install inlet pipe from tank overflow. Provide removable top cover for cleaning.",
+            "criteria": [
+              {
+                "name": "harvestable_yield",
+                "raw": 877500.0,
+                "normalised": 1.0,
+                "weight": 0.4174
+              },
+              {
+                "name": "annual_rainfall",
+                "raw": 2300.0,
+                "normalised": 1.0,
+                "weight": 0.2634
+              },
+              {
+                "name": "soil_infiltration",
+                "raw": 25.0,
+                "normalised": 0.571,
+                "weight": 0.1602
+              },
+              {
+                "name": "open_space",
+                "raw": 300.0,
+                "normalised": 1.0,
+                "weight": 0.0975
+              },
+              {
+                "name": "groundwater_depth",
+                "raw": 20.0,
+                "normalised": 0.667,
+                "weight": 0.0615
+              }
+            ]
+          }
+        ],
+        "cost_benefit": {
+          "estimated_cost": 114721.36,
+          "storage_cost": 25000.0,
+          "recharge_cost": 45000.0,
+          "plumbing_cost": 44721.36,
+          "water_tariff_per_kl": 35.0,
+          "annual_water_savings_liters": 877542.5,
+          "annual_savings_inr": 30713.99,
+          "annual_recharge_value_inr": 8452.5,
+          "annual_maintenance_inr": 2294.43,
+          "net_annual_savings_inr": 36872.06,
+          "payback_period_years": 3.1,
+          "economically_viable": true,
+          "roi_percentage": 221.4,
+          "monthly_savings": [
+            34.72,
+            34.72,
+            84.13,
+            105.49,
+            563.51,
+            7087.95,
+            9259.2,
+            6405.59,
+            4688.35,
+            1844.09,
+            440.66,
+            165.58
+          ]
+        },
+        "hydrogeo_info": {
+          "aquifer_type": "Semi-Confined Aquifer",
+          "aquifer_depth": 20.0,
+          "permeability": "High (20-30 mm/hr)",
+          "storage_coefficient": 0.25,
+          "transmissivity": 250.0,
+          "groundwater_quality": "Potable - requires testing",
+          "seasonal_fluctuation": 9.2
+        },
+        "mcda": {
+          "method": "Analytic Hierarchy Process (Saaty, 1980) — geometric mean weights, consistency-checked",
+          "criteria": [
+            "harvestable_yield",
+            "annual_rainfall",
+            "soil_infiltration",
+            "open_space",
+            "groundwater_depth"
+          ],
+          "weights": {
+            "harvestable_yield": 0.4174,
+            "annual_rainfall": 0.2634,
+            "soil_infiltration": 0.1602,
+            "open_space": 0.0975,
+            "groundwater_depth": 0.0615
+          },
+          "pairwise_matrix": [
+            [
+              1.0,
+              2.0,
+              3.0,
+              4.0,
+              5.0
+            ],
+            [
+              0.5,
+              1.0,
+              2.0,
+              3.0,
+              4.0
+            ],
+            [
+              0.3333,
+              0.5,
+              1.0,
+              2.0,
+              3.0
+            ],
+            [
+              0.25,
+              0.3333,
+              0.5,
+              1.0,
+              2.0
+            ],
+            [
+              0.2,
+              0.25,
+              0.3333,
+              0.5,
+              1.0
+            ]
+          ],
+          "lambda_max": 5.068,
+          "consistency_index": 0.017,
+          "consistency_ratio": 0.0152,
+          "consistent": true
+        }
+      }
+    },
+    "green_roof": {
+      "label": "Pune green roof",
+      "input": {
+        "name": "Green Campus Block",
+        "location": "Pune, Maharashtra",
+        "location_name": "Pune, Maharashtra",
+        "latitude": 18.5204,
+        "longitude": 73.8567,
+        "num_people": 4,
+        "roof_type": "GREEN",
+        "roof_area": 100.0,
+        "open_space_area": 50.0,
+        "soil_type": "LOAMY",
+        "groundwater_depth": 15.0,
+        "water_tariff_per_kl": 35.0,
+        "annual_rainfall_override": 700.0,
+        "runoff_method": "rational"
+      },
+      "response": {
+        "assessment_id": "57D550B0",
+        "timestamp": "2026-10-26T07:29:47.578029",
+        "request": {
+          "name": "Green Campus Block",
+          "location": "Pune, Maharashtra",
+          "latitude": 18.5204,
+          "longitude": 73.8567,
+          "num_people": 4,
+          "roof_type": "GREEN",
+          "roof_area": 100.0,
+          "open_space_area": 50.0,
+          "soil_type": "LOAMY",
+          "groundwater_depth": 15.0,
+          "water_tariff_per_kl": 35.0,
+          "annual_rainfall_override": 700.0,
+          "runoff_method": "rational",
+          "location_name": "Pune, Maharashtra"
+        },
+        "weather": {
+          "location_name": "Pune, Maharashtra",
+          "annual_rainfall": 700.0,
+          "monthly_rainfall": [
+            0.6,
+            0.6,
+            2.2,
+            3.1,
+            14.5,
+            157.7,
+            206.7,
+            149.9,
+            108.3,
+            44.7,
+            8.9,
+            2.9
+          ],
+          "avg_temperature": 27.0,
+          "humidity": 65.0,
+          "current_rainfall": 0.0,
+          "rainfall_source": "NOAA PSL CMAP (CPC Merged Analysis of Precipitation)",
+          "rainfall_method": "NOAA PSL CMAP (CPC Merged Analysis of Precipitation), 2.5° grid (monthly distribution) + local annual total",
+          "grid_cell": "18.75°, 73.75°",
+          "grid_resolution_deg": 2.5,
+          "climatology_period": "1991/01/01 - 2020/12/31",
+          "rainfall_is_grid_estimate": false,
+          "rainfall_is_live": false
+        },
+        "runoff": {
+          "annual_runoff_volume": 21000.0,
+          "monthly_runoff": [
+            18.0,
+            18.0,
+            66.0,
+            93.0,
+            435.0,
+            4731.0,
+            6201.0,
+            4497.0,
+            3249.0,
+            1341.0,
+            267.0,
+            87.0
+          ],
+          "runoff_coefficient": 0.3,
+          "peak_runoff_rate": 0.0258,
+          "harvestable_volume": 1000.0,
+          "runoff_method": "rational",
+          "curve_number": 75.0,
+          "scs_cn_annual_runoff": 35463.7,
+          "scs_cn_monthly_runoff": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            8789.85,
+            13122.09,
+            8123.82,
+            4742.21,
+            685.73,
+            0.0,
+            0.0
+          ],
+          "scs_cn_vs_rational_pct": 68.9
+        },
+        "recharge": {
+          "annual_recharge_potential": 24500.0,
+          "groundwater_recharge_rate": 67.12,
+          "infiltration_rate": 12.5,
+          "aquifer_type": "Semi-Confined Aquifer",
+          "recharge_feasibility_score": 55.0
+        },
+        "recommended_structures": [
+          {
+            "structure_type": "Rooftop Storage Tank",
+            "suitability_score": 93.0,
+            "description": "A dedicated storage tank collects and stores harvested rooftop runoff for direct use in toilets, gardening, and non-potable purposes. Most cost-effective first step for any building.",
+            "dimensions": {
+              "volume_m3": 16.2,
+              "diameter_m": 3.21,
+              "depth_m": 2.0,
+              "material": "RCC/PVC"
+            },
+            "installation_notes": "Install at ground level or underground. Connect to rooftop downpipes via first-flush diverter. Include overflow pipe to recharge pit.",
+            "criteria": [
+              {
+                "name": "harvestable_yield",
+                "raw": 1000.0,
+                "normalised": 1.0,
+                "weight": 0.4174
+              },
+              {
+                "name": "annual_rainfall",
+                "raw": 700.0,
+                "normalised": 0.733,
+                "weight": 0.2634
+              },
+              {
+                "name": "soil_infiltration",
+                "raw": 12.5,
+                "normalised": 1.0,
+                "weight": 0.1602
+              },
+              {
+                "name": "open_space",
+                "raw": 50.0,
+                "normalised": 1.0,
+                "weight": 0.0975
+              },
+              {
+                "name": "groundwater_depth",
+                "raw": 15.0,
+                "normalised": 1.0,
+                "weight": 0.0615
+              }
+            ]
+          },
+          {
+            "structure_type": "Recharge Well / Borewell Recharge",
+            "suitability_score": 39.8,
+            "description": "A dedicated recharge well (200–300mm diameter, 10–30m deep) channels treated rooftop runoff directly into deeper aquifers. Ideal where surface soil has low permeability but deep aquifers are present.",
+            "dimensions": {
+              "diameter_mm": 250,
+              "depth_m": 20.0,
+              "casing_type": "MS perforated pipe"
+            },
+            "installation_notes": "Drill 200–300mm bore to aquifer depth. Install casing with perforations. Connect via first-flush diverter → settling tank → filter media → well. Annual cleaning required.",
+            "criteria": [
+              {
+                "name": "harvestable_yield",
+                "raw": 1000.0,
+                "normalised": 0.0,
+                "weight": 0.4174
+              },
+              {
+                "name": "annual_rainfall",
+                "raw": 700.0,
+                "normalised": 0.3,
+                "weight": 0.2634
+              },
+              {
+                "name": "soil_infiltration",
+                "raw": 12.5,
+                "normalised": 1.0,
+                "weight": 0.1602
+              },
+              {
+                "name": "open_space",
+                "raw": 50.0,
+                "normalised": 1.0,
+                "weight": 0.0975
+              },
+              {
+                "name": "groundwater_depth",
+                "raw": 15.0,
+                "normalised": 1.0,
+                "weight": 0.0615
+              }
+            ]
+          },
+          {
+            "structure_type": "Soak Pit / French Drain",
+            "suitability_score": 31.0,
+            "description": "A soak pit (1m diameter, 1.5–2m deep) filled with gravel provides a simple low-cost solution for small rooftop areas, distributing water slowly into surrounding soil.",
+            "dimensions": {
+              "diameter_m": 1.0,
+              "depth_m": 1.5,
+              "fill_material": "40mm stone aggregate"
+            },
+            "installation_notes": "Dig 1m diameter × 1.5m depth. Line sides with dry-brick or perforated concrete rings. Fill with 40mm stone aggregate. Cover with perforated slab.",
+            "criteria": [
+              {
+                "name": "harvestable_yield",
+                "raw": 1000.0,
+                "normalised": 0.0,
+                "weight": 0.4174
+              },
+              {
+                "name": "annual_rainfall",
+                "raw": 700.0,
+                "normalised": 0.444,
+                "weight": 0.2634
+              },
+              {
+                "name": "soil_infiltration",
+                "raw": 12.5,
+                "normalised": 0.214,
+                "weight": 0.1602
+              },
+              {
+                "name": "open_space",
+                "raw": 50.0,
+                "normalised": 1.0,
+                "weight": 0.0975
+              },
+              {
+                "name": "groundwater_depth",
+                "raw": 15.0,
+                "normalised": 1.0,
+                "weight": 0.0615
+              }
+            ]
+          },
+          {
+            "structure_type": "Recharge Pit",
+            "suitability_score": 27.2,
+            "description": "A recharge pit (1.5m × 1.5m × 2m) filled with gravel and sand filters allows harvested water to percolate directly into the groundwater table. Highly effective for shallow aquifers.",
+            "dimensions": {
+              "length_m": 1.5,
+              "width_m": 1.5,
+              "depth_m": 2.0,
+              "filter_layers": "0.5m gravel + 1.0m stone + 0.5m sand"
+            },
+            "installation_notes": "Excavate 2m deep, fill with 0.5m gravel at bottom, 1m stone/brick, 0.5m sand. Install inlet pipe from tank overflow. Provide removable top cover for cleaning.",
+            "criteria": [
+              {
+                "name": "harvestable_yield",
+                "raw": 1000.0,
+                "normalised": 0.0,
+                "weight": 0.4174
+              },
+              {
+                "name": "annual_rainfall",
+                "raw": 700.0,
+                "normalised": 0.3,
+                "weight": 0.2634
+              },
+              {
+                "name": "soil_infiltration",
+                "raw": 12.5,
+                "normalised": 0.214,
+                "weight": 0.1602
+              },
+              {
+                "name": "open_space",
+                "raw": 50.0,
+                "normalised": 1.0,
+                "weight": 0.0975
+              },
+              {
+                "name": "groundwater_depth",
+                "raw": 15.0,
+                "normalised": 1.0,
+                "weight": 0.0615
+              }
+            ]
+          }
+        ],
+        "cost_benefit": {
+          "estimated_cost": 90000.0,
+          "storage_cost": 25000.0,
+          "recharge_cost": 45000.0,
+          "plumbing_cost": 20000.0,
+          "water_tariff_per_kl": 35.0,
+          "annual_water_savings_liters": 1003.0,
+          "annual_savings_inr": 35.12,
+          "annual_recharge_value_inr": 428.75,
+          "annual_maintenance_inr": 1800.0,
+          "net_annual_savings_inr": -1336.13,
+          "payback_period_years": null,
+          "economically_viable": false,
+          "roi_percentage": -114.8,
+          "monthly_savings": [
+            0.03,
+            0.03,
+            0.11,
+            0.16,
+            0.73,
+            7.91,
+            10.36,
+            7.52,
+            5.43,
+            2.24,
+            0.45,
+            0.15
+          ]
+        },
+        "hydrogeo_info": {
+          "aquifer_type": "Semi-Confined Aquifer",
+          "aquifer_depth": 15.0,
+          "permeability": "Moderate (10-15 mm/hr)",
+          "storage_coefficient": 0.15,
+          "transmissivity": 125.0,
+          "groundwater_quality": "Potable - requires testing",
+          "seasonal_fluctuation": 2.8
+        },
+        "mcda": {
+          "method": "Analytic Hierarchy Process (Saaty, 1980) — geometric mean weights, consistency-checked",
+          "criteria": [
+            "harvestable_yield",
+            "annual_rainfall",
+            "soil_infiltration",
+            "open_space",
+            "groundwater_depth"
+          ],
+          "weights": {
+            "harvestable_yield": 0.4174,
+            "annual_rainfall": 0.2634,
+            "soil_infiltration": 0.1602,
+            "open_space": 0.0975,
+            "groundwater_depth": 0.0615
+          },
+          "pairwise_matrix": [
+            [
+              1.0,
+              2.0,
+              3.0,
+              4.0,
+              5.0
+            ],
+            [
+              0.5,
+              1.0,
+              2.0,
+              3.0,
+              4.0
+            ],
+            [
+              0.3333,
+              0.5,
+              1.0,
+              2.0,
+              3.0
+            ],
+            [
+              0.25,
+              0.3333,
+              0.5,
+              1.0,
+              2.0
+            ],
+            [
+              0.2,
+              0.25,
+              0.3333,
+              0.5,
+              1.0
+            ]
+          ],
+          "lambda_max": 5.068,
+          "consistency_index": 0.017,
+          "consistency_ratio": 0.0152,
+          "consistent": true
+        }
+      }
+    },
+    "kolhapur_devanagari": {
+      "label": "Kolhapur multilingual",
+      "input": {
+        "name": "श्रीमती सुनीता पाटील",
+        "location": "कोल्हापूर, महाराष्ट्र",
+        "location_name": "Kolhapur, Maharashtra",
+        "latitude": 16.705,
+        "longitude": 74.2433,
+        "num_people": 6,
+        "roof_type": "RCC",
+        "roof_area": 150.0,
+        "open_space_area": 80.0,
+        "soil_type": "LOAMY",
+        "groundwater_depth": 12.0,
+        "water_tariff_per_kl": 35.0,
+        "runoff_method": "rational"
+      },
+      "response": {
+        "assessment_id": "2680FD69",
+        "timestamp": "2026-10-26T07:29:47.584000",
+        "request": {
+          "name": "श्रीमती सुनीता पाटील",
+          "location": "कोल्हापूर, महाराष्ट्र",
+          "latitude": 16.705,
+          "longitude": 74.2433,
+          "num_people": 6,
+          "roof_type": "RCC",
+          "roof_area": 150.0,
+          "open_space_area": 80.0,
+          "soil_type": "LOAMY",
+          "groundwater_depth": 12.0,
+          "water_tariff_per_kl": 35.0,
+          "annual_rainfall_override": null,
+          "runoff_method": "rational",
+          "location_name": "Kolhapur, Maharashtra"
+        },
+        "weather": {
+          "location_name": "Kolhapur, Maharashtra",
+          "annual_rainfall": 1530.2,
+          "monthly_rainfall": [
+            1.3,
+            1.3,
+            6.7,
+            15.7,
+            54.3,
+            371.4,
+            433.9,
+            314.2,
+            199.6,
+            107.8,
+            18.9,
+            5.2
+          ],
+          "avg_temperature": 27.0,
+          "humidity": 65.0,
+          "current_rainfall": 0.0,
+          "rainfall_source": "NOAA PSL CMAP (CPC Merged Analysis of Precipitation)",
+          "rainfall_method": "NOAA PSL CMAP (CPC Merged Analysis of Precipitation), 2.5° grid",
+          "grid_cell": "18.75°, 73.75°",
+          "grid_resolution_deg": 2.5,
+          "climatology_period": "1991/01/01 - 2020/12/31",
+          "rainfall_is_grid_estimate": true,
+          "rainfall_is_live": false
+        },
+        "runoff": {
+          "annual_runoff_volume": 206577.0,
+          "monthly_runoff": [
+            175.5,
+            175.5,
+            904.5,
+            2119.5,
+            7330.5,
+            50139.0,
+            58576.5,
+            42417.0,
+            26946.0,
+            14553.0,
+            2551.5,
+            702.0
+          ],
+          "runoff_coefficient": 0.9,
+          "peak_runoff_rate": 0.2441,
+          "harvestable_volume": 176577.0,
+          "runoff_method": "rational",
+          "curve_number": 98.0,
+          "scs_cn_annual_runoff": 221166.32,
+          "scs_cn_monthly_runoff": [
+            1.91,
+            1.91,
+            443.52,
+            1625.02,
+            7280.9,
+            54787.67,
+            64161.14,
+            46209.6,
+            29026.72,
+            15272.94,
+            2076.82,
+            278.16
+          ],
+          "scs_cn_vs_rational_pct": 7.1
+        },
+        "recharge": {
+          "annual_recharge_potential": 85691.2,
+          "groundwater_recharge_rate": 234.77,
+          "infiltration_rate": 12.5,
+          "aquifer_type": "Semi-Confined Aquifer",
+          "recharge_feasibility_score": 70.0
+        },
+        "recommended_structures": [
+          {
+            "structure_type": "Rooftop Storage Tank",
+            "suitability_score": 100.0,
+            "description": "A dedicated storage tank collects and stores harvested rooftop runoff for direct use in toilets, gardening, and non-potable purposes. Most cost-effective first step for any building.",
+            "dimensions": {
+              "volume_m3": 29.3,
+              "diameter_m": 4.32,
+              "depth_m": 2.0,
+              "material": "RCC/PVC"
+            },
+            "installation_notes": "Install at ground level or underground. Connect to rooftop downpipes via first-flush diverter. Include overflow pipe to recharge pit.",
+            "criteria": [
+              {
+                "name": "harvestable_yield",
+                "raw": 176577.0,
+                "normalised": 1.0,
+                "weight": 0.4174
+              },
+              {
+                "name": "annual_rainfall",
+                "raw": 1530.2,
+                "normalised": 1.0,
+                "weight": 0.2634
+              },
+              {
+                "name": "soil_infiltration",
+                "raw": 12.5,
+                "normalised": 1.0,
+                "weight": 0.1602
+              },
+              {
+                "name": "open_space",
+                "raw": 80.0,
+                "normalised": 1.0,
+                "weight": 0.0975
+              },
+              {
+                "name": "groundwater_depth",
+                "raw": 12.0,
+                "normalised": 1.0,
+                "weight": 0.0615
+              }
+            ]
+          },
+          {
+            "structure_type": "Recharge Well / Borewell Recharge",
+            "suitability_score": 98.2,
+            "description": "A dedicated recharge well (200–300mm diameter, 10–30m deep) channels treated rooftop runoff directly into deeper aquifers. Ideal where surface soil has low permeability but deep aquifers are present.",
+            "dimensions": {
+              "diameter_mm": 250,
+              "depth_m": 20,
+              "casing_type": "MS perforated pipe"
+            },
+            "installation_notes": "Drill 200–300mm bore to aquifer depth. Install casing with perforations. Connect via first-flush diverter → settling tank → filter media → well. Annual cleaning required.",
+            "criteria": [
+              {
+                "name": "harvestable_yield",
+                "raw": 176577.0,
+                "normalised": 1.0,
+                "weight": 0.4174
+              },
+              {
+                "name": "annual_rainfall",
+                "raw": 1530.2,
+                "normalised": 1.0,
+                "weight": 0.2634
+              },
+              {
+                "name": "soil_infiltration",
+                "raw": 12.5,
+                "normalised": 1.0,
+                "weight": 0.1602
+              },
+              {
+                "name": "open_space",
+                "raw": 80.0,
+                "normalised": 1.0,
+                "weight": 0.0975
+              },
+              {
+                "name": "groundwater_depth",
+                "raw": 12.0,
+                "normalised": 0.7,
+                "weight": 0.0615
+              }
+            ]
+          },
+          {
+            "structure_type": "Recharge Pit",
+            "suitability_score": 87.4,
+            "description": "A recharge pit (1.5m × 1.5m × 2m) filled with gravel and sand filters allows harvested water to percolate directly into the groundwater table. Highly effective for shallow aquifers.",
+            "dimensions": {
+              "length_m": 1.5,
+              "width_m": 1.5,
+              "depth_m": 2.0,
+              "filter_layers": "0.5m gravel + 1.0m stone + 0.5m sand"
+            },
+            "installation_notes": "Excavate 2m deep, fill with 0.5m gravel at bottom, 1m stone/brick, 0.5m sand. Install inlet pipe from tank overflow. Provide removable top cover for cleaning.",
+            "criteria": [
+              {
+                "name": "harvestable_yield",
+                "raw": 176577.0,
+                "normalised": 1.0,
+                "weight": 0.4174
+              },
+              {
+                "name": "annual_rainfall",
+                "raw": 1530.2,
+                "normalised": 1.0,
+                "weight": 0.2634
+              },
+              {
+                "name": "soil_infiltration",
+                "raw": 12.5,
+                "normalised": 0.214,
+                "weight": 0.1602
+              },
+              {
+                "name": "open_space",
+                "raw": 80.0,
+                "normalised": 1.0,
+                "weight": 0.0975
+              },
+              {
+                "name": "groundwater_depth",
+                "raw": 12.0,
+                "normalised": 1.0,
+                "weight": 0.0615
+              }
+            ]
+          },
+          {
+            "structure_type": "Soak Pit / French Drain",
+            "suitability_score": 87.4,
+            "description": "A soak pit (1m diameter, 1.5–2m deep) filled with gravel provides a simple low-cost solution for small rooftop areas, distributing water slowly into surrounding soil.",
+            "dimensions": {
+              "diameter_m": 1.0,
+              "depth_m": 1.5,
+              "fill_material": "40mm stone aggregate"
+            },
+            "installation_notes": "Dig 1m diameter × 1.5m depth. Line sides with dry-brick or perforated concrete rings. Fill with 40mm stone aggregate. Cover with perforated slab.",
+            "criteria": [
+              {
+                "name": "harvestable_yield",
+                "raw": 176577.0,
+                "normalised": 1.0,
+                "weight": 0.4174
+              },
+              {
+                "name": "annual_rainfall",
+                "raw": 1530.2,
+                "normalised": 1.0,
+                "weight": 0.2634
+              },
+              {
+                "name": "soil_infiltration",
+                "raw": 12.5,
+                "normalised": 0.214,
+                "weight": 0.1602
+              },
+              {
+                "name": "open_space",
+                "raw": 80.0,
+                "normalised": 1.0,
+                "weight": 0.0975
+              },
+              {
+                "name": "groundwater_depth",
+                "raw": 12.0,
+                "normalised": 1.0,
+                "weight": 0.0615
+              }
+            ]
+          },
+          {
+            "structure_type": "Percolation Tank",
+            "suitability_score": 55.1,
+            "description": "A large open-surface impoundment (percolation tank) captures runoff from rooftops and open spaces, allowing slow percolation over a large area. Best for large plots and community use.",
+            "dimensions": {
+              "surface_area_m2": 24.0,
+              "depth_m": 2.5,
+              "storage_volume_m3": 36.0
+            },
+            "installation_notes": "Suitable for land area >100m². Depth 1.5–3m. Provide inlet, spillway, and de-silting arrangement. Plant grass on bunds to prevent erosion.",
+            "criteria": [
+              {
+                "name": "harvestable_yield",
+                "raw": 176577.0,
+                "normalised": 0.439,
+                "weight": 0.4174
+              },
+              {
+                "name": "annual_rainfall",
+                "raw": 1530.2,
+                "normalised": 1.0,
+                "weight": 0.2634
+              },
+              {
+                "name": "soil_infiltration",
+                "raw": 12.5,
+                "normalised": 0.083,
+                "weight": 0.1602
+              },
+              {
+                "name": "open_space",
+                "raw": 80.0,
+                "normalised": 0.3,
+                "weight": 0.0975
+              },
+              {
+                "name": "groundwater_depth",
+                "raw": 12.0,
+                "normalised": 1.0,
+                "weight": 0.0615
+              }
+            ]
+          }
+        ],
+        "cost_benefit": {
+          "estimated_cost": 94494.9,
+          "storage_cost": 25000.0,
+          "recharge_cost": 45000.0,
+          "plumbing_cost": 24494.9,
+          "water_tariff_per_kl": 35.0,
+          "annual_water_savings_liters": 176590.5,
+          "annual_savings_inr": 6180.66,
+          "annual_recharge_value_inr": 1499.6,
+          "annual_maintenance_inr": 1889.9,
+          "net_annual_savings_inr": 5790.36,
+          "payback_period_years": 16.3,
+          "economically_viable": false,
+          "roi_percentage": -38.7,
+          "monthly_savings": [
+            5.25,
+            5.25,
+            27.06,
+            63.41,
+            219.31,
+            1500.03,
+            1752.46,
+            1269.01,
+            806.16,
+            435.39,
+            76.33,
+            21.0
+          ]
+        },
+        "hydrogeo_info": {
+          "aquifer_type": "Semi-Confined Aquifer",
+          "aquifer_depth": 12.0,
+          "permeability": "Moderate (10-15 mm/hr)",
+          "storage_coefficient": 0.15,
+          "transmissivity": 125.0,
+          "groundwater_quality": "Potable - requires testing",
+          "seasonal_fluctuation": 6.1
+        },
+        "mcda": {
+          "method": "Analytic Hierarchy Process (Saaty, 1980) — geometric mean weights, consistency-checked",
+          "criteria": [
+            "harvestable_yield",
+            "annual_rainfall",
+            "soil_infiltration",
+            "open_space",
+            "groundwater_depth"
+          ],
+          "weights": {
+            "harvestable_yield": 0.4174,
+            "annual_rainfall": 0.2634,
+            "soil_infiltration": 0.1602,
+            "open_space": 0.0975,
+            "groundwater_depth": 0.0615
+          },
+          "pairwise_matrix": [
+            [
+              1.0,
+              2.0,
+              3.0,
+              4.0,
+              5.0
+            ],
+            [
+              0.5,
+              1.0,
+              2.0,
+              3.0,
+              4.0
+            ],
+            [
+              0.3333,
+              0.5,
+              1.0,
+              2.0,
+              3.0
+            ],
+            [
+              0.25,
+              0.3333,
+              0.5,
+              1.0,
+              2.0
+            ],
+            [
+              0.2,
+              0.25,
+              0.3333,
+              0.5,
+              1.0
+            ]
+          ],
+          "lambda_max": 5.068,
+          "consistency_index": 0.017,
+          "consistency_ratio": 0.0152,
+          "consistent": true
+        }
+      }
+    },
+    "delhi_semi_arid": {
+      "label": "Delhi semi-arid campus",
+      "input": {
+        "name": "Delhi Institutional Campus",
+        "location": "Delhi, India",
+        "location_name": "Delhi, India",
+        "latitude": 28.6139,
+        "longitude": 77.209,
+        "num_people": 50,
+        "roof_type": "RCC",
+        "roof_area": 1000.0,
+        "open_space_area": 400.0,
+        "soil_type": "CLAY",
+        "groundwater_depth": 30.0,
+        "water_tariff_per_kl": 50.0,
+        "annual_rainfall_override": 780.0,
+        "runoff_method": "rational"
+      },
+      "response": {
+        "assessment_id": "44BB1688",
+        "timestamp": "2026-10-26T07:29:47.590190",
+        "request": {
+          "name": "Delhi Institutional Campus",
+          "location": "Delhi, India",
+          "latitude": 28.6139,
+          "longitude": 77.209,
+          "num_people": 50,
+          "roof_type": "RCC",
+          "roof_area": 1000.0,
+          "open_space_area": 400.0,
+          "soil_type": "CLAY",
+          "groundwater_depth": 30.0,
+          "water_tariff_per_kl": 50.0,
+          "annual_rainfall_override": 780.0,
+          "runoff_method": "rational",
+          "location_name": "Delhi, India"
+        },
+        "weather": {
+          "location_name": "Delhi, India",
+          "annual_rainfall": 780.0,
+          "monthly_rainfall": [
+            19.0,
+            25.8,
+            21.4,
+            15.8,
+            33.4,
+            96.3,
+            212.5,
+            211.0,
+            115.4,
+            16.2,
+            5.1,
+            8.1
+          ],
+          "avg_temperature": 27.0,
+          "humidity": 65.0,
+          "current_rainfall": 0.0,
+          "rainfall_source": "NOAA PSL CMAP (CPC Merged Analysis of Precipitation)",
+          "rainfall_method": "NOAA PSL CMAP (CPC Merged Analysis of Precipitation), 2.5° grid (monthly distribution) + local annual total",
+          "grid_cell": "28.75°, 76.25°",
+          "grid_resolution_deg": 2.5,
+          "climatology_period": "1991/01/01 - 2020/12/31",
+          "rainfall_is_grid_estimate": false,
+          "rainfall_is_live": false
+        },
+        "runoff": {
+          "annual_runoff_volume": 702000.0,
+          "monthly_runoff": [
+            17100.0,
+            23220.0,
+            19260.0,
+            14220.0,
+            30060.0,
+            86670.0,
+            191250.0,
+            189900.0,
+            103860.0,
+            14580.0,
+            4590.0,
+            7290.0
+          ],
+          "runoff_coefficient": 0.9,
+          "peak_runoff_rate": 0.7969,
+          "harvestable_volume": 502000.0,
+          "runoff_method": "rational",
+          "curve_number": 98.0,
+          "scs_cn_annual_runoff": 717689.54,
+          "scs_cn_monthly_runoff": [
+            13940.46,
+            20476.86,
+            16231.4,
+            10926.69,
+            27895.24,
+            90347.1,
+            206403.62,
+            204904.49,
+            109404.36,
+            11300.21,
+            1785.47,
+            4073.65
+          ],
+          "scs_cn_vs_rational_pct": 2.2
+        },
+        "recharge": {
+          "annual_recharge_potential": 218400.0,
+          "groundwater_recharge_rate": 598.36,
+          "infiltration_rate": 2.5,
+          "aquifer_type": "Confined Artesian Aquifer",
+          "recharge_feasibility_score": 60.0
+        },
+        "recommended_structures": [
+          {
+            "structure_type": "Rooftop Storage Tank",
+            "suitability_score": 95.8,
+            "description": "A dedicated storage tank collects and stores harvested rooftop runoff for direct use in toilets, gardening, and non-potable purposes. Most cost-effective first step for any building.",
+            "dimensions": {
+              "volume_m3": 202.5,
+              "diameter_m": 11.36,
+              "depth_m": 2.0,
+              "material": "RCC/PVC"
+            },
+            "installation_notes": "Install at ground level or underground. Connect to rooftop downpipes via first-flush diverter. Include overflow pipe to recharge pit.",
+            "criteria": [
+              {
+                "name": "harvestable_yield",
+                "raw": 502000.0,
+                "normalised": 1.0,
+                "weight": 0.4174
+              },
+              {
+                "name": "annual_rainfall",
+                "raw": 780.0,
+                "normalised": 0.84,
+                "weight": 0.2634
+              },
+              {
+                "name": "soil_infiltration",
+                "raw": 2.5,
+                "normalised": 1.0,
+                "weight": 0.1602
+              },
+              {
+                "name": "open_space",
+                "raw": 400.0,
+                "normalised": 1.0,
+                "weight": 0.0975
+              },
+              {
+                "name": "groundwater_depth",
+                "raw": 30.0,
+                "normalised": 1.0,
+                "weight": 0.0615
+              }
+            ]
+          },
+          {
+            "structure_type": "Recharge Well / Borewell Recharge",
+            "suitability_score": 83.7,
+            "description": "A dedicated recharge well (200–300mm diameter, 10–30m deep) channels treated rooftop runoff directly into deeper aquifers. Ideal where surface soil has low permeability but deep aquifers are present.",
+            "dimensions": {
+              "diameter_mm": 250,
+              "depth_m": 35.0,
+              "casing_type": "MS perforated pipe"
+            },
+            "installation_notes": "Drill 200–300mm bore to aquifer depth. Install casing with perforations. Connect via first-flush diverter → settling tank → filter media → well. Annual cleaning required.",
+            "criteria": [
+              {
+                "name": "harvestable_yield",
+                "raw": 502000.0,
+                "normalised": 1.0,
+                "weight": 0.4174
+              },
+              {
+                "name": "annual_rainfall",
+                "raw": 780.0,
+                "normalised": 0.38,
+                "weight": 0.2634
+              },
+              {
+                "name": "soil_infiltration",
+                "raw": 2.5,
+                "normalised": 1.0,
+                "weight": 0.1602
+              },
+              {
+                "name": "open_space",
+                "raw": 400.0,
+                "normalised": 1.0,
+                "weight": 0.0975
+              },
+              {
+                "name": "groundwater_depth",
+                "raw": 30.0,
+                "normalised": 1.0,
+                "weight": 0.0615
+              }
+            ]
+          },
+          {
+            "structure_type": "Soak Pit / French Drain",
+            "suitability_score": 68.6,
+            "description": "A soak pit (1m diameter, 1.5–2m deep) filled with gravel provides a simple low-cost solution for small rooftop areas, distributing water slowly into surrounding soil.",
+            "dimensions": {
+              "diameter_m": 1.0,
+              "depth_m": 1.5,
+              "fill_material": "40mm stone aggregate"
+            },
+            "installation_notes": "Dig 1m diameter × 1.5m depth. Line sides with dry-brick or perforated concrete rings. Fill with 40mm stone aggregate. Cover with perforated slab.",
+            "criteria": [
+              {
+                "name": "harvestable_yield",
+                "raw": 502000.0,
+                "normalised": 1.0,
+                "weight": 0.4174
+              },
+              {
+                "name": "annual_rainfall",
+                "raw": 780.0,
+                "normalised": 0.533,
+                "weight": 0.2634
+              },
+              {
+                "name": "soil_infiltration",
+                "raw": 2.5,
+                "normalised": 0.0,
+                "weight": 0.1602
+              },
+              {
+                "name": "open_space",
+                "raw": 400.0,
+                "normalised": 1.0,
+                "weight": 0.0975
+              },
+              {
+                "name": "groundwater_depth",
+                "raw": 30.0,
+                "normalised": 0.5,
+                "weight": 0.0615
+              }
+            ]
+          },
+          {
+            "structure_type": "Percolation Tank",
+            "suitability_score": 63.5,
+            "description": "A large open-surface impoundment (percolation tank) captures runoff from rooftops and open spaces, allowing slow percolation over a large area. Best for large plots and community use.",
+            "dimensions": {
+              "surface_area_m2": 120.0,
+              "depth_m": 2.5,
+              "storage_volume_m3": 180.0
+            },
+            "installation_notes": "Suitable for land area >100m². Depth 1.5–3m. Provide inlet, spillway, and de-silting arrangement. Plant grass on bunds to prevent erosion.",
+            "criteria": [
+              {
+                "name": "harvestable_yield",
+                "raw": 502000.0,
+                "normalised": 1.0,
+                "weight": 0.4174
+              },
+              {
+                "name": "annual_rainfall",
+                "raw": 780.0,
+                "normalised": 0.28,
+                "weight": 0.2634
+              },
+              {
+                "name": "soil_infiltration",
+                "raw": 2.5,
+                "normalised": 0.0,
+                "weight": 0.1602
+              },
+              {
+                "name": "open_space",
+                "raw": 400.0,
+                "normalised": 1.0,
+                "weight": 0.0975
+              },
+              {
+                "name": "groundwater_depth",
+                "raw": 30.0,
+                "normalised": 0.75,
+                "weight": 0.0615
+              }
+            ]
+          },
+          {
+            "structure_type": "Recharge Pit",
+            "suitability_score": 61.5,
+            "description": "A recharge pit (1.5m × 1.5m × 2m) filled with gravel and sand filters allows harvested water to percolate directly into the groundwater table. Highly effective for shallow aquifers.",
+            "dimensions": {
+              "length_m": 1.5,
+              "width_m": 1.5,
+              "depth_m": 2.0,
+              "filter_layers": "0.5m gravel + 1.0m stone + 0.5m sand"
+            },
+            "installation_notes": "Excavate 2m deep, fill with 0.5m gravel at bottom, 1m stone/brick, 0.5m sand. Install inlet pipe from tank overflow. Provide removable top cover for cleaning.",
+            "criteria": [
+              {
+                "name": "harvestable_yield",
+                "raw": 502000.0,
+                "normalised": 1.0,
+                "weight": 0.4174
+              },
+              {
+                "name": "annual_rainfall",
+                "raw": 780.0,
+                "normalised": 0.38,
+                "weight": 0.2634
+              },
+              {
+                "name": "soil_infiltration",
+                "raw": 2.5,
+                "normalised": 0.0,
+                "weight": 0.1602
+              },
+              {
+                "name": "open_space",
+                "raw": 400.0,
+                "normalised": 1.0,
+                "weight": 0.0975
+              },
+              {
+                "name": "groundwater_depth",
+                "raw": 30.0,
+                "normalised": 0.0,
+                "weight": 0.0615
+              }
+            ]
+          }
+        ],
+        "cost_benefit": {
+          "estimated_cost": 133245.55,
+          "storage_cost": 25000.0,
+          "recharge_cost": 45000.0,
+          "plumbing_cost": 63245.55,
+          "water_tariff_per_kl": 50.0,
+          "annual_water_savings_liters": 502000.0,
+          "annual_savings_inr": 25099.99,
+          "annual_recharge_value_inr": 5460.0,
+          "annual_maintenance_inr": 2664.91,
+          "net_annual_savings_inr": 27895.08,
+          "payback_period_years": 4.8,
+          "economically_viable": true,
+          "roi_percentage": 109.4,
+          "monthly_savings": [
+            611.41,
+            830.23,
+            688.64,
+            508.44,
+            1074.79,
+            3098.88,
+            6838.14,
+            6789.87,
+            3713.51,
+            521.31,
+            164.12,
+            260.65
+          ]
+        },
+        "hydrogeo_info": {
+          "aquifer_type": "Confined Artesian Aquifer",
+          "aquifer_depth": 30.0,
+          "permeability": "Low (1-5 mm/hr)",
+          "storage_coefficient": 0.05,
+          "transmissivity": 25.0,
+          "groundwater_quality": "Potable - requires testing",
+          "seasonal_fluctuation": 3.1
+        },
+        "mcda": {
+          "method": "Analytic Hierarchy Process (Saaty, 1980) — geometric mean weights, consistency-checked",
+          "criteria": [
+            "harvestable_yield",
+            "annual_rainfall",
+            "soil_infiltration",
+            "open_space",
+            "groundwater_depth"
+          ],
+          "weights": {
+            "harvestable_yield": 0.4174,
+            "annual_rainfall": 0.2634,
+            "soil_infiltration": 0.1602,
+            "open_space": 0.0975,
+            "groundwater_depth": 0.0615
+          },
+          "pairwise_matrix": [
+            [
+              1.0,
+              2.0,
+              3.0,
+              4.0,
+              5.0
+            ],
+            [
+              0.5,
+              1.0,
+              2.0,
+              3.0,
+              4.0
+            ],
+            [
+              0.3333,
+              0.5,
+              1.0,
+              2.0,
+              3.0
+            ],
+            [
+              0.25,
+              0.3333,
+              0.5,
+              1.0,
+              2.0
+            ],
+            [
+              0.2,
+              0.25,
+              0.3333,
+              0.5,
+              1.0
+            ]
+          ],
+          "lambda_max": 5.068,
+          "consistency_index": 0.017,
+          "consistency_ratio": 0.0152,
+          "consistent": true
+        }
+      }
+    }
+  },
+  "sample_pdf_bytes": 56204,
+  "sample_pdf_assessment_id": "2680FD69"
+}
