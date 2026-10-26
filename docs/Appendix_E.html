@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Appendix E</title>
+<style>
+:root { --ink:#111; --rule:#333; }
+* { box-sizing: border-box; }
+body { margin:0; background:#eceff1; color:var(--ink);
+       font-family:"Times New Roman", Times, Georgia, serif; font-size:12pt; line-height:1.5; }
+.sheet { width:210mm; min-height:297mm; padding:23.4mm 23.4mm 32mm 37mm; margin:14px auto;
+         background:#fff; box-shadow:0 2px 10px rgba(0,0,0,.18); }
+.sheet-body { width:149.6mm; }
+p { margin:0 0 12pt 0; }
+p.body, p.cert { text-align:justify; text-indent:36pt; }
+p.cert { margin-bottom:10pt; }
+p.blank { margin:0; line-height:1; font-size:12pt; }
+h1 { font-size:14pt; font-weight:bold; text-align:center; text-transform:uppercase;
+     margin:0 0 10pt 0; line-height:1.5; page-break-before:always; }
+h1.front { margin-bottom:12pt; }
+h2 { font-size:12pt; font-weight:bold; text-align:left; margin:8pt 0 6pt 0; line-height:1.5;
+     page-break-after:avoid; }
+h3 { font-size:12pt; font-weight:bold; text-align:left; margin:6pt 0 4pt 0; line-height:1.5;
+     page-break-after:avoid; }
+p.cover-title { font-size:16pt; font-weight:bold; text-align:center; line-height:1.1; margin:0 0 6pt 0; }
+p.cover-line { font-size:12pt; font-weight:bold; text-align:center; line-height:1.15; margin:0 0 5pt 0; }
+p.caption { font-size:12pt; text-align:center; text-indent:0; line-height:1.1; margin:2pt 0 0 0; }
+p.legend  { font-size:10pt; text-align:center; text-indent:0; line-height:1.1; margin:0 0 8pt 0; }
+p.tablecap{ font-size:12pt; font-weight:bold; text-align:center; text-indent:0; line-height:1.1;
+            margin:6pt 0 4pt 0; }
+p.sig     { font-size:12pt; text-align:center; text-indent:0; line-height:1.2; margin:4pt 0; }
+p.toc     { font-size:10pt; text-indent:0; line-height:1.2; margin:0; }
+p.list    { font-size:9pt; text-indent:0; line-height:1.2; margin:0 0 1pt 0; }
+p.ref     { font-size:10.5pt; text-align:justify; text-indent:-21.6pt; margin:0 0 7pt 21.6pt;
+            line-height:1.15; }
+p.code    { font-family:"Courier New", monospace; font-size:9pt; text-indent:0; line-height:1.1;
+            margin:0; }
+p.figure  { text-align:center; text-indent:0; margin:6pt 0 0 0; page-break-inside:avoid; }
+p.figure img { max-width:100%; height:auto; }
+table.grid { border-collapse:collapse; width:100%; margin:4pt 0 10pt 0; font-size:9pt;
+             line-height:1.15; page-break-inside:auto; }
+table.grid th, table.grid td { border:0.5pt solid var(--rule); padding:2.5pt 4pt; vertical-align:top;
+                               text-align:left; }
+table.grid th { font-weight:bold; text-align:center; background:#f2f2f2; }
+@media print {
+  body { background:#fff; }
+  .sheet { width:auto; min-height:0; margin:0; padding:0; box-shadow:none; }
+  .sheet-body { width:auto; }
+  @page { size:A4; margin:23.4mm 23.4mm 32mm 37mm; }
+  h1, h1.front { page-break-before:always; }
+  .sheet-body > :first-child { page-break-before:avoid; }
+}
+</style>
+</head><body>
+<div class="sheet"><div class="sheet-body">
+<h1 class="chapter">APPENDIX E</h1>
+<h2>E.1 Detailed Test and Build Evidence</h2>
+<p class="body">The backend verification command is run from the Project directory: python -m pytest -q. The final output shows 38 passed tests and one dependency deprecation warning. The frontend verification command is run from Project/frontend: npm run build. The build output confirms successful compilation, type checking and static generation of all routes.</p>
+<p class="body">The two figures below reproduce the captured console output. Detailed test case tables appear in Chapter 7. The temporary database used by the report generator is separate from the development database, so sample assessments do not pollute the local application state. The evidence images are monochrome to comply with the institute&#x27;s illustration rules.</p>
+<p class="figure"><img src="images/Fig_E.1_Backend_pytest_execution_evidence.png" style="width:266.2pt" alt="Fig_E.1_Backend_pytest_execution_evidence.png"></p>
+<p class="caption">Figure E.1: Backend pytest execution evidence</p>
+<p class="legend">Legend: final result is 38 passed.</p>
+<p class="figure"><img src="images/Fig_E.2_Frontend_production_build_evidence.png" style="width:266.2pt" alt="Fig_E.2_Frontend_production_build_evidence.png"></p>
+<p class="caption">Figure E.2: Frontend production build evidence</p>
+<p class="legend">Legend: Next.js compiled successfully and generated static pages.</p>
+</div></div>
+</body></html>

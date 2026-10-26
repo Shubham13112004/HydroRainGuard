@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>5. System Design</title>
+<style>
+:root { --ink:#111; --rule:#333; }
+* { box-sizing: border-box; }
+body { margin:0; background:#eceff1; color:var(--ink);
+       font-family:"Times New Roman", Times, Georgia, serif; font-size:12pt; line-height:1.5; }
+.sheet { width:210mm; min-height:297mm; padding:23.4mm 23.4mm 32mm 37mm; margin:14px auto;
+         background:#fff; box-shadow:0 2px 10px rgba(0,0,0,.18); }
+.sheet-body { width:149.6mm; }
+p { margin:0 0 12pt 0; }
+p.body, p.cert { text-align:justify; text-indent:36pt; }
+p.cert { margin-bottom:10pt; }
+p.blank { margin:0; line-height:1; font-size:12pt; }
+h1 { font-size:14pt; font-weight:bold; text-align:center; text-transform:uppercase;
+     margin:0 0 10pt 0; line-height:1.5; page-break-before:always; }
+h1.front { margin-bottom:12pt; }
+h2 { font-size:12pt; font-weight:bold; text-align:left; margin:8pt 0 6pt 0; line-height:1.5;
+     page-break-after:avoid; }
+h3 { font-size:12pt; font-weight:bold; text-align:left; margin:6pt 0 4pt 0; line-height:1.5;
+     page-break-after:avoid; }
+p.cover-title { font-size:16pt; font-weight:bold; text-align:center; line-height:1.1; margin:0 0 6pt 0; }
+p.cover-line { font-size:12pt; font-weight:bold; text-align:center; line-height:1.15; margin:0 0 5pt 0; }
+p.caption { font-size:12pt; text-align:center; text-indent:0; line-height:1.1; margin:2pt 0 0 0; }
+p.legend  { font-size:10pt; text-align:center; text-indent:0; line-height:1.1; margin:0 0 8pt 0; }
+p.tablecap{ font-size:12pt; font-weight:bold; text-align:center; text-indent:0; line-height:1.1;
+            margin:6pt 0 4pt 0; }
+p.sig     { font-size:12pt; text-align:center; text-indent:0; line-height:1.2; margin:4pt 0; }
+p.toc     { font-size:10pt; text-indent:0; line-height:1.2; margin:0; }
+p.list    { font-size:9pt; text-indent:0; line-height:1.2; margin:0 0 1pt 0; }
+p.ref     { font-size:10.5pt; text-align:justify; text-indent:-21.6pt; margin:0 0 7pt 21.6pt;
+            line-height:1.15; }
+p.code    { font-family:"Courier New", monospace; font-size:9pt; text-indent:0; line-height:1.1;
+            margin:0; }
+p.figure  { text-align:center; text-indent:0; margin:6pt 0 0 0; page-break-inside:avoid; }
+p.figure img { max-width:100%; height:auto; }
+table.grid { border-collapse:collapse; width:100%; margin:4pt 0 10pt 0; font-size:9pt;
+             line-height:1.15; page-break-inside:auto; }
+table.grid th, table.grid td { border:0.5pt solid var(--rule); padding:2.5pt 4pt; vertical-align:top;
+                               text-align:left; }
+table.grid th { font-weight:bold; text-align:center; background:#f2f2f2; }
+@media print {
+  body { background:#fff; }
+  .sheet { width:auto; min-height:0; margin:0; padding:0; box-shadow:none; }
+  .sheet-body { width:auto; }
+  @page { size:A4; margin:23.4mm 23.4mm 32mm 37mm; }
+  h1, h1.front { page-break-before:always; }
+  .sheet-body > :first-child { page-break-before:avoid; }
+}
+</style>
+</head><body>
+<div class="sheet"><div class="sheet-body">
+<h1 class="chapter">5 SYSTEM DESIGN</h1>
+<h2>5.1 System Architecture</h2>
+<p class="body">The architecture is organised into presentation, API, service and data tiers. The presentation tier contains Next.js routes and React components. The API tier exposes FastAPI endpoints and Pydantic schemas. The service tier contains weather, rainfall-grid, hydrology, feasibility, MCDA, cost-benefit, text-shaping and PDF-report modules. The data tier contains the assessment table, precipitation raster and bundled fonts.</p>
+<p class="body">This separation makes the domain logic independent of HTTP and UI concerns. Services receive and return Pydantic models, so they can be unit-tested without a browser. The API layer is responsible for validation, orchestration, persistence and error translation. The frontend is responsible for state, charts and presentation; it does not compute hydrological results.</p>
+<p class="figure"><img src="images/Fig_5.1_Three_tier_system_architecture.png" style="width:384.0pt" alt="Fig_5.1_Three_tier_system_architecture.png"></p>
+<p class="caption">Figure 5.1: Three-tier system architecture</p>
+<p class="legend">Legend: arrows show request flow from browser to API, services and data.</p>
+<h2>5.2 Frontend Design</h2>
+<p class="body">The frontend uses the Next.js App Router with six static routes: home, about, assess, results, not-found and AR. The assessment page is a client component with a three-step wizard. React Hook Form and Zod manage state and validation, while Framer Motion supplies step transitions [32][33]. The map picker is dynamically imported with server-side rendering disabled because Leaflet requires the browser window [34].</p>
+<p class="body">After submission, the full AssessmentResponse is stored in localStorage under hydro_result and the assessment ID is placed in the URL. The results page reads localStorage first and falls back to GET /api/assessment/{id} for shared links. Recharts renders monthly rainfall, runoff and savings charts from the same response object.</p>
+<p class="figure"><img src="images/Fig_5.2_Frontend_page_and_state_flow.png" style="width:384.0pt" alt="Fig_5.2_Frontend_page_and_state_flow.png"></p>
+<p class="caption">Figure 5.2: Frontend page and state flow</p>
+<p class="legend">Legend: results state is shared with the 3D/AR page and PDF download action.</p>
+<h2>5.3 Backend API Design</h2>
+<p class="body">FastAPI exposes health, weather preview, assessment creation, assessment retrieval, PDF download, assessment history and manual database initialisation endpoints. Interactive OpenAPI documentation is available at /docs. The main assessment endpoint follows a fixed sequence: weather, runoff, recharge, recommendations, cost-benefit, hydrogeology, response creation and persistence.</p>
+<p class="body">Startup uses a lifespan handler to create tables, eliminating the fresh-clone failure where the first assessment returned HTTP 500. A guarded init_db function prevents repeated concurrent creation. Production maintenance endpoints require an admin token; development keeps them open for local convenience. CORS origins are configurable through environment variables.</p>
+<p class="tablecap">Table 5.1: API endpoints</p>
+<table class="grid"><thead><tr><th><b>Method</b></th><th><b>Endpoint</b></th><th><b>Purpose</b></th></tr></thead><tbody><tr><td>GET</td><td>/api/health</td><td>Service health and timestamp</td></tr><tr><td>GET</td><td>/api/weather</td><td>Rainfall preview for coordinates</td></tr><tr><td>POST</td><td>/api/assess</td><td>Run full assessment and persist</td></tr><tr><td>GET</td><td>/api/assessment/{id}</td><td>Retrieve stored response</td></tr><tr><td>GET</td><td>/api/report/{id}</td><td>Generate PDF report</td></tr><tr><td>GET</td><td>/api/assessments</td><td>Recent assessments (redacted if unauthorised)</td></tr><tr><td>POST</td><td>/api/init-db</td><td>Manual table creation</td></tr><tr><td>GET</td><td>/docs</td><td>Swagger UI documentation</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+<h2>5.4 Data Contracts and Validation</h2>
+<p class="body">Pydantic models define AssessmentRequest, WeatherData, RunoffResult, RechargeResult, StructureRecommendation, MCDAInfo, CostBenefitAnalysis, HydroGeoInfo and AssessmentResponse. TypeScript interfaces in frontend/lib/types.ts mirror these contracts. This alignment prevents silent field drift between Python and browser code.</p>
+<p class="body">The request schema restricts roof and soil types to enumerations and allows optional override fields. The response schema always includes both runoff methods, provenance fields, AHP audit information and nullable payback. A null payback explicitly means that the system does not repay its capital cost at the selected tariff; it is not displayed as a numeric sentinel.</p>
+<p class="tablecap">Table 5.2: Principal data contracts</p>
+<table class="grid"><thead><tr><th><b>Model</b></th><th><b>Important fields</b></th><th><b>Design note</b></th></tr></thead><tbody><tr><td>AssessmentRequest</td><td>roof_area, soil_type, latitude, longitude</td><td>Validated by Pydantic/Zod</td></tr><tr><td>WeatherData</td><td>monthly_rainfall, source, method</td><td>Provenance is mandatory</td></tr><tr><td>RunoffResult</td><td>rational + SCS-CN values</td><td>Cross-check always visible</td></tr><tr><td>RechargeResult</td><td>infiltration_rate, score</td><td>Soil and depth based</td></tr><tr><td>StructureRecommendation</td><td>score, dimensions, criteria</td><td>Auditable ranking</td></tr><tr><td>CostBenefitAnalysis</td><td>cost, savings, payback, ROI</td><td>Payback is nullable</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+<table class="grid"><tbody><tr><td>AssessmentRequest -&gt; get_weather_data(lat, lon, override?)
+WeatherData + Request -&gt; calculate_runoff() / calculate_recharge()
+Runoff + Recharge -&gt; get_recommendations() -&gt; list[Structure]
+Top structures -&gt; calculate_cost_benefit() -&gt; AssessmentResponse
+AssessmentResponse -&gt; SQLite/PostgreSQL -&gt; PDF / Results / AR</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+<h2>5.5 Data Flow Diagram - Level 0</h2>
+<p class="body">The Level-0 DFD shows the user as the source of site inputs and the recipient of assessment results. The HYDRO RAIN GUARD process is the central transformation. External data and storage include the precipitation raster, optional weather service, map services and the assessment database.</p>
+<p class="body">This high-level view emphasises that the system is not merely a form. It transforms validated site and rainfall data into hydrological, economic and visual outputs. Every output can be traced back to the same assessment identifier, which is essential for reproducibility.</p>
+<p class="figure"><img src="images/Fig_5.3_Data_Flow_Diagram_Level_0.png" style="width:384.0pt" alt="Fig_5.3_Data_Flow_Diagram_Level_0.png"></p>
+<p class="caption">Figure 5.3: Data Flow Diagram - Level 0</p>
+<p class="legend">Legend: input arrows enter the central process; output arrows return results and reports.</p>
+<h2>5.6 Data Flow Diagram - Level 1</h2>
+<p class="body">Level 1 decomposes the central process into five stages: validate input, acquire rainfall, compute hydrology, rank structures and generate outputs. The rainfall raster and assessment database act as data stores. Weather preview uses stages 1 and 2, whereas a full assessment uses all five stages.</p>
+<p class="body">The decomposition matches the service modules in the backend. A failure in optional live weather does not stop the rainfall stage because the climatology grid is local. A failure in database persistence is reported as an API error, while calculations can still be unit-tested independently.</p>
+<p class="figure"><img src="images/Fig_5.4_Data_Flow_Diagram_Level_1.png" style="width:384.0pt" alt="Fig_5.4_Data_Flow_Diagram_Level_1.png"></p>
+<p class="caption">Figure 5.4: Data Flow Diagram - Level 1</p>
+<p class="legend">Legend: numbered processes correspond to validation, acquisition, computation, ranking and output.</p>
+<h2>5.7 Data Flow Diagram - Level 2</h2>
+<p class="body">Level 2 focuses on hydrological computation. Monthly rainfall feeds both the Rational method and SCS-CN cross-check. The first-flush deduction is applied to the selected primary method. Harvestable volume then feeds recharge sizing, structure ranking and monthly savings. Peak runoff rate is derived from the wettest month.</p>
+<p class="body">The two runoff methods are not merged into a hidden average. The chosen method drives economics, while the other is displayed as a percentage difference. This design makes model uncertainty visible to the user and supports future calibration against observed roof runoff data.</p>
+<p class="figure"><img src="images/Fig_5.5_Data_Flow_Diagram_Level_2_hydrology.png" style="width:384.0pt" alt="Fig_5.5_Data_Flow_Diagram_Level_2_hydrology.png"></p>
+<p class="caption">Figure 5.5: Data Flow Diagram - Level 2: hydrology</p>
+<p class="legend">Legend: parallel computation paths provide an auditable cross-check.</p>
+<h2>5.8 Entity Relationship and Database Design</h2>
+<p class="body">The database contains a single Assessment entity. Its primary key is an eight-character uppercase identifier derived from UUID4. Indexed summary columns store name, location, coordinates, roof area, soil type, groundwater depth, runoff, recharge, recommended structure, cost and payback. A full_response_json column stores the complete API response.</p>
+<p class="body">SQLite is used for local development and tests; PostgreSQL through asyncpg is supported for production. The dual-driver configuration rewrites postgres:// URLs, strips unsupported SSL query parameters and passes SSL through connect_args. This design reflects a realistic deployment path while keeping local setup simple [35].</p>
+<p class="figure"><img src="images/Fig_5.6_Entity_relationship_diagram.png" style="width:384.0pt" alt="Fig_5.6_Entity_relationship_diagram.png"></p>
+<p class="caption">Figure 5.6: Entity relationship diagram</p>
+<p class="legend">Legend: one Assessment aggregates the request, weather, runoff, recharge, structures, economics and MCDA data.</p>
+<p class="tablecap">Table 5.3: Assessment table summary</p>
+<table class="grid"><thead><tr><th><b>Column group</b></th><th><b>Representative columns</b></th><th><b>Purpose</b></th></tr></thead><tbody><tr><td>Identity</td><td>id, timestamp</td><td>Shareable result and ordering</td></tr><tr><td>Site</td><td>name, location, latitude, longitude</td><td>Project identification</td></tr><tr><td>Inputs</td><td>roof_type, roof_area, soil_type, depth</td><td>Reproducibility</td></tr><tr><td>Outputs</td><td>annual_runoff_volume, recharge, cost</td><td>Quick history queries</td></tr><tr><td>Complete state</td><td>full_response_json</td><td>PDF regeneration and result links</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+<h2>5.9 UML Use Case and Class Views</h2>
+<p class="body">The use case view identifies residents, engineers and administrators as actors and groups their interactions into assessment, visualisation, reporting and maintenance services. The class view is simplified because the implementation uses Pydantic data-transfer objects rather than deep inheritance hierarchies. Composition is preferred: AssessmentResponse contains WeatherData, RunoffResult, RechargeResult, a list of structures, CostBenefitAnalysis and MCDAInfo.</p>
+<p class="body">This structural choice keeps domain objects immutable from the API consumer&#x27;s perspective. Services are stateless functions, and the ORM entity is used only for persistence. As a result, changes to visualisation do not require database schema changes, and new calculation services can be added without altering the frontend contract.</p>
+<p class="figure"><img src="images/Fig_5.7_UML_use_case_diagram.png" style="width:266.2pt" alt="Fig_5.7_UML_use_case_diagram.png"></p>
+<p class="caption">Figure 5.7: UML use case diagram</p>
+<p class="legend">Legend: use cases are grouped by user goal and system responsibility.</p>
+<p class="figure"><img src="images/Fig_5.8_Simplified_UML_class_diagram.png" style="width:266.2pt" alt="Fig_5.8_Simplified_UML_class_diagram.png"></p>
+<p class="caption">Figure 5.8: Simplified UML class diagram</p>
+<p class="legend">Legend: Pydantic response models are composed inside AssessmentResponse.</p>
+<h2>5.10 Sequence Diagram</h2>
+<p class="body">The sequence diagram traces a successful assessment. The user fills the wizard, the UI posts to the same-origin /api path, the Next.js rewrite forwards the request to FastAPI, and FastAPI invokes domain services. After computation, the response is persisted and returned through the proxy to the browser, which navigates to the results page.</p>
+<p class="body">The diagram also clarifies why the frontend never calls a private localhost backend in deployment. Browser requests remain same-origin, while server-side rewrites can target a separately hosted API. This avoids mixed-content problems and reduces CORS complexity.</p>
+<p class="figure"><img src="images/Fig_5.9_UML_sequence_diagram_for_assessment_creati.png" style="width:384.0pt" alt="Fig_5.9_UML_sequence_diagram_for_assessment_creati.png"></p>
+<p class="caption">Figure 5.9: UML sequence diagram for assessment creation</p>
+<p class="legend">Legend: vertical lifelines represent participants; horizontal arrows represent messages.</p>
+<h2>5.11 Component Diagram</h2>
+<p class="body">The component diagram maps frontend pages and the API client to FastAPI routes and domain services. Static assets such as the precipitation raster and fonts are read by the rainfall-grid and PDF components. The database component stores the full response and powers result retrieval and report regeneration.</p>
+<p class="body">Loose coupling is achieved through narrow function signatures. For example, calculate_runoff depends only on AssessmentRequest and WeatherData, not on HTTP or SQLAlchemy. This makes it possible to test the hydrology module with synthetic weather objects and to replace the rainfall source later without rewriting the calculation engine.</p>
+<p class="figure"><img src="images/Fig_5.10_UML_component_diagram.png" style="width:384.0pt" alt="Fig_5.10_UML_component_diagram.png"></p>
+<p class="caption">Figure 5.10: UML component diagram</p>
+<p class="legend">Legend: components communicate through typed interfaces rather than shared global state.</p>
+<h2>5.12 Deployment and State Diagrams</h2>
+<p class="body">The deployment diagram shows a browser or mobile client, a Vercel-hosted Next.js frontend, a FastAPI service, a PostgreSQL or SQLite database and local raster/font assets. The project frontend is deployed at the URL supplied by the team, while the backend can be hosted separately and reached through the configured rewrite target.</p>
+<p class="body">The state machine describes an assessment from idle through input, weather preview, computation, results and export. Error transitions return to input without losing data. A new assessment resets the state machine. These views connect the logical design to the operational status described later in the report.</p>
+<p class="figure"><img src="images/Fig_5.11_UML_deployment_diagram.png" style="width:266.2pt" alt="Fig_5.11_UML_deployment_diagram.png"></p>
+<p class="caption">Figure 5.11: UML deployment diagram</p>
+<p class="legend">Legend: production persistence should use PostgreSQL rather than ephemeral serverless SQLite.</p>
+<p class="figure"><img src="images/Fig_5.12_UML_state_machine_diagram.png" style="width:266.2pt" alt="Fig_5.12_UML_state_machine_diagram.png"></p>
+<p class="caption">Figure 5.12: UML state machine diagram</p>
+<p class="legend">Legend: the export state includes PDF download and 3D/AR inspection.</p>
+</div></div>
+</body></html>

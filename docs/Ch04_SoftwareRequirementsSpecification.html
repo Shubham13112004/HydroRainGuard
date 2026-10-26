@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4. Software Requirements Specification</title>
+<style>
+:root { --ink:#111; --rule:#333; }
+* { box-sizing: border-box; }
+body { margin:0; background:#eceff1; color:var(--ink);
+       font-family:"Times New Roman", Times, Georgia, serif; font-size:12pt; line-height:1.5; }
+.sheet { width:210mm; min-height:297mm; padding:23.4mm 23.4mm 32mm 37mm; margin:14px auto;
+         background:#fff; box-shadow:0 2px 10px rgba(0,0,0,.18); }
+.sheet-body { width:149.6mm; }
+p { margin:0 0 12pt 0; }
+p.body, p.cert { text-align:justify; text-indent:36pt; }
+p.cert { margin-bottom:10pt; }
+p.blank { margin:0; line-height:1; font-size:12pt; }
+h1 { font-size:14pt; font-weight:bold; text-align:center; text-transform:uppercase;
+     margin:0 0 10pt 0; line-height:1.5; page-break-before:always; }
+h1.front { margin-bottom:12pt; }
+h2 { font-size:12pt; font-weight:bold; text-align:left; margin:8pt 0 6pt 0; line-height:1.5;
+     page-break-after:avoid; }
+h3 { font-size:12pt; font-weight:bold; text-align:left; margin:6pt 0 4pt 0; line-height:1.5;
+     page-break-after:avoid; }
+p.cover-title { font-size:16pt; font-weight:bold; text-align:center; line-height:1.1; margin:0 0 6pt 0; }
+p.cover-line { font-size:12pt; font-weight:bold; text-align:center; line-height:1.15; margin:0 0 5pt 0; }
+p.caption { font-size:12pt; text-align:center; text-indent:0; line-height:1.1; margin:2pt 0 0 0; }
+p.legend  { font-size:10pt; text-align:center; text-indent:0; line-height:1.1; margin:0 0 8pt 0; }
+p.tablecap{ font-size:12pt; font-weight:bold; text-align:center; text-indent:0; line-height:1.1;
+            margin:6pt 0 4pt 0; }
+p.sig     { font-size:12pt; text-align:center; text-indent:0; line-height:1.2; margin:4pt 0; }
+p.toc     { font-size:10pt; text-indent:0; line-height:1.2; margin:0; }
+p.list    { font-size:9pt; text-indent:0; line-height:1.2; margin:0 0 1pt 0; }
+p.ref     { font-size:10.5pt; text-align:justify; text-indent:-21.6pt; margin:0 0 7pt 21.6pt;
+            line-height:1.15; }
+p.code    { font-family:"Courier New", monospace; font-size:9pt; text-indent:0; line-height:1.1;
+            margin:0; }
+p.figure  { text-align:center; text-indent:0; margin:6pt 0 0 0; page-break-inside:avoid; }
+p.figure img { max-width:100%; height:auto; }
+table.grid { border-collapse:collapse; width:100%; margin:4pt 0 10pt 0; font-size:9pt;
+             line-height:1.15; page-break-inside:auto; }
+table.grid th, table.grid td { border:0.5pt solid var(--rule); padding:2.5pt 4pt; vertical-align:top;
+                               text-align:left; }
+table.grid th { font-weight:bold; text-align:center; background:#f2f2f2; }
+@media print {
+  body { background:#fff; }
+  .sheet { width:auto; min-height:0; margin:0; padding:0; box-shadow:none; }
+  .sheet-body { width:auto; }
+  @page { size:A4; margin:23.4mm 23.4mm 32mm 37mm; }
+  h1, h1.front { page-break-before:always; }
+  .sheet-body > :first-child { page-break-before:avoid; }
+}
+</style>
+</head><body>
+<div class="sheet"><div class="sheet-body">
+<h1 class="chapter">4 SOFTWARE REQUIREMENTS SPECIFICATION</h1>
+<h2>4.1 Introduction and Project Scope</h2>
+<p class="body">The SRS defines the externally observable behaviour of HYDRO RAIN GUARD. The system boundary includes the web interface, API, calculation services, persistence and report generation. External services include the bundled CMAP raster, optional OpenWeatherMap current-weather data, OpenStreetMap/Photon/Nominatim geocoding and the browser&#x27;s WebXR runtime. No external service is required for the core offline calculation path.</p>
+<p class="body">The product scope covers assessment creation, weather preview, hydrological analysis, recharge feasibility, AHP ranking, cost-benefit analysis, result retrieval, PDF download, 3D/AR visualisation and multilingual presentation. It excludes IoT sensor management, billing, user accounts, structural certification, municipal approval workflows and water-quality laboratory analysis.</p>
+<p class="figure"><img src="images/Fig_4.1_System_context_and_external_interfaces.png" style="width:384.0pt" alt="Fig_4.1_System_context_and_external_interfaces.png"></p>
+<p class="caption">Figure 4.1: System context and external interfaces</p>
+<p class="legend">Legend: external services provide optional enrichment; the core engine remains local.</p>
+<h2>4.2 User Classes and Characteristics</h2>
+<p class="body">The primary user is a resident, student or facility owner who can describe a roof and site but has no hydrological training. The secondary user is a civil or environmental engineer who needs to inspect coefficients, methods and structure dimensions. A tertiary user is a project reviewer or administrator who examines stored assessments and deployment health.</p>
+<p class="body">The interface therefore uses plain-language labels, default values, map assistance and progressive validation. At the same time, the results pages expose technical details: rainfall source, grid cell, resolution, climatology period, runoff coefficient, curve number, AHP matrix and formula assumptions. This dual-level presentation supports both accessibility and auditability.</p>
+<p class="tablecap">Table 4.1: User classes</p>
+<table class="grid"><thead><tr><th><b>User class</b></th><th><b>Knowledge level</b></th><th><b>Main interaction</b></th><th><b>Required support</b></th></tr></thead><tbody><tr><td>Resident</td><td>Non-technical</td><td>Complete wizard</td><td>Defaults, map picker, tips</td></tr><tr><td>Engineer</td><td>Technical</td><td>Inspect results and PDF</td><td>Provenance, formulas, dimensions</td></tr><tr><td>Planner</td><td>Policy-oriented</td><td>Compare scenarios</td><td>Stored IDs and charts</td></tr><tr><td>Reviewer</td><td>Academic</td><td>Verify implementation</td><td>Tests, diagrams, source structure</td></tr><tr><td>Administrator</td><td>Deployment</td><td>Maintain database</td><td>Environment variables and health API</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+<h2>4.3 Functional Requirements Overview</h2>
+<p class="body">Functional requirements are stated as observable system services. Each requirement is implemented by one or more modules and verified by a test or a demonstrable interface behaviour. FR-01 to FR-05 cover input and data acquisition; FR-06 to FR-10 cover computation; FR-11 to FR-15 cover recommendation; FR-16 to FR-21 cover output, persistence and administration.</p>
+<p class="body">The requirements avoid prescribing unnecessary implementation details. For example, FR-07 requires an independent runoff cross-check, while the design chapter selects SCS Curve Number as the method. This separation allowed the hydrology service to be replaced or extended without changing the API contract.</p>
+<p class="tablecap">Table 4.2: Functional requirements FR-01 to FR-12</p>
+<table class="grid"><thead><tr><th><b>ID</b></th><th><b>Requirement</b></th><th><b>Priority</b></th></tr></thead><tbody><tr><td>FR-01</td><td>Accept site, roof, soil and groundwater inputs</td><td>High</td></tr><tr><td>FR-02</td><td>Allow map pin or manual coordinates</td><td>High</td></tr><tr><td>FR-03</td><td>Validate input types and ranges</td><td>High</td></tr><tr><td>FR-04</td><td>Preview monthly and annual rainfall</td><td>High</td></tr><tr><td>FR-05</td><td>Support local annual rainfall override</td><td>High</td></tr><tr><td>FR-06</td><td>Compute Rational-method runoff</td><td>High</td></tr><tr><td>FR-07</td><td>Compute independent SCS-CN cross-check</td><td>High</td></tr><tr><td>FR-08</td><td>Deduct first-flush loss</td><td>Medium</td></tr><tr><td>FR-09</td><td>Compute recharge potential and score</td><td>High</td></tr><tr><td>FR-10</td><td>Rank feasible recharge/storage structures</td><td>High</td></tr><tr><td>FR-11</td><td>Compute costs, savings, ROI and payback</td><td>Medium</td></tr><tr><td>FR-12</td><td>Generate downloadable multi-page PDF</td><td>High</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+<h2>4.4 Data Acquisition Requirements</h2>
+<p class="body">The assessment wizard must collect a project name, location, coordinates, occupant count, roof type, roof area, open-space area, soil type, groundwater depth, optional water tariff, optional annual rainfall total and runoff-method selection. Zod performs client-side validation, and Pydantic repeats validation on the server [29][20].</p>
+<p class="body">Weather preview is a read-only operation. It must return the annual rainfall, twelve monthly values, source, method, grid cell, resolution, climatology period and flags indicating whether the total came from the grid or a local override. Optional OpenWeatherMap data must be limited to current temperature, humidity and recent rain; annual rainfall must remain reproducible from the climatology [30].</p>
+<p class="tablecap">Table 4.3: Input fields and validation</p>
+<table class="grid"><thead><tr><th><b>Field</b></th><th><b>Type / allowed values</b></th><th><b>Validation</b></th></tr></thead><tbody><tr><td>latitude / longitude</td><td>float</td><td>-90..90 / -180..180</td></tr><tr><td>roof_area</td><td>float (m2)</td><td>&gt;= 5 and &lt;= 10,000</td></tr><tr><td>open_space_area</td><td>float (m2)</td><td>&gt;= 0</td></tr><tr><td>roof_type</td><td>RCC, METAL, TILE, GREEN, ASPHALT</td><td>Enumerated</td></tr><tr><td>soil_type</td><td>SANDY, LOAMY, CLAY, GRAVELLY, SILTY</td><td>Enumerated</td></tr><tr><td>groundwater_depth</td><td>float (m)</td><td>&gt;= 1 and &lt;= 200</td></tr><tr><td>annual_rainfall_override</td><td>float (mm/year)</td><td>Optional, &gt; 0</td></tr><tr><td>water_tariff_per_kl</td><td>float (INR/KL)</td><td>Optional, &gt; 0</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+<h2>4.5 Hydrology and Recommendation Requirements</h2>
+<p class="body">The hydrology subsystem must compute annual and monthly runoff from rainfall, roof area and a roof-material coefficient. It must also compute SCS-CN runoff for each month using a curve-number lookup and the TR-55 retention equation [31]. A fixed first-flush allowance must be deducted from the primary annual volume and allocated across months for savings calculations.</p>
+<p class="body">The recommendation subsystem must apply minimum harvestable-volume and open-space constraints before scoring. Each candidate structure must receive a 0-100 suitability score, dimensions, installation notes and a per-criterion breakdown. AHP weights must be derived from a reciprocal matrix and rejected if the consistency ratio exceeds 0.10 [16].</p>
+<p class="tablecap">Table 4.4: Core computation requirements</p>
+<table class="grid"><thead><tr><th><b>Service</b></th><th><b>Input</b></th><th><b>Output</b></th><th><b>Constraint</b></th></tr></thead><tbody><tr><td>calculate_runoff</td><td>Request + WeatherData</td><td>RunoffResult</td><td>Both methods reported</td></tr><tr><td>calculate_recharge</td><td>Request + WeatherData</td><td>RechargeResult</td><td>Cap at rainfall and 70% efficiency</td></tr><tr><td>get_recommendations</td><td>Runoff + Recharge</td><td>Ranked structures</td><td>Hard constraints first</td></tr><tr><td>get_mcda_info</td><td>Pairwise matrix</td><td>Weights + CR</td><td>CR &lt;= 0.10</td></tr><tr><td>calculate_cost_benefit</td><td>Top structures</td><td>CostBenefitAnalysis</td><td>Monthly savings reconcile</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+<h2>4.6 Visualisation and Reporting Requirements</h2>
+<p class="body">The results dashboard must present summary cards for runoff, harvestable volume, recharge potential, feasibility score and economic indicators. It must provide separate tabs for overview, monthly analysis, structures, cost-benefit and hydrogeology. Charts must use the same response object as the PDF so that figures cannot disagree.</p>
+<p class="body">The PDF must include project metadata, executive summary, rainfall provenance, input parameters, monthly table, hydrological formulas, structure recommendations, AHP audit trail, cost-benefit, hydrogeology, installation notes and limitations. Devanagari names and locations must be shaped correctly. The 3D/AR page must derive geometry from assessment dimensions and degrade gracefully when immersive AR is unavailable.</p>
+<p class="tablecap">Table 4.5: Output requirements</p>
+<table class="grid"><thead><tr><th><b>Output</b></th><th><b>Content</b></th><th><b>Implementation</b></th></tr></thead><tbody><tr><td>Results dashboard</td><td>Cards, tabs and charts</td><td>Next.js + Recharts</td></tr><tr><td>PDF</td><td>Multi-page assessment report</td><td>ReportLab + HarfBuzz</td></tr><tr><td>3D scene</td><td>Tank, pit, well, roof and ground</td><td>react-three-fiber</td></tr><tr><td>AR mode</td><td>Floor placement on supported devices</td><td>@react-three/xr WebXR</td></tr><tr><td>Stored result</td><td>Full response JSON</td><td>SQLAlchemy entity</td></tr><tr><td>Localisation</td><td>English, Hindi, Marathi</td><td>i18n dictionaries</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+<h2>4.7 Use Case Documentation</h2>
+<p class="body">The principal use case is Create Assessment. The actor opens the wizard, selects a site, previews rainfall, enters roof and site conditions and submits the form. The system validates the request, samples climatology, computes all services, stores the response and navigates to the results page. Alternate flows include invalid coordinates, weather preview failure and database unavailability.</p>
+<p class="body">Secondary use cases are Retrieve Assessment, Download Report, Inspect 3D/AR Model, Change Language and Initialise Database. The complete use case list is provided in the table below; detailed preconditions and postconditions are summarised in Appendix E. The use-case diagram uses simplified actor boxes because the diagram is rendered in monochrome for the report.</p>
+<p class="figure"><img src="images/Fig_4.2_UML_use_case_diagram.png" style="width:384.0pt" alt="Fig_4.2_UML_use_case_diagram.png"></p>
+<p class="caption">Figure 4.2: UML use case diagram</p>
+<p class="legend">Legend: actors are grouped at the top; use cases are grouped by purpose below.</p>
+<p class="tablecap">Table 4.6: Use case catalogue</p>
+<table class="grid"><thead><tr><th><b>ID</b></th><th><b>Use case</b></th><th><b>Actor</b></th><th><b>Postcondition</b></th></tr></thead><tbody><tr><td>UC-01</td><td>Create assessment</td><td>User</td><td>Assessment stored and displayed</td></tr><tr><td>UC-02</td><td>Preview rainfall</td><td>User</td><td>Monthly rainfall shown</td></tr><tr><td>UC-03</td><td>Retrieve assessment</td><td>User</td><td>Stored response loaded by ID</td></tr><tr><td>UC-04</td><td>Download PDF</td><td>User</td><td>PDF stream returned</td></tr><tr><td>UC-05</td><td>Inspect 3D/AR</td><td>User</td><td>Scaled model displayed</td></tr><tr><td>UC-06</td><td>Change language</td><td>User</td><td>UI strings updated</td></tr><tr><td>UC-07</td><td>Initialise database</td><td>Admin</td><td>Tables created</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+<h2>4.8 External Interface Requirements</h2>
+<p class="body">The user interface is a responsive web application with navigation, a three-step wizard, results tabs, about page, language switcher and 3D/AR page. The hardware interface includes a keyboard, pointer or touch screen; a WebXR-capable Android device is optional. The software interface consists of HTTP/JSON APIs and browser APIs for localStorage, geolocation and WebXR.</p>
+<p class="body">Communication uses same-origin /api requests from the browser. Next.js rewrites these to the configured backend target. CORS is configured as an additional safeguard for direct API use. The database URL, admin token, CORS origins, weather key, environment and API proxy target are supplied through environment variables rather than hard-coded secrets.</p>
+<p class="tablecap">Table 4.7: External interfaces</p>
+<table class="grid"><thead><tr><th><b>Interface</b></th><th><b>Protocol / technology</b></th><th><b>Purpose</b></th></tr></thead><tbody><tr><td>User interface</td><td>HTML, CSS, JavaScript</td><td>Assessment and visualisation</td></tr><tr><td>Frontend API client</td><td>Axios over HTTP/JSON</td><td>Assessment and weather calls</td></tr><tr><td>Backend API</td><td>FastAPI REST + OpenAPI</td><td>Validated computation endpoints</td></tr><tr><td>Map services</td><td>Leaflet, Photon, Nominatim</td><td>Site selection and reverse geocoding</td></tr><tr><td>Weather</td><td>OpenWeatherMap REST</td><td>Optional current conditions</td></tr><tr><td>Database</td><td>SQLAlchemy async driver</td><td>SQLite or PostgreSQL persistence</td></tr><tr><td>AR</td><td>WebXR immersive-ar</td><td>Optional model placement</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+<h2>4.9 Nonfunctional and System Requirements</h2>
+<p class="body">Performance requirements state that a typical assessment should complete within a few seconds because the rainfall raster is local and live weather has a ten-second timeout. Reliability requires graceful degradation when optional APIs fail. Security requires production maintenance endpoints to be protected by an admin token and personally identifying fields to be redacted in unauthorised history responses.</p>
+<p class="body">Quality attributes include maintainability through service separation, portability through environment variables, usability through multilingual labels and testability through pure functions. Minimum development hardware is a 64-bit dual-core machine with 8 GB RAM; recommended deployment uses a Python 3.10+ backend, Node.js 18+ frontend, PostgreSQL and HTTPS. The iterative SDLC model supports incremental verification.</p>
+<p class="figure"><img src="images/Fig_4.3_Iterative_SDLC_model_applied_to_the_projec.png" style="width:384.0pt" alt="Fig_4.3_Iterative_SDLC_model_applied_to_the_projec.png"></p>
+<p class="caption">Figure 4.3: Iterative SDLC model applied to the project</p>
+<p class="legend">Legend: each iteration ends with verification and feeds the next refinement.</p>
+<p class="tablecap">Table 4.8: Nonfunctional requirements</p>
+<table class="grid"><thead><tr><th><b>ID</b></th><th><b>Attribute</b></th><th><b>Requirement</b></th></tr></thead><tbody><tr><td>NFR-01</td><td>Performance</td><td>Typical assessment &lt; 5 s with local raster</td></tr><tr><td>NFR-02</td><td>Availability</td><td>Rainfall grid works without API key</td></tr><tr><td>NFR-03</td><td>Security</td><td>Admin token for production maintenance</td></tr><tr><td>NFR-04</td><td>Privacy</td><td>Redact names/locations in unauthorised history</td></tr><tr><td>NFR-05</td><td>Maintainability</td><td>Services separated by domain</td></tr><tr><td>NFR-06</td><td>Portability</td><td>Environment-based configuration</td></tr><tr><td>NFR-07</td><td>Usability</td><td>Three-step wizard and three languages</td></tr><tr><td>NFR-08</td><td>Testability</td><td>Unit, API and PDF regression tests</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+</div></div>
+</body></html>

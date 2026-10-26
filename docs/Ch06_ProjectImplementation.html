@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>6. Project Implementation</title>
+<style>
+:root { --ink:#111; --rule:#333; }
+* { box-sizing: border-box; }
+body { margin:0; background:#eceff1; color:var(--ink);
+       font-family:"Times New Roman", Times, Georgia, serif; font-size:12pt; line-height:1.5; }
+.sheet { width:210mm; min-height:297mm; padding:23.4mm 23.4mm 32mm 37mm; margin:14px auto;
+         background:#fff; box-shadow:0 2px 10px rgba(0,0,0,.18); }
+.sheet-body { width:149.6mm; }
+p { margin:0 0 12pt 0; }
+p.body, p.cert { text-align:justify; text-indent:36pt; }
+p.cert { margin-bottom:10pt; }
+p.blank { margin:0; line-height:1; font-size:12pt; }
+h1 { font-size:14pt; font-weight:bold; text-align:center; text-transform:uppercase;
+     margin:0 0 10pt 0; line-height:1.5; page-break-before:always; }
+h1.front { margin-bottom:12pt; }
+h2 { font-size:12pt; font-weight:bold; text-align:left; margin:8pt 0 6pt 0; line-height:1.5;
+     page-break-after:avoid; }
+h3 { font-size:12pt; font-weight:bold; text-align:left; margin:6pt 0 4pt 0; line-height:1.5;
+     page-break-after:avoid; }
+p.cover-title { font-size:16pt; font-weight:bold; text-align:center; line-height:1.1; margin:0 0 6pt 0; }
+p.cover-line { font-size:12pt; font-weight:bold; text-align:center; line-height:1.15; margin:0 0 5pt 0; }
+p.caption { font-size:12pt; text-align:center; text-indent:0; line-height:1.1; margin:2pt 0 0 0; }
+p.legend  { font-size:10pt; text-align:center; text-indent:0; line-height:1.1; margin:0 0 8pt 0; }
+p.tablecap{ font-size:12pt; font-weight:bold; text-align:center; text-indent:0; line-height:1.1;
+            margin:6pt 0 4pt 0; }
+p.sig     { font-size:12pt; text-align:center; text-indent:0; line-height:1.2; margin:4pt 0; }
+p.toc     { font-size:10pt; text-indent:0; line-height:1.2; margin:0; }
+p.list    { font-size:9pt; text-indent:0; line-height:1.2; margin:0 0 1pt 0; }
+p.ref     { font-size:10.5pt; text-align:justify; text-indent:-21.6pt; margin:0 0 7pt 21.6pt;
+            line-height:1.15; }
+p.code    { font-family:"Courier New", monospace; font-size:9pt; text-indent:0; line-height:1.1;
+            margin:0; }
+p.figure  { text-align:center; text-indent:0; margin:6pt 0 0 0; page-break-inside:avoid; }
+p.figure img { max-width:100%; height:auto; }
+table.grid { border-collapse:collapse; width:100%; margin:4pt 0 10pt 0; font-size:9pt;
+             line-height:1.15; page-break-inside:auto; }
+table.grid th, table.grid td { border:0.5pt solid var(--rule); padding:2.5pt 4pt; vertical-align:top;
+                               text-align:left; }
+table.grid th { font-weight:bold; text-align:center; background:#f2f2f2; }
+@media print {
+  body { background:#fff; }
+  .sheet { width:auto; min-height:0; margin:0; padding:0; box-shadow:none; }
+  .sheet-body { width:auto; }
+  @page { size:A4; margin:23.4mm 23.4mm 32mm 37mm; }
+  h1, h1.front { page-break-before:always; }
+  .sheet-body > :first-child { page-break-before:avoid; }
+}
+</style>
+</head><body>
+<div class="sheet"><div class="sheet-body">
+<h1 class="chapter">6 PROJECT IMPLEMENTATION</h1>
+<h2>6.1 Implementation Overview</h2>
+<p class="body">The implementation is divided into frontend routes, reusable components, typed API helpers, backend routes, Pydantic/SQLAlchemy models, pure calculation services, static data and tests. The backend contains nine service modules and four test modules; the frontend contains six App Router routes, five principal components and a typed i18n subsystem.</p>
+<p class="body">The module map shows how source code is organised. The README documents quick start, rainfall provenance, hydrological methods, AHP weights, endpoints, environment variables and known deployment constraints. A reproducibility script rebuilds the precipitation raster from a source SQLite database. The implementation is committed to the project repository for review.</p>
+<p class="figure"><img src="images/Fig_6.1_Implementation_module_map.png" style="width:384.0pt" alt="Fig_6.1_Implementation_module_map.png"></p>
+<p class="caption">Figure 6.1: Implementation module map</p>
+<p class="legend">Legend: frontend, backend, services, tests and static data are separated.</p>
+<p class="tablecap">Table 6.1: Implemented modules</p>
+<table class="grid"><thead><tr><th><b>Area</b></th><th><b>Modules</b></th><th><b>Status</b></th></tr></thead><tbody><tr><td>Frontend pages</td><td>home, about, assess, results, ar</td><td>Completed</td></tr><tr><td>Frontend components</td><td>navbar, footer, map, AR viewer, language switcher</td><td>Completed</td></tr><tr><td>Backend API</td><td>health, weather, assess, report, history</td><td>Completed</td></tr><tr><td>Services</td><td>rainfall, hydrology, MCDA, cost, PDF</td><td>Completed</td></tr><tr><td>Data</td><td>CMAP raster, provenance JSON, Noto fonts</td><td>Completed</td></tr><tr><td>Tests</td><td>38 backend tests</td><td>Passing</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+<h2>6.2 Landing and About Pages</h2>
+<p class="body">The landing page introduces the problem, describes six capabilities and presents the five-step workflow. It uses responsive cards, iconography and motion effects while keeping all navigation accessible from the top bar. The About page lists the institution, research team, paper identification and reference summary.</p>
+<p class="body">The interface is intentionally lightweight. No 3D engine is loaded on the landing page; the AR viewer is dynamically imported only when the user opens the 3D route. This lazy-loading decision reduces initial JavaScript cost and prevents the rest of the application from depending on WebGL availability.</p>
+<p class="figure"><img src="images/Fig_6.2_Implemented_landing_page.png" style="width:227.1pt" alt="Fig_6.2_Implemented_landing_page.png"></p>
+<p class="caption">Figure 6.2: Implemented landing page</p>
+<p class="legend">Legend: hero area, capability summary and primary call-to-action are shown.</p>
+<p class="figure"><img src="images/Fig_6.3_Implemented_About_page.png" style="width:227.1pt" alt="Fig_6.3_Implemented_About_page.png"></p>
+<p class="caption">Figure 6.3: Implemented About page</p>
+<p class="legend">Legend: institution, paper identity and research team are displayed.</p>
+<h2>6.3 Assessment Wizard - Basic Information</h2>
+<p class="body">Step one captures the project name, occupant count, site coordinates and location name. A Leaflet map allows the user to place a pin, search for a place, use device location or switch to manual coordinate entry. Photon is attempted first for geocoding and Nominatim is used as a fallback [36].</p>
+<p class="body">The coordinate state is lifted out of the form watch subscription. Shared InputField and SelectField components are declared at module scope, preventing React from unmounting and remounting the inputs on each keystroke. getValues reads coordinates only when the weather preview button is pressed, so typing high-precision decimal values remains stable.</p>
+<p class="figure"><img src="images/Fig_6.4_Assessment_wizard_basic_information_and_ma.png" style="width:327.6pt" alt="Fig_6.4_Assessment_wizard_basic_information_and_ma.png"></p>
+<p class="caption">Figure 6.4: Assessment wizard - basic information and map pin</p>
+<p class="legend">Legend: map controls, coordinate summary and manual-entry toggle are visible.</p>
+<h2>6.4 Assessment Wizard - Roof and Rainfall</h2>
+<p class="body">Step two selects roof type and area, fetches rainfall climatology and displays location, annual rainfall, temperature, humidity, dataset, climatology period and grid cell. A warning appears when the annual total comes directly from the coarse grid. The local override field replaces only the annual total while preserving the monthly distribution.</p>
+<p class="body">In the verified Pune example, the grid&#x27;s 2.5-degree cell would overstate local rainfall; an IMD-style 700 mm override is applied. The screenshot shows 700 mm annual rainfall, source NOAA PSL CMAP, climatology 1991-2020 and grid cell 18.75 degrees, 73.75 degrees at 2.5-degree resolution.</p>
+<p class="figure"><img src="images/Fig_6.5_Assessment_wizard_roof_details_and_rainfal.png" style="width:327.6pt" alt="Fig_6.5_Assessment_wizard_roof_details_and_rainfal.png"></p>
+<p class="caption">Figure 6.5: Assessment wizard - roof details and rainfall preview</p>
+<p class="legend">Legend: rainfall provenance and local override controls are shown below the weather summary.</p>
+<h2>6.5 Assessment Wizard - Site Conditions</h2>
+<p class="body">Step three captures open-space area, soil type, groundwater depth and the water tariff used for economic analysis. A contextual tip explains typical groundwater depths. The tariff is user-adjustable because avoided water cost is the most sensitive parameter in payback calculation; municipal and tanker rates can differ by an order of magnitude.</p>
+<p class="body">The Run Assessment button calls handleSubmit only on the final step. The wizard intentionally avoids a wrapping form element and marks all navigation buttons as type=button, preventing accidental submission while pressing Next. On success, the response is saved to localStorage and the browser navigates to /results?id=&lt;assessment_id&gt;.</p>
+<p class="figure"><img src="images/Fig_6.6_Assessment_wizard_site_conditions_and_fina.png" style="width:327.6pt" alt="Fig_6.6_Assessment_wizard_site_conditions_and_fina.png"></p>
+<p class="caption">Figure 6.6: Assessment wizard - site conditions and final submission</p>
+<p class="legend">Legend: soil, groundwater depth and tariff are entered before the final assessment.</p>
+<h2>6.6 Rainfall Grid and Weather Service</h2>
+<p class="body">The rainfall-grid service reads a compact binary raster containing twelve monthly means for a global 2.5-degree grid. It performs bilinear interpolation between four surrounding cell centres, handles longitude wrap-around at the dateline and rejects no-data cells. A companion JSON file stores dataset provenance and period metadata.</p>
+<p class="body">The weather service calls the grid sampler, optionally rescales monthly values to a user-supplied annual total and then attempts an optional OpenWeatherMap request. If the key is missing or the request fails, default temperature and humidity are used but rainfall remains available. This graceful degradation makes the core assessment independent of network access [15][30].</p>
+<p class="figure"><img src="images/Fig_6.7_Bilinear_rainfall_grid_sampling.png" style="width:384.0pt" alt="Fig_6.7_Bilinear_rainfall_grid_sampling.png"></p>
+<p class="caption">Figure 6.7: Bilinear rainfall grid sampling</p>
+<p class="legend">Legend: four surrounding grid cells contribute to the interpolated monthly value.</p>
+<p class="tablecap">Table 6.2: Rainfall provenance fields</p>
+<table class="grid"><thead><tr><th><b>Field</b></th><th><b>Example value</b></th><th><b>Purpose</b></th></tr></thead><tbody><tr><td>Source</td><td>NOAA PSL CMAP</td><td>Dataset identity</td></tr><tr><td>Period</td><td>1991/01/01 - 2020/12/31</td><td>Climatology baseline</td></tr><tr><td>Resolution</td><td>2.5 degrees</td><td>Spatial uncertainty</td></tr><tr><td>Grid cell</td><td>18.75 deg, 73.75 deg</td><td>Interpolation reference</td></tr><tr><td>Method</td><td>Grid monthly shape + local annual total</td><td>Override provenance</td></tr><tr><td>Grid estimate flag</td><td>false</td><td>Signals a local override was used</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+<h2>6.7 Hydrology Service Implementation</h2>
+<p class="body">The hydrology service maps roof materials to runoff coefficients and curve numbers. RCC uses C=0.90 and CN=98; metal uses 0.85 and 97; tile uses 0.75 and 95; green roof uses 0.30 and 75; asphalt uses 0.80 and 96. Monthly Rational runoff is computed as C times rainfall depth times roof area, with unit conversion from millimetres to litres.</p>
+<p class="body">SCS-CN is computed on each monthly rainfall total using S=25400/CN-254, Ia=0.2S and Q=(P-Ia)^2/(P-Ia+S) when P exceeds Ia [31]. A fixed first-flush allowance of 2 mm over 100 assumed events is deducted. In the Pune sample, Rational runoff is 63.0 KL and the SCS-CN cross-check is 65.3 KL, a difference of 3.7 percent.</p>
+<p class="tablecap">Table 6.3: Roof coefficients and curve numbers</p>
+<table class="grid"><thead><tr><th><b>Roof type</b></th><th><b>Runoff coefficient C</b></th><th><b>Curve number CN</b></th><th><b>Interpretation</b></th></tr></thead><tbody><tr><td>RCC</td><td>0.90</td><td>98</td><td>Highly impervious</td></tr><tr><td>Metal</td><td>0.85</td><td>97</td><td>High runoff</td></tr><tr><td>Tile</td><td>0.75</td><td>95</td><td>Moderate-high runoff</td></tr><tr><td>Asphalt</td><td>0.80</td><td>96</td><td>Impervious</td></tr><tr><td>Green</td><td>0.30</td><td>75</td><td>Retention and evapotranspiration</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+<table class="grid"><tbody><tr><td>for each month m:
+  rational_L = C * R_m(mm) * A(m2)
+  S  = 25400 / CN - 254
+  Ia = 0.2 * S
+  scs_L = (R_m - Ia)^2 / (R_m - Ia + S) * A   if R_m &gt; Ia else 0
+harvestable = max(0, primary_annual - first_flush_loss)</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+<h2>6.8 Recharge and Feasibility Service</h2>
+<p class="body">Recharge potential uses soil-specific infiltration rates: gravelly 30 mm/hr, sandy 25, loamy 12.5, silty 6.5 and clay 2.5. The service assumes 120 rainy days at eight hours per day, multiplies infiltration by open space and duration, and caps the result at 70 percent of rainfall over the open area. A rule-based feasibility score combines depth, soil, space and rainfall.</p>
+<p class="body">Structure definitions encode minimum harvestable volume, minimum open space, rainfall band, infiltration band and groundwater-depth band. A hard space filter removes physically impossible options before AHP scoring. For the Pune sample, recharge potential is 24.5 KL/year at 67.1 L/day and the feasibility score is 55/100.</p>
+<p class="tablecap">Table 6.4: Recharge structure catalogue</p>
+<table class="grid"><thead><tr><th><b>Structure</b></th><th><b>Minimum harvestable</b></th><th><b>Minimum space</b></th><th><b>Suitable condition</b></th></tr></thead><tbody><tr><td>Rooftop Storage Tank</td><td>0 L</td><td>0 m2</td><td>All buildings</td></tr><tr><td>Recharge Pit</td><td>20 KL</td><td>9 m2</td><td>Permeable soil, moderate depth</td></tr><tr><td>Recharge Well</td><td>60 KL</td><td>4 m2</td><td>Deep aquifer, limited surface space</td></tr><tr><td>Percolation Tank</td><td>200 KL</td><td>100 m2</td><td>Large open plots</td></tr><tr><td>Soak Pit / French Drain</td><td>10 KL</td><td>6 m2</td><td>Small roofs and moderate soil</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+<h2>6.9 AHP Recommendation Engine</h2>
+<p class="body">The MCDA service builds a five-by-five reciprocal pairwise matrix. Harvestable yield is preferred over annual rainfall, rainfall over soil infiltration, infiltration over open space and open space over groundwater depth. Geometric-mean weights are computed and checked with lambda-max, CI, RI and CR. The implementation reports CR=0.0152, below Saaty&#x27;s 0.10 threshold [16].</p>
+<p class="body">Each criterion is converted to a 0-1 utility using ramp or trapezoidal functions. The weighted sum is multiplied by 100 to produce a suitability score. For the Pune sample, rooftop storage tank scores 93.0, soak pit 72.8, recharge pit 69.0 and recharge well 51.8. The percolation tank is filtered out because the available open space is too small.</p>
+<p class="figure"><img src="images/Fig_6.8_AHP_criteria_hierarchy.png" style="width:266.2pt" alt="Fig_6.8_AHP_criteria_hierarchy.png"></p>
+<p class="caption">Figure 6.8: AHP criteria hierarchy</p>
+<p class="legend">Legend: goal, criteria and candidate structures form the decision hierarchy.</p>
+<p class="figure"><img src="images/Fig_6.9_Derived_AHP_criterion_weights.png" style="width:266.2pt" alt="Fig_6.9_Derived_AHP_criterion_weights.png"></p>
+<p class="caption">Figure 6.9: Derived AHP criterion weights</p>
+<p class="legend">Legend: weights are percentages and are checked for internal consistency.</p>
+<h2>6.10 Cost-Benefit Implementation</h2>
+<p class="body">The cost-benefit service prices the top two recommended structures, adds plumbing estimated from roof perimeter and applies a user-selectable avoided-water tariff. Storage, recharge and plumbing costs are kept separate. Recharge benefit is valued conservatively at half the water tariff, annual maintenance is two percent of capital cost and ROI uses a ten-year horizon.</p>
+<p class="body">Monthly savings are derived from the harvestable monthly series after first-flush allocation; annual savings are the sum of those monthly values, so charts and summary cards cannot disagree. For the Pune sample, estimated cost is Rs. 53,000, annual savings Rs. 1,505, net annual benefit Rs. 874, payback 60.6 years and ten-year ROI -83.5 percent. The interface states that the system is not economically viable at this tariff within ten years.</p>
+<p class="figure"><img src="images/Fig_6.10_Estimated_capital_cost_breakdown.png" style="width:384.0pt" alt="Fig_6.10_Estimated_capital_cost_breakdown.png"></p>
+<p class="caption">Figure 6.10: Estimated capital cost breakdown</p>
+<p class="legend">Legend: bars show storage, recharge and plumbing components for the Pune sample.</p>
+<p class="tablecap">Table 6.5: Economic parameters</p>
+<table class="grid"><thead><tr><th><b>Parameter</b></th><th><b>Value</b></th><th><b>Meaning</b></th></tr></thead><tbody><tr><td>Default tariff</td><td>Rs. 35/KL</td><td>Blended avoided water cost</td></tr><tr><td>Storage tank</td><td>Rs. 25,000</td><td>Base structure cost</td></tr><tr><td>Soak pit</td><td>Rs. 8,000</td><td>Base structure cost</td></tr><tr><td>Plumbing</td><td>Rs. 500/m</td><td>Roof perimeter estimate</td></tr><tr><td>Maintenance</td><td>2%/year</td><td>Operating allowance</td></tr><tr><td>ROI horizon</td><td>10 years</td><td>Decision horizon</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+<h2>6.11 Reporting, Languages and 3D/AR</h2>
+<p class="body">PDF generation uses ReportLab tables and flowables, with every input value, monthly series, recommendation, AHP audit field and economic assumption included [24]. Because ReportLab cannot shape Devanagari correctly, the text-shaping service uses HarfBuzz and fontTools to produce glyph outlines for Hindi and Marathi, while Latin text remains searchable [25][26].</p>
+<p class="body">The i18n layer provides English, Hindi and Marathi dictionaries with English fallback. The AR page lazy-loads a react-three-fiber viewer, builds geometry from roof area, tank volume, pit depth and well depth, and offers cutaway and label toggles [18]. WebXR AR placement is available only on supported secure-origin devices [19].</p>
+<p class="figure"><img src="images/Fig_6.11_Automated_PDF_report_pipeline.png" style="width:266.2pt" alt="Fig_6.11_Automated_PDF_report_pipeline.png"></p>
+<p class="caption">Figure 6.11: Automated PDF report pipeline</p>
+<p class="legend">Legend: HarfBuzz shaping is applied before Devanagari text is drawn as vector outlines.</p>
+<p class="figure"><img src="images/Fig_6.12_Implemented_3D_AR_structure_selection_pane.png" style="width:113.5pt" alt="Fig_6.12_Implemented_3D_AR_structure_selection_pane.png"></p>
+<p class="caption">Figure 6.12: Implemented 3D/AR structure selection panel</p>
+<p class="legend">Legend: scores and dimensions come from the stored assessment response.</p>
+</div></div>
+</body></html>

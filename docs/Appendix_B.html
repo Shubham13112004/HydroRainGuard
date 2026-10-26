@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Appendix B</title>
+<style>
+:root { --ink:#111; --rule:#333; }
+* { box-sizing: border-box; }
+body { margin:0; background:#eceff1; color:var(--ink);
+       font-family:"Times New Roman", Times, Georgia, serif; font-size:12pt; line-height:1.5; }
+.sheet { width:210mm; min-height:297mm; padding:23.4mm 23.4mm 32mm 37mm; margin:14px auto;
+         background:#fff; box-shadow:0 2px 10px rgba(0,0,0,.18); }
+.sheet-body { width:149.6mm; }
+p { margin:0 0 12pt 0; }
+p.body, p.cert { text-align:justify; text-indent:36pt; }
+p.cert { margin-bottom:10pt; }
+p.blank { margin:0; line-height:1; font-size:12pt; }
+h1 { font-size:14pt; font-weight:bold; text-align:center; text-transform:uppercase;
+     margin:0 0 10pt 0; line-height:1.5; page-break-before:always; }
+h1.front { margin-bottom:12pt; }
+h2 { font-size:12pt; font-weight:bold; text-align:left; margin:8pt 0 6pt 0; line-height:1.5;
+     page-break-after:avoid; }
+h3 { font-size:12pt; font-weight:bold; text-align:left; margin:6pt 0 4pt 0; line-height:1.5;
+     page-break-after:avoid; }
+p.cover-title { font-size:16pt; font-weight:bold; text-align:center; line-height:1.1; margin:0 0 6pt 0; }
+p.cover-line { font-size:12pt; font-weight:bold; text-align:center; line-height:1.15; margin:0 0 5pt 0; }
+p.caption { font-size:12pt; text-align:center; text-indent:0; line-height:1.1; margin:2pt 0 0 0; }
+p.legend  { font-size:10pt; text-align:center; text-indent:0; line-height:1.1; margin:0 0 8pt 0; }
+p.tablecap{ font-size:12pt; font-weight:bold; text-align:center; text-indent:0; line-height:1.1;
+            margin:6pt 0 4pt 0; }
+p.sig     { font-size:12pt; text-align:center; text-indent:0; line-height:1.2; margin:4pt 0; }
+p.toc     { font-size:10pt; text-indent:0; line-height:1.2; margin:0; }
+p.list    { font-size:9pt; text-indent:0; line-height:1.2; margin:0 0 1pt 0; }
+p.ref     { font-size:10.5pt; text-align:justify; text-indent:-21.6pt; margin:0 0 7pt 21.6pt;
+            line-height:1.15; }
+p.code    { font-family:"Courier New", monospace; font-size:9pt; text-indent:0; line-height:1.1;
+            margin:0; }
+p.figure  { text-align:center; text-indent:0; margin:6pt 0 0 0; page-break-inside:avoid; }
+p.figure img { max-width:100%; height:auto; }
+table.grid { border-collapse:collapse; width:100%; margin:4pt 0 10pt 0; font-size:9pt;
+             line-height:1.15; page-break-inside:auto; }
+table.grid th, table.grid td { border:0.5pt solid var(--rule); padding:2.5pt 4pt; vertical-align:top;
+                               text-align:left; }
+table.grid th { font-weight:bold; text-align:center; background:#f2f2f2; }
+@media print {
+  body { background:#fff; }
+  .sheet { width:auto; min-height:0; margin:0; padding:0; box-shadow:none; }
+  .sheet-body { width:auto; }
+  @page { size:A4; margin:23.4mm 23.4mm 32mm 37mm; }
+  h1, h1.front { page-break-before:always; }
+  .sheet-body > :first-child { page-break-before:avoid; }
+}
+</style>
+</head><body>
+<div class="sheet"><div class="sheet-body">
+<h1 class="chapter">APPENDIX B</h1>
+<h2>B.1 Implementation Paper and Project Details</h2>
+<p class="body">The implementation report is represented by this BE Project Work - II document and the accompanying project repository. It converts the conceptual framework into FastAPI services, a Next.js frontend, a CMAP rainfall raster, AHP ranking, cost-benefit analysis, 3D/AR visualisation and a multilingual PDF generator. The repository README records setup instructions, formulas, endpoints and environment variables.</p>
+<p class="body">The official acceptance proof for the associated conference paper and any implementation-paper certificate should be inserted on this page or immediately after it. No certificate number, publication date, DOI or page range is fabricated in this report. The students should attach the documents supplied by the conference or institution before final submission.</p>
+<p class="tablecap">Table B.1: Implementation and publication details</p>
+<table class="grid"><thead><tr><th><b>Item</b></th><th><b>Detail</b></th></tr></thead><tbody><tr><td>Implementation title</td><td>HYDRO RAIN GUARD: INTELLIGENT RAINWATER HARVESTING AND ARTIFICIAL GROUNDWATER RECHARGE ASSESSMENT SYSTEM</td></tr><tr><td>Repository</td><td>https://github.com/Shubham13112004/HydroRainGuard</td></tr><tr><td>Deployed frontend</td><td>https://hydro-rain-guard-mhus.vercel.app/</td></tr><tr><td>Survey paper status</td><td>Accepted, ICICIS 2026, Paper ID 195</td></tr><tr><td>Implementation paper</td><td>Stage-II project report / repository evidence</td></tr><tr><td>Verification</td><td>38 backend tests; Next.js production build</td></tr><tr><td>Documents to attach</td><td>Acceptance letter, implementation paper proof if issued</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+</div></div>
+</body></html>

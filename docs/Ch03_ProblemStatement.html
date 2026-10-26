@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3. Problem Statement</title>
+<style>
+:root { --ink:#111; --rule:#333; }
+* { box-sizing: border-box; }
+body { margin:0; background:#eceff1; color:var(--ink);
+       font-family:"Times New Roman", Times, Georgia, serif; font-size:12pt; line-height:1.5; }
+.sheet { width:210mm; min-height:297mm; padding:23.4mm 23.4mm 32mm 37mm; margin:14px auto;
+         background:#fff; box-shadow:0 2px 10px rgba(0,0,0,.18); }
+.sheet-body { width:149.6mm; }
+p { margin:0 0 12pt 0; }
+p.body, p.cert { text-align:justify; text-indent:36pt; }
+p.cert { margin-bottom:10pt; }
+p.blank { margin:0; line-height:1; font-size:12pt; }
+h1 { font-size:14pt; font-weight:bold; text-align:center; text-transform:uppercase;
+     margin:0 0 10pt 0; line-height:1.5; page-break-before:always; }
+h1.front { margin-bottom:12pt; }
+h2 { font-size:12pt; font-weight:bold; text-align:left; margin:8pt 0 6pt 0; line-height:1.5;
+     page-break-after:avoid; }
+h3 { font-size:12pt; font-weight:bold; text-align:left; margin:6pt 0 4pt 0; line-height:1.5;
+     page-break-after:avoid; }
+p.cover-title { font-size:16pt; font-weight:bold; text-align:center; line-height:1.1; margin:0 0 6pt 0; }
+p.cover-line { font-size:12pt; font-weight:bold; text-align:center; line-height:1.15; margin:0 0 5pt 0; }
+p.caption { font-size:12pt; text-align:center; text-indent:0; line-height:1.1; margin:2pt 0 0 0; }
+p.legend  { font-size:10pt; text-align:center; text-indent:0; line-height:1.1; margin:0 0 8pt 0; }
+p.tablecap{ font-size:12pt; font-weight:bold; text-align:center; text-indent:0; line-height:1.1;
+            margin:6pt 0 4pt 0; }
+p.sig     { font-size:12pt; text-align:center; text-indent:0; line-height:1.2; margin:4pt 0; }
+p.toc     { font-size:10pt; text-indent:0; line-height:1.2; margin:0; }
+p.list    { font-size:9pt; text-indent:0; line-height:1.2; margin:0 0 1pt 0; }
+p.ref     { font-size:10.5pt; text-align:justify; text-indent:-21.6pt; margin:0 0 7pt 21.6pt;
+            line-height:1.15; }
+p.code    { font-family:"Courier New", monospace; font-size:9pt; text-indent:0; line-height:1.1;
+            margin:0; }
+p.figure  { text-align:center; text-indent:0; margin:6pt 0 0 0; page-break-inside:avoid; }
+p.figure img { max-width:100%; height:auto; }
+table.grid { border-collapse:collapse; width:100%; margin:4pt 0 10pt 0; font-size:9pt;
+             line-height:1.15; page-break-inside:auto; }
+table.grid th, table.grid td { border:0.5pt solid var(--rule); padding:2.5pt 4pt; vertical-align:top;
+                               text-align:left; }
+table.grid th { font-weight:bold; text-align:center; background:#f2f2f2; }
+@media print {
+  body { background:#fff; }
+  .sheet { width:auto; min-height:0; margin:0; padding:0; box-shadow:none; }
+  .sheet-body { width:auto; }
+  @page { size:A4; margin:23.4mm 23.4mm 32mm 37mm; }
+  h1, h1.front { page-break-before:always; }
+  .sheet-body > :first-child { page-break-before:avoid; }
+}
+</style>
+</head><body>
+<div class="sheet"><div class="sheet-body">
+<h1 class="chapter">3 PROBLEM STATEMENT</h1>
+<h2>3.1 Detailed Problem Definition</h2>
+<p class="body">The problem is to transform scattered rooftop, rainfall, soil and groundwater information into a consistent feasibility assessment without requiring the user to perform hydrological calculations manually. Existing practice separates data collection, coefficient selection, runoff estimation, recharge feasibility, structure selection, cost estimation and report preparation. This separation introduces transcription errors and makes assumptions difficult to audit.</p>
+<p class="body">Formally, the system must accept a site description, produce annual and monthly water-balance estimates, estimate soil-limited recharge potential, filter physically impossible structures, rank feasible options, calculate indicative economics and communicate the result through charts, 3D/AR and PDF. All outputs must be reproducible from the same request object and must state their data provenance.</p>
+<p class="figure"><img src="images/Fig_3.1_Problem_decomposition_into_subsystems.png" style="width:384.0pt" alt="Fig_3.1_Problem_decomposition_into_subsystems.png"></p>
+<p class="caption">Figure 3.1: Problem decomposition into subsystems</p>
+<p class="legend">Legend: the central problem is divided into data, computation, ranking and communication.</p>
+<h2>3.2 Limitations of the Existing Manual System</h2>
+<p class="body">Manual design relies on rainfall tables, printed guidelines and spreadsheet arithmetic. A change in roof area, soil type or rainfall requires the engineer to revisit several calculations. There is usually no machine-readable provenance, no independent runoff cross-check, no consistency test for structure ranking and no automatic mechanism to produce a updated report for a revised scenario.</p>
+<p class="body">Monitoring-oriented smart-water systems improve sensing but do not necessarily support feasibility design. GIS tools produce maps but may not size structures. AR tools explain a design but do not calculate it. The absence of a unified workflow disproportionately affects non-specialist users and small sites that cannot commission a detailed consultancy study.</p>
+<p class="tablecap">Table 3.1: Existing-system limitations and required response</p>
+<table class="grid"><thead><tr><th><b>Limitation</b></th><th><b>Consequence</b></th><th><b>Required response</b></th></tr></thead><tbody><tr><td>Manual calculations</td><td>Transcription and unit errors</td><td>Pure hydrology services</td></tr><tr><td>Static rainfall records</td><td>Outdated or distant data</td><td>Grid plus local override</td></tr><tr><td>Rule-of-thumb structure choice</td><td>Unclear trade-offs</td><td>AHP with audit trail</td></tr><tr><td>2D drawings only</td><td>Poor spatial understanding</td><td>Scaled 3D/AR view</td></tr><tr><td>Static documents</td><td>Slow revision cycle</td><td>Generated PDF from stored JSON</td></tr><tr><td>No persistence</td><td>Results lost after refresh</td><td>Assessment ID and database</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+<h2>3.3 Proposed Solution</h2>
+<p class="body">HYDRO RAIN GUARD proposes an integrated decision-support architecture. User inputs are validated in the browser and again by Pydantic models. Coordinates sample the CMAP raster through bilinear interpolation. Hydrology services compute Rational-method runoff and an SCS-CN cross-check on monthly totals. Recharge is capped by rainfall and soil infiltration. AHP ranks storage and recharge structures after hard-constraint filtering.</p>
+<p class="body">The response is stored with a short assessment identifier and returned to the results dashboard. The user can inspect monthly rainfall, runoff, savings, hydrogeology, structure scores and AHP weights. A ReportLab document reproduces the same values with provenance and a multilingual text layer. The same response dimensions drive the 3D/AR scene. This design ensures that all outputs are consistent with one another.</p>
+<p class="figure"><img src="images/Fig_3.2_Conceptual_solution_and_computational_pipe.png" style="width:384.0pt" alt="Fig_3.2_Conceptual_solution_and_computational_pipe.png"></p>
+<p class="caption">Figure 3.2: Conceptual solution and computational pipeline</p>
+<p class="legend">Legend: deterministic services receive validated site and rainfall data and produce auditable outputs.</p>
+<h2>3.4 Feasibility, Assumptions and Constraints</h2>
+<p class="body">Technical feasibility is demonstrated by the completed repository, passing tests and successful production build. Operational feasibility is supported by a browser-based interface and a public deployment. Economic feasibility is assessed by the system itself, but the resulting payback depends strongly on local water tariff and rainfall; the tool exposes the tariff rather than hiding it.</p>
+<p class="body">The assessment is a screening model. It uses long-term monthly climatology, an assumed number of rainy hours, fixed first-flush loss and lookup-table soil infiltration. It does not replace pumping tests, water-quality testing, structural design, legal approval or site surveying. These assumptions are explicitly surfaced in the report and discussed in the limitations chapter.</p>
+<p class="tablecap">Table 3.2: Feasibility dimensions and principal assumptions</p>
+<table class="grid"><thead><tr><th><b>Dimension</b></th><th><b>Status</b></th><th><b>Key assumption / constraint</b></th></tr></thead><tbody><tr><td>Technical</td><td>Implemented and tested</td><td>Python 3.10+, Node.js 18+</td></tr><tr><td>Data</td><td>CMAP climatology bundled</td><td>2.5-degree grid; local override recommended</td></tr><tr><td>Operational</td><td>Web UI and deployment</td><td>HTTPS required for immersive WebXR</td></tr><tr><td>Economic</td><td>Cost-benefit module</td><td>User-selectable water tariff</td></tr><tr><td>Hydrological</td><td>Screening-level model</td><td>Monthly rather than event-scale rainfall</td></tr><tr><td>Institutional</td><td>Academic decision support</td><td>Expert validation required before construction</td></tr></tbody></table>
+<p class="blank">&nbsp;</p>
+</div></div>
+</body></html>
