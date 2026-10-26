@@ -21,6 +21,8 @@ indent), captions, legends and real bordered tables are reproduced. Pictures pas
 ## Files
 
 - `full_report.html` - complete report in one page.
+- `full_report_offline.html` - same page with every picture embedded, so it
+  opens by double-click without the images folder.
 - `00_Cover.html` ... `12_References.html` - one file per chapter/appendix.
 - `images/` - 53 extracted figures, named `Fig_<chapter>.<n>_<title>.png`.
 - `full_report.md` - plain Markdown mirror of the text.

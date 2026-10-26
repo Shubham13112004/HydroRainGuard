@@ -490,6 +490,16 @@ def main() -> None:
         HEAD.format(title="HYDRO RAIN GUARD - BE Project Stage-II Report", css=CSS) + full_body + TAIL,
         encoding="utf-8")
 
+    # single self-contained file (images embedded) for offline use
+    import base64 as _b64
+    full_html = (OUT / "full_report.html").read_text(encoding="utf-8")
+    for img_file in sorted(IMG.glob("*")):
+        data = _b64.b64encode(img_file.read_bytes()).decode("ascii")
+        mime = "image/png" if img_file.suffix.lower() == ".png" else "image/jpeg"
+        full_html = full_html.replace(f'src="images/{img_file.name}"',
+                                      f'src="data:{mime};base64,{data}"')
+    (OUT / "full_report_offline.html").write_text(full_html, encoding="utf-8")
+
     # markdown mirror
     md = ["# HYDRO RAIN GUARD: Intelligent Rainwater Harvesting and Artificial Groundwater Recharge Assessment System",
           "", "*BE Project Stage-II report - plain-text mirror of the Word file.*", ""]
@@ -552,6 +562,7 @@ code {{ background:#eef1f4; padding:1px 5px; border-radius:4px; }}
 <h1>HYDRO RAIN GUARD - report paste pack</h1>
 <p>Every file below holds the same report text, figures and tables in a form you can copy straight into Word.</p>
 <a class="big" href="full_report.html">Open the full report &rarr;</a>
+<p>One-file version (images embedded, works offline): <a href="full_report_offline.html">full_report_offline.html</a></p>
 <p class="note"><b>To paste into Word:</b> open <code>full_report.html</code> (or a single chapter), press
 <code>Ctrl+A</code> then <code>Ctrl+C</code>, and paste into Word with <code>Keep Source Formatting</code>.
 Headings, justified 12 pt Times New Roman text, real tables and all pictures come across. Then set A4 with
@@ -593,6 +604,8 @@ top 23.4 mm, left 37 mm, bottom 32 mm, right 23.4 mm and add the footer.</p>
         "- Chapter titles already carry a page break before them.\n\n"
         "## Files\n\n"
         "- `full_report.html` - complete report in one page.\n"
+        "- `full_report_offline.html` - same page with every picture embedded, so it\n"
+        "  opens by double-click without the images folder.\n"
         "- `00_Cover.html` ... `12_References.html` - one file per chapter/appendix.\n"
         "- `images/` - 53 extracted figures, named `Fig_<chapter>.<n>_<title>.png`.\n"
         "- `full_report.md` - plain Markdown mirror of the text.\n",
