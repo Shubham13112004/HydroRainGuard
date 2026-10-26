@@ -496,6 +496,19 @@ def main() -> None:
     md.append(md_blocks(blocks))
     (OUT / "full_report.md").write_text("\n".join(md), encoding="utf-8")
 
+    # plain text mirror (no markup) for pasting into Word/Docs
+    txt = []
+    for block in blocks:
+        if block["type"] == "tbl":
+            for row in block["rows"]:
+                txt.append(" | ".join(html.unescape(re.sub("<[^>]+>", " ", c)) for c in row))
+            txt.append("")
+            continue
+        text = "".join(r["text"] for r in block["runs"]).strip()
+        if text:
+            txt.append(text)
+    (OUT / "full_report.txt").write_text("\n\n".join(txt), encoding="utf-8")
+
     # sample outputs the report refers to
     sample_dir = OUT / "sample_outputs"
     sample_dir.mkdir(exist_ok=True)
@@ -557,7 +570,7 @@ top 23.4 mm, left 37 mm, bottom 32 mm, right 23.4 mm and add the footer.</p>
 <ul>
 <li><a href="hydrorainguard_report_pack.zip">hydrorainguard_report_pack.zip</a> - everything above in one download</li>
 <li><code>images/</code> - all 53 figures as separate PNG files named <code>Fig_8.1_....png</code></li>
-<li><code>full_report.md</code> - plain Markdown text of the whole report (for Google Docs or Grammarly)</li>
+<li><code>full_report.md</code> / <code>full_report.txt</code> - the same text as Markdown or plain text</li>
 <li><code>README.md</code> - the same instructions in text form</li>
 </ul>
 </div></body></html>

@@ -31,7 +31,8 @@ by hand:
   `direct/12_References.html` - one file per chapter / appendix / front-matter
   page, so chapters can be pasted one at a time.
 - `direct/images/` - all 53 figures as `Fig_<chapter>.<n>_<title>.png`.
-- `direct/full_report.md` - plain Markdown mirror of the whole text.
+- `direct/full_report.md` and `direct/full_report.txt` - the whole text as
+  Markdown and as plain text.
 - `direct/sample_outputs/` - `sample_report.pdf`, `scenarios.json` and
   `ui_assessment.json` reproduced in the appendices and results chapter.
 - `direct/hydrorainguard_report_pack.zip` - everything above in one download.
