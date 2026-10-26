@@ -15,23 +15,28 @@ Each block is a tuple consumed by build_paper.py:
 """
 from __future__ import annotations
 
-TITLE = ("From Rooftop to Aquifer: An Open, Auditable Pipeline for "
-         "Rainwater Harvesting and Artificial Recharge Assessment")
+TITLE = ("HYDRO RAIN GUARD: An Auditable Decision-Support System for Rooftop "
+         "Rainwater Harvesting and Artificial Groundwater Recharge")
 
 AUTHORS = [
     [
         ("Shubham Desai", "Department of Information Technology",
-         "JSPM's Rajarshi Shahu College of Engineering", "Pune, India", "roll no. ______"),
+         "JSPM's Rajarshi Shahu College of Engineering", "Pune, India",
+         "desaishubham696@gmail.com"),
+        ("Dr. Dipali H. Patil", "Department of Information Technology",
+         "JSPM's Rajarshi Shahu College of Engineering", "Pune, India",
+         "patildipali07@gmail.com"),
         ("Siddhesh Mahadik", "Department of Information Technology",
-         "JSPM's Rajarshi Shahu College of Engineering", "Pune, India", "roll no. ______"),
-        ("Kaushal Agale", "Department of Information Technology",
-         "JSPM's Rajarshi Shahu College of Engineering", "Pune, India", "roll no. ______"),
+         "JSPM's Rajarshi Shahu College of Engineering", "Pune, India",
+         "siddheshamahadik@gmail.com"),
     ],
     [
         ("Omkar Kshirsagar", "Department of Information Technology",
-         "JSPM's Rajarshi Shahu College of Engineering", "Pune, India", "roll no. ______"),
-        ("Dr. Dipali H. Patil", "Department of Information Technology",
-         "JSPM's Rajarshi Shahu College of Engineering", "Pune, India", "guide"),
+         "JSPM's Rajarshi Shahu College of Engineering", "Pune, India",
+         "omkarkshirsagar2005@gmail.com"),
+        ("Kaushal Agale", "Department of Information Technology",
+         "JSPM's Rajarshi Shahu College of Engineering", "Pune, India",
+         "kaushalagale907@gmail.com"),
     ],
 ]
 
@@ -295,7 +300,7 @@ BLOCKS = [
     ("p", "The results page presents four headline figures, then tabs for monthly analysis, structures, cost-benefit "
           "and hydrogeology. A three-dimensional view, built with react-three-fiber, draws the recommended structure "
           "at its computed dimensions on a ground plane and supports WebXR [15] on Android devices, so a tank can "
-          "placed on the actual floor before it is built. The scene is intentionally schematic; it is a "
+          "be placed on the actual floor before it is built. The scene is intentionally schematic; it is a "
           "communication device, not a structural drawing."),
 
     ("fig", "fig4_results.png", "Fig. 3.  Results for the Pune reference case. Every headline figure links to the "
@@ -307,7 +312,7 @@ BLOCKS = [
 
     ("h2", "C. Report Generation"),
     ("p", "The PDF is composed with ReportLab [16] and runs to five pages: summary, monthly water balance, structures "
-          "dimensions and installation notes, economics, and assumptions with data provenance. Hindi and Marathi "
+          "with dimensions and installation notes, economics, and assumptions with data provenance. Hindi and Marathi "
           "text required more than loading a font. ReportLab draws glyphs in logical order, so Devanagari conjuncts "
           "and matras come out reordered and disconnected unless the string is shaped first. We shape with HarfBuzz "
           "through uharfbuzz [17], convert the shaped glyph run into positioned text, and draw with Noto Sans Devanagari; "
