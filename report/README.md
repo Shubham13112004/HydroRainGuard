@@ -59,3 +59,25 @@ fabricated.
 
 The deployed frontend URL used in the report is
 `https://hydro-rain-guard-mhus.vercel.app/`.
+
+## Google Docs version
+
+An editable Google Docs copy of the same report (same chapter order, headings,
+figures with captions and legends, tables and references) is available at:
+
+`https://docs.google.com/document/d/1PEec2q-1G31iq0cFL8lF5-Q1O1USmQ_ku3BDceh9tJc/edit`
+
+Notes for the Google Docs copy:
+
+- A4 page size and template margins (top 23.4 mm, left 37 mm, bottom 32 mm,
+  right 23.4 mm) are applied to the document style.
+- Chapter and appendix titles use Heading 1 with a page break before, section
+  headings use Heading 2, so the automatic outline/summary works.
+- All 53 figures are inserted with their captions and legends.
+- Add the footer with `Insert > Headers & footers > Footer` and then
+  `Insert > Page numbers > Footer` to get the
+  "RSCOE, Department of Information Technology 2026-27" line with page numbers.
+  Page numbers in the table of contents are the print estimates from the DOCX
+  build; update them after the final pagination.
+- `google_docs_export.py` regenerates the plain-text stream used to build the
+  Google Docs copy.
