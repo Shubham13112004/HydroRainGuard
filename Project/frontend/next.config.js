@@ -18,6 +18,14 @@ const nextConfig = {
   // dialling localhost directly.
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || '',
+    // CARTO basemaps key. Next only auto-inlines NEXT_PUBLIC_* into
+    // browser code, so this name is deliberately un-prefixed and
+    // forwarded to the client by listing it here. That is substitution,
+    // not protection: the value still ships in the bundle (it has to —
+    // Leaflet puts it in the tile URL), so treat it as public and rely
+    // on CARTO's rate limits. Must be present at BUILD time, i.e. set
+    // before `npm run build` / a Vercel deploy.
+    CARTO_BASEMAPS_KEY: process.env.CARTO_BASEMAPS_KEY || '',
   },
 
   async rewrites() {
