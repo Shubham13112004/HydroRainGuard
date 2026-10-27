@@ -54,7 +54,8 @@ The frontend calls `/api/*` on its own origin and `next.config.js`
 forwards those requests to the backend, so you never have to point
 browser code at `localhost:8000` (and CORS never gets involved).
 Override with `NEXT_PUBLIC_API_URL` / `API_PROXY_TARGET` if your
-backend lives somewhere else.
+backend lives somewhere else. The map picker's CARTO basemap key is
+`CARTO_BASEMAPS_KEY` (see [Map Pin Picker](#️-map-pin-picker)).
 
 ---
 
@@ -253,7 +254,7 @@ out before scoring rather than merely penalised.
 - **Framer Motion** — Animations
 - **react-three-fiber + drei** — 3D visualisation (lazy-loaded on `/ar`)
 - **@react-three/xr** — WebXR AR placement on supported Android devices
-- **Leaflet + react-leaflet** — Map pin picker (OpenStreetMap, no API key)
+- **Leaflet + react-leaflet** — Map pin picker (CARTO Voyager tiles, OpenStreetMap fallback)
 - **react-hook-form + zod** — Form validation
 - **Built-in i18n** — English / हिन्दी / मराठी
 
@@ -313,16 +314,37 @@ depth). It is lazy-loaded, so the rest of the site never downloads the
 
 ## 🗺️ Map Pin Picker
 
-Instead of typing coordinates, drop a pin on an OpenStreetMap map:
+Instead of typing coordinates, drop a pin on the map:
 
-- Drag the marker (or right-click the map) to your rooftop
+- Drag the marker (or click/right-click the map) to your rooftop
 - Latitude / longitude are filled automatically
-- The Location field auto-completes via Nominatim reverse geocoding
+- The Location field auto-completes via reverse geocoding
 - Search for a place, or use your device's GPS
 - A "enter coordinates manually" toggle keeps power users happy
 
-No API key and no billing — tiles and geocoding come from
-OpenStreetMap.
+**Basemap.** Tiles are CARTO Voyager. Since **25 September 2026**
+CARTO no longer serves raster tiles without an API key — an
+`API KEY REQUIRED · carto.com/basemaps/apikey` watermark is drawn
+instead of streets. The key is free (no CARTO account) and goes in the
+tile URL as `?key=…` (**not** `api_key`). Set it once:
+
+```bash
+# frontend/.env.local
+CARTO_BASEMAPS_KEY=your_key_here
+```
+
+The name has no `NEXT_PUBLIC_` prefix; `next.config.js` forwards it to
+the browser map through its `env` block. It is inlined at **build** time
+all the same, so restart `npm run dev` (or redeploy) after changing it —
+and note the key is still readable in the tile requests, so it is not a
+secret, only un-prefixed. A working key is built
+into `components/MapPicker.tsx` as a default so the picker renders out
+of the box; the environment variable overrides it. With no usable key
+the component skips CARTO and falls back to OpenStreetMap tiles rather
+than showing watermarked placeholders. Get/rotate a key at
+[carto.com/basemaps/apikey](https://carto.com/basemaps/apikey/).
+
+Geocoding (Photon, falling back to Nominatim) needs no key.
 
 ## 🌐 Multi-language
 
@@ -369,6 +391,31 @@ See `backend/.env.example` and `frontend/.env.example`.
 | `ADMIN_TOKEN` | backend | Guards `/api/init-db` and `/api/assessments` |
 | `NEXT_PUBLIC_API_URL` | frontend | Leave empty for the same-origin proxy |
 | `API_PROXY_TARGET` | frontend | Where Next forwards `/api/*` (default `http://localhost:8000`) |
+| `CARTO_BASEMAPS_KEY` | frontend | CARTO basemap key; without it the map falls back to OpenStreetMap |
+
+### Vercel
+
+Two projects, because the backend is not a Next.js app:
+
+| Project | Root directory | Environment variables |
+|---|---|---|
+| frontend (Next.js) | `Project/frontend` | `CARTO_BASEMAPS_KEY`, `API_PROXY_TARGET`, optionally `NEXT_PUBLIC_API_URL` |
+| backend (FastAPI) | `Project/backend` | `DATABASE_URL`, `CORS_ORIGINS`, `ENVIRONMENT`, `ADMIN_TOKEN`, `OPENWEATHER_API_KEY` |
+
+Set them in **Project → Settings → Environment Variables**, tick
+Production / Preview / Development, then **redeploy**. Three rules that
+cost time if missed:
+
+1. **Build-time values are baked into the bundle at build time.** That
+   covers `NEXT_PUBLIC_*` and `CARTO_BASEMAPS_KEY` (which `next.config.js`
+   maps into the bundle itself). Changing one does nothing to an existing
+   deployment — trigger a new one (Deployments → ⋯ → Redeploy, and untick
+   *use existing build cache* so the old inlined value is not reused).
+2. **`API_PROXY_TARGET` must be the public backend URL in production.**
+   It defaults to `http://localhost:8000`, which means every `/api/*`
+   call from the deployed site fails with a 500 from the rewrite.
+3. **The backend's `CORS_ORIGINS` must list the frontend's real
+   deployment hostname** (and its preview hosts if you use them).
 
 > ⚠️ **SQLite does not survive on serverless hosts.** Vercel (and any
 > FaaS platform) gives each invocation a fresh filesystem, so stored

@@ -42,25 +42,74 @@ const pinIcon = L.divIcon({
 /* ============================================================
    TILE PROVIDERS
 
+   CARTO raster basemaps have required an API key since 25 Sep 2026:
+   without one, every tile comes back as an "API KEY REQUIRED -
+   carto.com/basemaps/apikey" placeholder instead of the map. The key
+   is free (no CARTO account) and is passed as the `key` query
+   parameter — NOT `api_key`, which CARTO silently ignores.
+
+   The key comes from CARTO_BASEMAPS_KEY, forwarded to the browser by
+   the `env` block in next.config.js (an un-prefixed name is not
+   auto-inlined the way NEXT_PUBLIC_* is). The project's key is also
+   the literal default below so a fresh clone renders a working
+   basemap; the env var overrides and rotates it without touching
+   source. Dropping the NEXT_PUBLIC_ prefix keeps the name out of the
+   public-API convention, but it is NOT a secret: Leaflet puts the key
+   in every tile URL, so anyone can read it in DevTools. CARTO
+   rate-limits it; do not reuse it where that matters.
+
+   If no key survives, CARTO is dropped from the provider list entirely
+   and OpenStreetMap is used directly, so the map never renders
+   watermarked tiles.
+
    tile.openstreetmap.org is a volunteer-run server whose tile usage
    policy forbids use from apps: it answers 403 "access blocked" as
    soon as the requests look embedded rather than human, which is
-   exactly what happens inside a preview iframe. So the default is a
-   provider that permits embedding, with the next in the list tried
-   automatically if the first never produces a tile.
+   exactly what happens inside a preview iframe. That is why CARTO is
+   tried first and OSM is only the fallback when no key is configured.
 
-   Both require attribution, shown in the map's corner.
+   Both require attribution, shown in the map's corner; CARTO's free
+   tier requires CARTO and OpenStreetMap to be credited.
 ============================================================ */
 
-const TILE_PROVIDERS = [
-  {
-    name: 'CARTO',
-    url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',
-    subdomains: 'abcd',
-    maxZoom: 19,
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-  },
+const CARTO_API_KEY = (
+  process.env.CARTO_BASEMAPS_KEY ||
+  'cb1_4vlr_1_56aa8fe92524e58f085b2390'
+).trim();
+
+if (typeof window !== 'undefined' && !CARTO_API_KEY) {
+  // Loud enough to explain a grey/watermarked basemap, quiet enough
+  // not to run on every render.
+  console.warn(
+    '[MapPicker] CARTO_BASEMAPS_KEY is not set — CARTO tiles ' +
+      'would render an "API key required" watermark, so OpenStreetMap is ' +
+      'used instead. Get a free key at https://carto.com/basemaps/apikey/',
+  );
+}
+
+type TileProvider = {
+  name: string;
+  url: string;
+  subdomains: string;
+  maxZoom: number;
+  attribution: string;
+};
+
+const TILE_PROVIDERS: TileProvider[] = [
+  ...(CARTO_API_KEY
+    ? [
+        {
+          name: 'CARTO',
+          url:
+            'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png' +
+            `?key=${encodeURIComponent(CARTO_API_KEY)}`,
+          subdomains: 'abcd',
+          maxZoom: 19,
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        },
+      ]
+    : []),
   {
     name: 'OpenStreetMap',
     url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -224,6 +273,12 @@ function ClickToPin({
 }) {
   useMapEvents({
     click(e) {
+      onPick(e.latlng.lat, e.latlng.lng);
+    },
+    // The UI tip promises right-click, so honour it — and suppress the
+    // browser context menu, which would otherwise cover the map.
+    contextmenu(e) {
+      e.originalEvent.preventDefault();
       onPick(e.latlng.lat, e.latlng.lng);
     },
   });
